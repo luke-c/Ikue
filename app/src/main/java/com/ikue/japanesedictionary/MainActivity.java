@@ -19,17 +19,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.ikue.japanesedictionary.database.DictionaryDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private DictionaryDatabase mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Get a database on startup. Copying from assets folder is all handled
+        // by SQLiteAssetHelper
+        mDatabase = new DictionaryDatabase(this);
+
 
         // Add Toolbar to Main Screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -134,5 +142,11 @@ public class MainActivity extends AppCompatActivity {
             mDrawerLayout.openDrawer(GravityCompat.START);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mDatabase.close();
+        super.onDestroy();
     }
 }
