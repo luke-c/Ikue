@@ -6,9 +6,10 @@ package com.ikue.japanesedictionary.models;
 
 public class Priority {
 
+    // Records information about the relative priority of the entry, e.g. news1/2, ichi1/2, spec1/2.
     private String mValue;
 
-    // If false, then Reading priority
+    // If false, then a priority associated with the Reading Element.
     private boolean mIsKanjiPriority;
 
     public String getValue() {
