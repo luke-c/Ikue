@@ -1,5 +1,6 @@
 package com.ikue.japanesedictionary;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
+import com.ikue.japanesedictionary.models.DictionaryItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
-    private DictionaryDatabase mDatabase;
+    private static DictionaryDatabase mHelper;
+    private AsyncTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
-        mDatabase = new DictionaryDatabase(this);
-
+        mHelper = DictionaryDatabase.getInstance(this);
+        task = new GetEntryTask().execute(new Integer(2829739));
 
         // Add Toolbar to Main Screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -146,7 +149,30 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mDatabase.close();
+        // Cancel the AsyncTask if it is running when Activity is about to close
+        if(task!=null) {
+            task.cancel(false);
+        }
+
+        // Close the SQLiteHelper instance
+
+        mHelper.close();
         super.onDestroy();
+    }
+
+    // The types specified here are the input data type, the progress type, and the result type
+    private class GetEntryTask extends AsyncTask<Integer, Void, DictionaryItem> {
+
+        protected DictionaryItem doInBackground(Integer... id) {
+            // Some long-running task like downloading an image.
+            DictionaryItem entry = mHelper.getEntry(id[0].intValue());
+            return entry;
+        }
+
+
+        protected void onPostExecute(DictionaryItem result) {
+            // This method is executed in the UIThread
+            // with access to the result of the long running task
+        }
     }
 }
