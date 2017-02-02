@@ -20,6 +20,9 @@ public class DictionaryItem {
     // Always 1 or many
     private List<SenseElement> mSenseElements;
 
+    // Can be 0 or many
+    private List<Priority> mPriorities;
+
     public int getEntryId() {
         return mEntryId;
     }
@@ -50,5 +53,13 @@ public class DictionaryItem {
 
     public void setReadingElements(List<ReadingElement> readingElements) {
         mReadingElements = readingElements;
+    }
+
+    public List<Priority> getPriorities() {
+        return mPriorities;
+    }
+
+    public void setPriorities(List<Priority> priorities) {
+        mPriorities = priorities;
     }
 }
