@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
-import com.ikue.japanesedictionary.models.DictionaryItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
         mHelper = DictionaryDatabase.getInstance(this);
-        task = new GetEntryTask().execute(new Integer(2829739));
+        //task = new GetEntryTask().execute(new Integer(2829739));
 
         // Add Toolbar to Main Screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -155,24 +154,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Close the SQLiteHelper instance
-
         mHelper.close();
         super.onDestroy();
-    }
-
-    // The types specified here are the input data type, the progress type, and the result type
-    private class GetEntryTask extends AsyncTask<Integer, Void, DictionaryItem> {
-
-        protected DictionaryItem doInBackground(Integer... id) {
-            // Some long-running task like downloading an image.
-            DictionaryItem entry = mHelper.getEntry(id[0].intValue());
-            return entry;
-        }
-
-
-        protected void onPostExecute(DictionaryItem result) {
-            // This method is executed in the UIThread
-            // with access to the result of the long running task
-        }
     }
 }

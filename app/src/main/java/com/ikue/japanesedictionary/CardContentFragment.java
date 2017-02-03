@@ -1,6 +1,7 @@
 package com.ikue.japanesedictionary;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -42,12 +43,13 @@ public class CardContentFragment extends Fragment {
             name = (TextView) itemView.findViewById(R.id.card_title);
             description = (TextView) itemView.findViewById(R.id.card_text);
 
+            // On card click, open detail view
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //Context context = v.getContext();
-                    //Intent intent = new Intent(context, DetailActivity.class);
-                    //context.startActivity(intent);
+                    Context context = v.getContext();
+                    Intent i = DetailActivity.newIntent(context, 2829739);
+                    context.startActivity(i);
                 }
             });
 
