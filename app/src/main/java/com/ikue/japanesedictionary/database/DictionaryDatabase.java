@@ -4,12 +4,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.KanjiElementTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.ReadingElementTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.ReadingRelationTable;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.ReadingElement;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -54,16 +58,16 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         // The columns from the database I will use after the query
         String[] projection = {
-                "_ID",
-                "VALUE"
+                KanjiElementTable.Cols._ID,
+                KanjiElementTable.Cols.VALUE
         };
 
         // Filter results by WHERE ENTRY_ID = id
-        String selection = "ENTRY_ID" + " = ?";
+        String selection = KanjiElementTable.Cols.ENTRY_ID + " = ?";
         String[] selectionArgs = {Integer.toString(id)};
 
         Cursor cursor = db.query(
-          "JMdict_Kanji_Element", // Table to query
+          KanjiElementTable.NAME, // Table to query
           projection, // The columns to return
           selection, // The columns for the WHERE clause
           selectionArgs, // The values for the WHERE clause
@@ -76,10 +80,10 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         while(cursor.moveToNext()) {
             KanjiElement kanjiElement = new KanjiElement();
-            int entryId = cursor.getInt(cursor.getColumnIndexOrThrow("_ID"));
-            String value = cursor.getString(cursor.getColumnIndexOrThrow("VALUE"));
+            int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols._ID));
+            String value = cursor.getString(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols.VALUE));
 
-            kanjiElement.setKanjiElementId(entryId);
+            kanjiElement.setKanjiElementId(elementId);
             kanjiElement.setValue(value);
 
             kanjiElements.add(kanjiElement);
@@ -88,7 +92,49 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
     }
 
     private List<ReadingElement> getReadingElements(int id) {
-        return new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] arguments = new String[]{Integer.toString(id)};
+
+        String select = "SELECT r." + ReadingElementTable.Cols._ID + ", r."
+                + ReadingElementTable.Cols.VALUE + " AS read_value" + ", r."
+                + ReadingElementTable.Cols.IS_TRUE_READING + ", group_concat(rel."
+                + ReadingElementTable.Cols.VALUE + ") AS rel_value ";
+
+        String from = "FROM " + ReadingElementTable.NAME + " AS r ";
+
+        String join = "LEFT JOIN " + ReadingRelationTable.NAME + " AS rel ON rel."
+                + ReadingRelationTable.Cols.READING_ELEMENT_ID + " = r."
+                + ReadingElementTable.Cols._ID + " ";
+
+        String where = "WHERE r." + ReadingElementTable.Cols.ENTRY_ID + " = ? ";
+
+        String groupBy = "GROUP BY r." + ReadingElementTable.Cols._ID;
+
+        Cursor cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
+
+        List<ReadingElement> readingElements = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+            ReadingElement readingElement = new ReadingElement();
+            int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols._ID));
+            String value = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
+            int isTrueReading = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.IS_TRUE_READING));
+            String relationValue = cursor.getString(cursor.getColumnIndexOrThrow("rel_value")); // SAME COLUMN NAME!
+
+            // Split the string on commas, then store each value as a String in a List
+            // If the string is null or empty then don't try to split
+            List<String> relationValueList = (relationValue != null && !relationValue.isEmpty())
+                    ? Arrays.asList(relationValue.split(",")) : null;
+
+            readingElement.setReadingElementId(elementId);
+            readingElement.setValue(value);
+            readingElement.setTrueReading(!(isTrueReading == 1)); // Inverse the result
+            readingElement.setReadingRelation(relationValueList);
+
+            readingElements.add(readingElement);
+        }
+        return readingElements;
     }
 
 }

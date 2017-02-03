@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
 import com.ikue.japanesedictionary.models.DictionaryItem;
@@ -65,9 +64,7 @@ public class DetailActivity extends AppCompatActivity {
     private class GetEntryTask extends AsyncTask<Integer, Void, DictionaryItem> {
 
         protected DictionaryItem doInBackground(Integer... id) {
-            // Some long-running task like downloading an image.
-            DictionaryItem entry = mHelper.getEntry(id[0].intValue());
-            Log.i("INFO", "getEntry Query ran");
+            DictionaryItem entry = mHelper.getEntry(id[0]);
             return entry;
         }
 
