@@ -5,10 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.KanjiElementTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.PriorityTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.ReadingElementTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.ReadingRelationTable;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
+import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
@@ -40,7 +42,6 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Don't return cursor! Get a DictionaryItem from the cursor!
     public DictionaryItem getEntry(int id) {
 
         DictionaryItem entry = new DictionaryItem();
@@ -48,11 +49,12 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         entry.setKanjiElements(getKanjiElements(id));
         entry.setReadingElements(getReadingElements(id));
         //entry.setSenseElements(getSenseElements(id));
-        //entry.setPriorities(getPriorities(id));
+        entry.setPriorities(getPriorities(id));
 
         return entry;
     }
 
+    // Get all Kanji Elements associated with a given ID
     private List<KanjiElement> getKanjiElements(int id) {
         SQLiteDatabase db = getReadableDatabase();
 
@@ -66,6 +68,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         String selection = KanjiElementTable.Cols.ENTRY_ID + " = ?";
         String[] selectionArgs = {Integer.toString(id)};
 
+        // Execute the query
         Cursor cursor = db.query(
           KanjiElementTable.NAME, // Table to query
           projection, // The columns to return
@@ -76,8 +79,10 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
           null  // Sort order
         );
 
+        // Create a new List of Kanji Elements to store the results of our query
         List<KanjiElement> kanjiElements = new ArrayList<>();
 
+        // Iterate over the rows returned and assign to the POJO
         while(cursor.moveToNext()) {
             KanjiElement kanjiElement = new KanjiElement();
             int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols._ID));
@@ -91,6 +96,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         return kanjiElements;
     }
 
+    // Get all Reading Elements associated with a given ID
     private List<ReadingElement> getReadingElements(int id) {
         SQLiteDatabase db = getReadableDatabase();
 
@@ -135,6 +141,55 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
             readingElements.add(readingElement);
         }
         return readingElements;
+    }
+
+    // Get all Priorities associated with a given ID
+    private List<Priority> getPriorities(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        // The columns from the database I will use after the query
+        String[] projection = {
+                PriorityTable.Cols._ID,
+                PriorityTable.Cols.VALUE,
+                PriorityTable.Cols.TYPE
+        };
+
+        // Filter results by WHERE ENTRY_ID = id
+        String selection = PriorityTable.Cols.ENTRY_ID + " = ?";
+        String[] selectionArgs = {Integer.toString(id)};
+
+        // Execute the query
+        Cursor cursor = db.query(
+                PriorityTable.NAME, // Table to query
+                projection, // The columns to return
+                selection, // The columns for the WHERE clause
+                selectionArgs, // The values for the WHERE clause
+                null, // Group by
+                null, // Filter by
+                null  // Sort order
+        );
+
+        // Create a new List of Priorities to store the results of our query
+        List<Priority> priorities = new ArrayList<>();
+
+        // Iterate over the rows returned and assign to the POJO
+        while(cursor.moveToNext()) {
+            Priority priority = new Priority();
+            int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(PriorityTable.Cols._ID));
+            String value = cursor.getString(cursor.getColumnIndexOrThrow(PriorityTable.Cols.VALUE));
+            String type = cursor.getString(cursor.getColumnIndexOrThrow(PriorityTable.Cols.TYPE));
+
+            // If the type is Kanji Reading, set the bool to true, otherwise false.
+            boolean isKanjiReadingPriority = type.equals("Kanji_Element") ? true : false;
+
+            priority.setPriorityId(elementId);
+            priority.setValue(value);
+            priority.setKanjiReadingPriority(isKanjiReadingPriority);
+
+            // Add the priority to the list
+            priorities.add(priority);
+        }
+        return priorities;
     }
 
 }
