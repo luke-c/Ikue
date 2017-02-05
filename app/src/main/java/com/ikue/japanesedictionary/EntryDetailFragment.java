@@ -25,6 +25,7 @@ public class EntryDetailFragment extends Fragment {
 
     private static DictionaryDatabase mHelper;
     private static AsyncTask task;
+    private static DictionaryItem mDictionaryItem;
 
     private TextView mTestTextView;
     private CollapsingToolbarLayout mCollapsingToolbar;
@@ -41,6 +42,9 @@ public class EntryDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Retain the fragment so rotation does not repeatedly fire off new AsyncTasks
+        setRetainInstance(true);
 
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
@@ -69,6 +73,24 @@ public class EntryDetailFragment extends Fragment {
         return v;
     }
 
+    private void updateViews() {
+        mCollapsingToolbar.setTitle(mDictionaryItem.getKanjiElements().get(0).getValue());
+        mTestTextView.setText(mDictionaryItem.getReadingElements().get(0).getValue());
+    }
+
+    @Override
+    public void onDestroy() {
+        // Cancel the AsyncTask if it is running when Activity is about to close
+        // cancel(false) is safer and doesn't force an instant cancellation
+        if(task!=null) {
+            task.cancel(false);
+        }
+
+        // Close the SQLiteHelper instance
+        mHelper.close();
+        super.onDestroy();
+    }
+
     // The types specified here are the input data type, the progress type, and the result type
     private class GetEntryTask extends AsyncTask<Integer, Void, DictionaryItem> {
 
@@ -80,20 +102,8 @@ public class EntryDetailFragment extends Fragment {
         protected void onPostExecute(DictionaryItem result) {
             // This method is executed in the UIThread
             // with access to the result of the long running task
-            mCollapsingToolbar.setTitle(result.getKanjiElements().get(0).getValue());
-            mTestTextView.setText(result.getReadingElements().get(0).getValue());
+            mDictionaryItem = result;
+            updateViews();
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        // Cancel the AsyncTask if it is running when Activity is about to close
-        if(task!=null) {
-            task.cancel(false);
-        }
-
-        // Close the SQLiteHelper instance
-        mHelper.close();
-        super.onDestroy();
     }
 }
