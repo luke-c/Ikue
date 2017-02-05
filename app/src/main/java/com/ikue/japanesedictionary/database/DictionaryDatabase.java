@@ -2,30 +2,46 @@ package com.ikue.japanesedictionary.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.GlossTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.KanjiElementTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.PriorityTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.ReadingElementTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.ReadingRelationTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseDialectTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseElementTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseFieldTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SensePosTable;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
+import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
+import com.ikue.japanesedictionary.models.SenseElement;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
  * Created by luke_c on 01/02/2017.
  */
 
+// TODO: Add catch blocks for queries
 public class DictionaryDatabase extends SQLiteAssetHelper {
 
     private static DictionaryDatabase sInstance;
+    private static SQLiteDatabase db;
 
     private static final String DATABASE_NAME = "dictionary.db";
     private static final int DATABASE_VERSION = 1;
+
+    private final String LOG_TAG = this.getClass().toString();
 
     public static synchronized DictionaryDatabase getInstance(Context context) {
         // Use the application context, which will ensure that you
@@ -40,21 +56,35 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Don't return cursor! Get a DictionaryItem from the cursor!
     public DictionaryItem getEntry(int id) {
 
         DictionaryItem entry = new DictionaryItem();
-        entry.setEntryId(id);
-        entry.setKanjiElements(getKanjiElements(id));
-        entry.setReadingElements(getReadingElements(id));
-        //entry.setSenseElements(getSenseElements(id));
-        //entry.setPriorities(getPriorities(id));
 
-        return entry;
+        try {
+            db = getReadableDatabase();
+
+            entry.setEntryId(id);
+            entry.setKanjiElements(getKanjiElements(id));
+            entry.setReadingElements(getReadingElements(id));
+            entry.setSenseElements(getSenseElements(id));
+            entry.setPriorities(getPriorities(id));
+
+            return entry;
+        }
+        // TODO: Handle errors more gracefully
+        catch (SQLException error){
+            Log.e(LOG_TAG ,error.getMessage());
+            return new DictionaryItem();
+        }
+        finally {
+            db.close();
+        }
     }
 
+    // Get all Kanji Elements associated with a given ID
     private List<KanjiElement> getKanjiElements(int id) {
-        SQLiteDatabase db = getReadableDatabase();
+        // Create a new List of Kanji Elements to store the results of our query
+        List<KanjiElement> kanjiElements = new ArrayList<>();
 
         // The columns from the database I will use after the query
         String[] projection = {
@@ -65,41 +95,51 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         // Filter results by WHERE ENTRY_ID = id
         String selection = KanjiElementTable.Cols.ENTRY_ID + " = ?";
         String[] selectionArgs = {Integer.toString(id)};
+        Cursor cursor = null;
 
-        Cursor cursor = db.query(
-          KanjiElementTable.NAME, // Table to query
-          projection, // The columns to return
-          selection, // The columns for the WHERE clause
-          selectionArgs, // The values for the WHERE clause
-          null, // Group by
-          null, // Filter by
-          null  // Sort order
-        );
+        try {
+            // Execute the query
+            cursor = db.query(
+              KanjiElementTable.NAME, // Table to query
+              projection, // The columns to return
+              selection, // The columns for the WHERE clause
+              selectionArgs, // The values for the WHERE clause
+              null, // Group by
+              null, // Filter by
+              null  // Sort order
+            );
 
-        List<KanjiElement> kanjiElements = new ArrayList<>();
+            // Iterate over the rows returned and assign to the POJO
+            while(cursor.moveToNext()) {
+                KanjiElement kanjiElement = new KanjiElement();
+                int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols._ID));
+                String value = cursor.getString(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols.VALUE));
 
-        while(cursor.moveToNext()) {
-            KanjiElement kanjiElement = new KanjiElement();
-            int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols._ID));
-            String value = cursor.getString(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols.VALUE));
+                kanjiElement.setKanjiElementId(elementId);
+                kanjiElement.setValue(value);
 
-            kanjiElement.setKanjiElementId(elementId);
-            kanjiElement.setValue(value);
+                kanjiElements.add(kanjiElement);
+            }
+            return kanjiElements;
 
-            kanjiElements.add(kanjiElement);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        return kanjiElements;
     }
 
+    // Get all Reading Elements associated with a given ID
     private List<ReadingElement> getReadingElements(int id) {
-        SQLiteDatabase db = getReadableDatabase();
+        // Create a new List of Reading Elements to store the results of our query
+        List<ReadingElement> readingElements = new ArrayList<>();
 
         String[] arguments = new String[]{Integer.toString(id)};
 
         String select = "SELECT r." + ReadingElementTable.Cols._ID + ", r."
                 + ReadingElementTable.Cols.VALUE + " AS read_value" + ", r."
                 + ReadingElementTable.Cols.IS_TRUE_READING + ", group_concat(rel."
-                + ReadingElementTable.Cols.VALUE + ") AS rel_value ";
+                + ReadingElementTable.Cols.VALUE + ", '§') AS rel_value ";
 
         String from = "FROM " + ReadingElementTable.NAME + " AS r ";
 
@@ -111,30 +151,152 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY r." + ReadingElementTable.Cols._ID;
 
-        Cursor cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
+        Cursor cursor = null;
 
-        List<ReadingElement> readingElements = new ArrayList<>();
+        try {
+            cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
 
-        while(cursor.moveToNext()) {
-            ReadingElement readingElement = new ReadingElement();
-            int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols._ID));
-            String value = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
-            int isTrueReading = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.IS_TRUE_READING));
-            String relationValue = cursor.getString(cursor.getColumnIndexOrThrow("rel_value")); // SAME COLUMN NAME!
+            while(cursor.moveToNext()) {
+                ReadingElement readingElement = new ReadingElement();
+                int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols._ID));
+                String value = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
+                int isTrueReading = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.IS_TRUE_READING));
+                String relationValue = cursor.getString(cursor.getColumnIndexOrThrow("rel_value")); // SAME COLUMN NAME!
 
-            // Split the string on commas, then store each value as a String in a List
-            // If the string is null or empty then don't try to split
-            List<String> relationValueList = (relationValue != null && !relationValue.isEmpty())
-                    ? Arrays.asList(relationValue.split(",")) : null;
+                readingElement.setReadingElementId(elementId);
+                readingElement.setValue(value);
+                readingElement.setTrueReading(!(isTrueReading == 1)); // Inverse the result
+                readingElement.setReadingRelation(formatString(relationValue));
 
-            readingElement.setReadingElementId(elementId);
-            readingElement.setValue(value);
-            readingElement.setTrueReading(!(isTrueReading == 1)); // Inverse the result
-            readingElement.setReadingRelation(relationValueList);
-
-            readingElements.add(readingElement);
+                readingElements.add(readingElement);
+            }
+            return readingElements;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        return readingElements;
     }
 
+    // Get all Sense Elements associated with a given ID
+    private List<SenseElement> getSenseElements(int id) {
+        // Create a new List of Sense Elements to store the results of our query
+        List<SenseElement> senseElements = new ArrayList<>();
+
+        String[] arguments = new String[]{Integer.toString(id)};
+
+        String select = "SELECT se." + SenseElementTable.Cols._ID + ", group_concat(pos."
+                + SensePosTable.Cols.VALUE + ", '§') AS pos_value, group_concat(foa."
+                + SenseFieldTable.Cols.VALUE + ", '§') AS foa_value, group_concat(dial."
+                + SenseDialectTable.Cols.VALUE + ", '§') AS dial_value, group_concat(gloss."
+                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
+
+        String from = "FROM " + SenseElementTable.NAME + " AS se ";
+
+        String join = "LEFT JOIN " + SensePosTable.NAME + " AS pos ON pos."
+                + SensePosTable.Cols.SENSE_ID + " = se." + SenseElementTable.Cols._ID
+                + " LEFT JOIN " + SenseFieldTable.NAME + " AS foa ON foa."
+                + SenseFieldTable.Cols.SENSE_ID + " = se." + SenseElementTable.Cols._ID
+                + " LEFT JOIN " + SenseDialectTable.NAME + " AS dial ON dial."
+                + SenseDialectTable.Cols.SENSE_ID + " = se." + SenseElementTable.Cols._ID
+                + " LEFT JOIN " + GlossTable.NAME + " AS gloss ON gloss."
+                + GlossTable.Cols.SENSE_ID + " = se." + SenseElementTable.Cols._ID + " ";
+
+        String where = "WHERE se." + SenseElementTable.Cols.ENTRY_ID + " = ? ";
+
+        String groupBy = "GROUP BY se." + SenseElementTable.Cols._ID;
+
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
+
+            while(cursor.moveToNext()) {
+                SenseElement senseElement = new SenseElement();
+                int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(SenseElementTable.Cols._ID));
+                String posValue = cursor.getString(cursor.getColumnIndexOrThrow("pos_value"));
+                String foaValue = cursor.getString(cursor.getColumnIndexOrThrow("foa_value"));
+                String dialValue = cursor.getString(cursor.getColumnIndexOrThrow("dial_value"));
+                String glossValue = cursor.getString(cursor.getColumnIndexOrThrow("gloss_value"));
+
+                senseElement.setSenseElementId(elementId);
+                senseElement.setPartOfSpeech(formatString(posValue));
+                senseElement.setFieldOfApplication(formatString(foaValue));
+                senseElement.setDialect(formatString(dialValue));
+                senseElement.setGlosses(formatString(glossValue));
+
+                senseElements.add(senseElement);
+            }
+            return senseElements;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    // Get all Priorities associated with a given ID
+    private List<Priority> getPriorities(int id) {
+        // Create a new List of Priorities to store the results of our query
+        List<Priority> priorities = new ArrayList<>();
+
+        // The columns from the database I will use after the query
+        String[] projection = {
+                PriorityTable.Cols._ID,
+                PriorityTable.Cols.VALUE,
+                PriorityTable.Cols.TYPE
+        };
+
+        // Filter results by WHERE ENTRY_ID = id
+        String selection = PriorityTable.Cols.ENTRY_ID + " = ?";
+        String[] selectionArgs = {Integer.toString(id)};
+
+        Cursor cursor = null;
+
+        try {
+            // Execute the query
+            cursor = db.query(
+                    PriorityTable.NAME, // Table to query
+                    projection, // The columns to return
+                    selection, // The columns for the WHERE clause
+                    selectionArgs, // The values for the WHERE clause
+                    null, // Group by
+                    null, // Filter by
+                    null  // Sort order
+            );
+
+            // Iterate over the rows returned and assign to the POJO
+            while(cursor.moveToNext()) {
+                Priority priority = new Priority();
+                int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(PriorityTable.Cols._ID));
+                String value = cursor.getString(cursor.getColumnIndexOrThrow(PriorityTable.Cols.VALUE));
+                String type = cursor.getString(cursor.getColumnIndexOrThrow(PriorityTable.Cols.TYPE));
+
+                // If the type is Kanji Reading, set the bool to true, otherwise false.
+                boolean isKanjiReadingPriority = type.equals("Kanji_Element");
+
+                priority.setPriorityId(elementId);
+                priority.setValue(value);
+                priority.setKanjiReadingPriority(isKanjiReadingPriority);
+
+                // Add the priority to the list
+                priorities.add(priority);
+            }
+            return priorities;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    // Split the string on the separator character into a list, then
+    // convert to a LinkedHashSet to remove duplicate values.
+    @Nullable
+    private static List<String> formatString(String stringToFormat) {
+        if(stringToFormat != null && !stringToFormat.isEmpty()) {
+            return new ArrayList<>(new LinkedHashSet<>(Arrays.asList(stringToFormat.split("§"))));
+        }
+        return null;
+    }
 }

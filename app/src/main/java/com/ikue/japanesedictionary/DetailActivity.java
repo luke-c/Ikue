@@ -36,7 +36,7 @@ public class DetailActivity extends AppCompatActivity {
         // by SQLiteAssetHelper
         mHelper = DictionaryDatabase.getInstance(this);
         int entryId = getIntent().getIntExtra(EXTRA_ENTRY_ID, 0);
-        task = new GetEntryTask().execute(new Integer(entryId));
+        task = new GetEntryTask().execute(entryId);
 
         // Set title of Detail page
         collapsingToolbar.setTitle(getString(R.string.item_title));
@@ -64,8 +64,7 @@ public class DetailActivity extends AppCompatActivity {
     private class GetEntryTask extends AsyncTask<Integer, Void, DictionaryItem> {
 
         protected DictionaryItem doInBackground(Integer... id) {
-            DictionaryItem entry = mHelper.getEntry(id[0]);
-            return entry;
+            return mHelper.getEntry(id[0]);
         }
 
 
