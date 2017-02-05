@@ -6,6 +6,7 @@ package com.ikue.japanesedictionary.models;
 
 public class Priority {
 
+    // Unique ID for the Priority
     private int mPriorityId;
 
     // Records information about the relative priority of the entry, e.g. news1/2, ichi1/2, spec1/2.

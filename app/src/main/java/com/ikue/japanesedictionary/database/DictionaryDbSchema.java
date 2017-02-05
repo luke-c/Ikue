@@ -4,6 +4,7 @@ package com.ikue.japanesedictionary.database;
  * Created by luke_c on 03/02/2017.
  */
 
+// TODO: Add Jmnedict data
 public class DictionaryDbSchema {
 
     public static final class Jmdict {
