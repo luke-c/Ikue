@@ -48,7 +48,7 @@ public class CardContentFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
-                    Intent i = DetailActivity.newIntent(context, 2829739);
+                    Intent i = EntryDetailActivity.newIntent(context, 2829739);
                     context.startActivity(i);
                 }
             });
