@@ -41,7 +41,7 @@ public class ListContentFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 //                    Context context = v.getContext();
-//                    Intent intent = new Intent(context, DetailActivity.class);
+//                    Intent intent = new Intent(context, EntryDetailActivity.class);
 //                    context.startActivity(intent);
                 }
             });

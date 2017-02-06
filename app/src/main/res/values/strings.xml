@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Japanese Dictionary</string>
+    <string name="app_name">Ikue</string>
     <string name="action_settings">Settings</string>
     <string name="item_title">Palais Garnier</string>
     <string name="item_desc">The Palais Garnier which locates in Paris was built from 1861 for
@@ -13,4 +13,6 @@
         deserunt mollit anim id est laborum.
     </string>
     <string name="detail_location">"8 Rue Scribe, 75009 Paris, France"</string>
+    <string name="detail_view_meanings_header">Meanings</string>
+    <string name="detail_view_other_forms_header">Other forms</string>
 </resources>
