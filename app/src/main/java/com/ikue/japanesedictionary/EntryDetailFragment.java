@@ -7,6 +7,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,11 @@ import android.widget.TextView;
 
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
 import com.ikue.japanesedictionary.models.DictionaryItem;
+import com.ikue.japanesedictionary.models.KanjiElement;
+import com.ikue.japanesedictionary.models.ReadingElement;
+import com.ikue.japanesedictionary.models.SenseElement;
+
+import java.util.List;
 
 /**
  * Created by luke_c on 05/02/2017.
@@ -27,7 +33,7 @@ public class EntryDetailFragment extends Fragment {
     private static AsyncTask task;
     private static DictionaryItem mDictionaryItem;
 
-    private TextView mTestTextView;
+    private TextView mReadingsTextView;
     private CollapsingToolbarLayout mCollapsingToolbar;
 
     public static EntryDetailFragment newInstance(int entryId) {
@@ -62,20 +68,68 @@ public class EntryDetailFragment extends Fragment {
         ((AppCompatActivity) getActivity()).setSupportActionBar((Toolbar) v.findViewById(R.id.toolbar));
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Set Collapsing Toolbar layout to the screen
         mCollapsingToolbar = (CollapsingToolbarLayout) v.findViewById(R.id.collapsing_toolbar);
-
-        // Set title of Detail page
-        mCollapsingToolbar.setTitle(getString(R.string.item_title));
-
-        mTestTextView = (TextView) v.findViewById(R.id.place_detail);
+        mReadingsTextView = (TextView) v.findViewById(R.id.sense_element);
 
         return v;
     }
 
     private void updateViews() {
-        mCollapsingToolbar.setTitle(mDictionaryItem.getKanjiElements().get(0).getValue());
-        mTestTextView.setText(mDictionaryItem.getReadingElements().get(0).getValue());
+        // Set the toolbar title to the main kanji element value + reading if it exists,
+        // if not then just use the first reading element value
+        List<KanjiElement> kanjiElementList = mDictionaryItem.getKanjiElements();
+        List<ReadingElement> readingElementList = mDictionaryItem.getReadingElements();
+        String toolbarTitle;
+        if (kanjiElementList != null && !kanjiElementList.isEmpty()) {
+            toolbarTitle = kanjiElementList.get(0).getValue()
+                    + " [" + readingElementList.get(0).getValue() + "]";
+        }
+        else toolbarTitle = readingElementList.get(0).getValue();
+
+        // TODO: Handle case where value is too big and parts are cutoff, see entry id: 1004000
+        mCollapsingToolbar.setTitle(toolbarTitle);
+
+
+        // TODO: Refactor. Perhaps add TextFields programmatically.
+        // Build a string for the 'Meanings' section
+        List<SenseElement> senseElementList = mDictionaryItem.getSenseElements();
+        String meaningSection = "";
+        int glossNumber = 0;
+        boolean posExists = false;
+        for (SenseElement senseElement : senseElementList) {
+
+            // TODO: Simplify Part of Speech values, currently long and too detailed
+            // Get all the Part of Speech elements, and join them into a single string.
+            List<String> partOfSpeech = senseElement.getPartOfSpeech();
+            if(partOfSpeech != null) {
+                // Only add a new line if it is not the first occurrence
+                String prefix = posExists == false ? "" : "\n";
+                meaningSection += prefix + TextUtils.join(", ", partOfSpeech) + "\n";
+                posExists = true;
+            }
+
+            // Get all the glosses for a Sense element, and join them into a single string
+            List<String> glosses = senseElement.getGlosses();
+            if(glosses != null) {
+                glossNumber++;
+                meaningSection += Integer.toString(glossNumber) + ". "
+                        + TextUtils.join("; ", glosses);
+            }
+
+            // Get all the Field of Application elements, and join them into a single string
+            List<String> fieldOfApplication = senseElement.getFieldOfApplication();
+            if(fieldOfApplication != null) {
+                meaningSection += " " + TextUtils.join(", ", fieldOfApplication);
+            }
+
+            // Get all the Dialect elements, and join them into a single string
+            List<String> dialect = senseElement.getDialect();
+            if(dialect != null) {
+                meaningSection += " " + TextUtils.join(", ", dialect);
+            }
+            meaningSection+= "\n";
+        }
+        mReadingsTextView.setText(meaningSection);
     }
 
     @Override
