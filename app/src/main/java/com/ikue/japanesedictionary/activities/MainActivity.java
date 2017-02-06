@@ -1,4 +1,4 @@
-package com.ikue.japanesedictionary;
+package com.ikue.japanesedictionary.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +20,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.ikue.japanesedictionary.fragments.CardContentFragment;
+import com.ikue.japanesedictionary.fragments.ListContentFragment;
+import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
 
 import java.util.ArrayList;

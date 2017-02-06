@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:padding="@dimen/md_keylines">
+
+    <TextView
+        android:id="@+id/partOfSpeech"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/md_keylines"
+        tools:text="Noun, Adjective, Na-Adjective"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textSize="@dimen/article_titles"
+        android:textColor="@color/medium_grey"
+        android:textStyle="bold"/>
+
+    <include layout="@layout/layout_meaning"></include>
+
+</LinearLayout>

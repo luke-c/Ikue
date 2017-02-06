@@ -1,23 +1,26 @@
-package com.ikue.japanesedictionary;
+package com.ikue.japanesedictionary.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.ikue.japanesedictionary.R;
+import com.ikue.japanesedictionary.adapters.RecyclerViewMeaningsAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.ReadingElement;
-import com.ikue.japanesedictionary.models.SenseElement;
 
 import java.util.List;
 
@@ -33,8 +36,8 @@ public class EntryDetailFragment extends Fragment {
     private static AsyncTask task;
     private static DictionaryItem mDictionaryItem;
 
-    private TextView mReadingsTextView;
     private CollapsingToolbarLayout mCollapsingToolbar;
+    private RecyclerView meaningsRecyclerView;
 
     public static EntryDetailFragment newInstance(int entryId) {
         Bundle args = new Bundle();
@@ -69,7 +72,28 @@ public class EntryDetailFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mCollapsingToolbar = (CollapsingToolbarLayout) v.findViewById(R.id.collapsing_toolbar);
-        mReadingsTextView = (TextView) v.findViewById(R.id.sense_element);
+        //mReadingsTextView = (TextView) v.findViewById(R.id.sense_element);
+
+        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: Add item to favourites
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        meaningsRecyclerView = (RecyclerView) v.findViewById(R.id.meanings_recyclerview);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+
+        // Disables scrolling for RecyclerView, CustomLinearLayoutManager used instead of MyLinearLayoutManager
+        meaningsRecyclerView.setNestedScrollingEnabled(false);
+
+        // Makes RecyclerView wrap its content
+        layoutManager.setAutoMeasureEnabled(true);
+        meaningsRecyclerView.setLayoutManager(layoutManager);
+        // recyclerView.setHasFixedSize(false);
 
         return v;
     }
@@ -89,47 +113,7 @@ public class EntryDetailFragment extends Fragment {
         // TODO: Handle case where value is too big and parts are cutoff, see entry id: 1004000
         mCollapsingToolbar.setTitle(toolbarTitle);
 
-
-        // TODO: Refactor. Perhaps add TextFields programmatically.
-        // Build a string for the 'Meanings' section
-        List<SenseElement> senseElementList = mDictionaryItem.getSenseElements();
-        String meaningSection = "";
-        int glossNumber = 0;
-        boolean posExists = false;
-        for (SenseElement senseElement : senseElementList) {
-
-            // TODO: Simplify Part of Speech values, currently long and too detailed
-            // Get all the Part of Speech elements, and join them into a single string.
-            List<String> partOfSpeech = senseElement.getPartOfSpeech();
-            if(partOfSpeech != null) {
-                // Only add a new line if it is not the first occurrence
-                String prefix = posExists == false ? "" : "\n";
-                meaningSection += prefix + TextUtils.join(", ", partOfSpeech) + "\n";
-                posExists = true;
-            }
-
-            // Get all the glosses for a Sense element, and join them into a single string
-            List<String> glosses = senseElement.getGlosses();
-            if(glosses != null) {
-                glossNumber++;
-                meaningSection += Integer.toString(glossNumber) + ". "
-                        + TextUtils.join("; ", glosses);
-            }
-
-            // Get all the Field of Application elements, and join them into a single string
-            List<String> fieldOfApplication = senseElement.getFieldOfApplication();
-            if(fieldOfApplication != null) {
-                meaningSection += " " + TextUtils.join(", ", fieldOfApplication);
-            }
-
-            // Get all the Dialect elements, and join them into a single string
-            List<String> dialect = senseElement.getDialect();
-            if(dialect != null) {
-                meaningSection += " " + TextUtils.join(", ", dialect);
-            }
-            meaningSection+= "\n";
-        }
-        mReadingsTextView.setText(meaningSection);
+        meaningsRecyclerView.setAdapter(new RecyclerViewMeaningsAdapter(mDictionaryItem.getSenseElements()));
     }
 
     @Override

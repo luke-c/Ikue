@@ -1,4 +1,4 @@
-package com.ikue.japanesedictionary;
+package com.ikue.japanesedictionary.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.ikue.japanesedictionary.R;
+import com.ikue.japanesedictionary.activities.EntryDetailActivity;
 
 /**
  * Created by luke_c on 13/10/2016.
@@ -48,7 +51,7 @@ public class CardContentFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
-                    Intent i = EntryDetailActivity.newIntent(context, 2829739);
+                    Intent i = EntryDetailActivity.newIntent(context, 1171270);
                     context.startActivity(i);
                 }
             });

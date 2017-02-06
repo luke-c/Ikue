@@ -41,7 +41,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="@dimen/md_keylines"
             android:paddingRight="@dimen/md_keylines"
@@ -56,12 +56,12 @@
                 android:layout_marginBottom="@dimen/md_keylines"
                 android:layout_marginTop="@dimen/md_keylines" />
 
-            <TextView
-                android:id="@+id/sense_element"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/meanings_recyclerview"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="@string/detail_location"
-                android:textSize="20sp"/>
+                android:clipToPadding="false"
+                android:paddingTop="0dp"/>
 
             <View style="@style/Divider"/>
 
@@ -83,6 +83,7 @@
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         app:layout_anchor="@id/appbar"
