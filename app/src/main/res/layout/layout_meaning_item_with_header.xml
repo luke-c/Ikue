@@ -4,16 +4,16 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               xmlns:tools="http://schemas.android.com/tools"
-              android:padding="@dimen/md_keylines">
+              android:paddingTop="16dp"
+              android:paddingBottom="8dp">
 
     <TextView
         android:id="@+id/partOfSpeech"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/md_keylines"
         tools:text="Noun, Adjective, Na-Adjective"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/article_titles"
+        android:textSize="@dimen/article_subheading"
         android:textColor="@color/medium_grey"
         android:textStyle="bold"/>
 

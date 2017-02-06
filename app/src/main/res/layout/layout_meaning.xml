@@ -5,7 +5,6 @@
         android:id="@+id/glosses"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/md_keylines"
         tools:text="Meaning1; Meaning2; Meaning3; Meaning4"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="@dimen/article_subheading" />
@@ -14,7 +13,6 @@
         android:id="@+id/fieldOfApplication"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/md_keylines"
         android:textColor="@color/medium_grey"
         android:ellipsize="end"
         tools:text="FoA1, FoA2, FoA3"
@@ -25,7 +23,6 @@
         android:id="@+id/dialect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/md_keylines"
         android:textColor="@color/medium_grey"
         android:ellipsize="end"
         tools:text="Dialect1, Dialect2, Dialect3"

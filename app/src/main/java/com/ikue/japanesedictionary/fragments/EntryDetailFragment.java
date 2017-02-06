@@ -72,7 +72,6 @@ public class EntryDetailFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mCollapsingToolbar = (CollapsingToolbarLayout) v.findViewById(R.id.collapsing_toolbar);
-        //mReadingsTextView = (TextView) v.findViewById(R.id.sense_element);
 
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -87,13 +86,13 @@ public class EntryDetailFragment extends Fragment {
         meaningsRecyclerView = (RecyclerView) v.findViewById(R.id.meanings_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
-        // Disables scrolling for RecyclerView, CustomLinearLayoutManager used instead of MyLinearLayoutManager
+        // Disables scrolling for RecyclerView,
         meaningsRecyclerView.setNestedScrollingEnabled(false);
 
         // Makes RecyclerView wrap its content
         layoutManager.setAutoMeasureEnabled(true);
         meaningsRecyclerView.setLayoutManager(layoutManager);
-        // recyclerView.setHasFixedSize(false);
+        meaningsRecyclerView.setHasFixedSize(true);
 
         return v;
     }

@@ -53,7 +53,7 @@
                 android:textColor="?attr/colorAccent"
                 android:text="@string/detail_view_meanings_header"
                 android:textSize="@dimen/article_titles"
-                android:layout_marginBottom="@dimen/md_keylines"
+                android:layout_marginBottom="0dp"
                 android:layout_marginTop="@dimen/md_keylines" />
 
             <android.support.v7.widget.RecyclerView
