@@ -25,23 +25,11 @@ public class MeaningViewHolder extends RecyclerView.ViewHolder {
         return dialect;
     }
 
-    public void setDialect(TextView dialect) {
-        this.dialect = dialect;
-    }
-
     public TextView getFieldOfApplication() {
         return fieldOfApplication;
     }
 
-    public void setFieldOfApplication(TextView fieldOfApplication) {
-        this.fieldOfApplication = fieldOfApplication;
-    }
-
     public TextView getGlosses() {
         return glosses;
-    }
-
-    public void setGlosses(TextView glosses) {
-        this.glosses = glosses;
     }
 }

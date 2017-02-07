@@ -26,31 +26,19 @@ public class MeaningWithHeaderViewHolder extends RecyclerView.ViewHolder {
         return partOfSpeech;
     }
 
-    public void setPartOfSpeech(TextView partOfSpeech) {
-        this.partOfSpeech = partOfSpeech;
-    }
 
     public TextView getDialect() {
         return dialect;
     }
 
-    public void setDialect(TextView dialect) {
-        this.dialect = dialect;
-    }
 
     public TextView getFieldOfApplication() {
         return fieldOfApplication;
     }
 
-    public void setFieldOfApplication(TextView fieldOfApplication) {
-        this.fieldOfApplication = fieldOfApplication;
-    }
 
     public TextView getGlosses() {
         return glosses;
     }
 
-    public void setGlosses(TextView glosses) {
-        this.glosses = glosses;
-    }
 }
