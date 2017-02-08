@@ -17,6 +17,7 @@ import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseEleme
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseFieldTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SensePosTable;
 import com.ikue.japanesedictionary.models.DictionaryItem;
+import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
@@ -54,6 +55,18 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
     public DictionaryDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public DictionarySearchResultItem searchByKana(String searchQuery) {
+        return new DictionarySearchResultItem();
+    }
+
+    public DictionarySearchResultItem searchByKanji(String searchQuery) {
+        return new DictionarySearchResultItem();
+    }
+
+    public DictionarySearchResultItem searchByEnglish(String searchQuery) {
+        return new DictionarySearchResultItem();
     }
 
     public DictionaryItem getEntry(int id) {
