@@ -25,7 +25,6 @@ public class SearchResultActivity extends AppCompatActivity {
         int type = 0;
         if(Intent.ACTION_SEARCH.equals(intent.getAction())) {
             query = intent.getStringExtra(SearchManager.QUERY);
-            type = getSearchType(query);
         }
 
         setContentView(R.layout.activity_detail);
@@ -34,15 +33,10 @@ public class SearchResultActivity extends AppCompatActivity {
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
 
         if (fragment == null) {
-            fragment = SearchResultFragment.newInstance(query, type);
+            fragment = SearchResultFragment.newInstance(query);
             fm.beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
         }
-    }
-
-    private int getSearchType(String searchTerm) {
-        // Do WanaKana stuff here
-        return 0;
     }
 }
