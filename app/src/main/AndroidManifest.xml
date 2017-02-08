@@ -14,9 +14,26 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+            <meta-data android:name="android.app.searchable"
+                       android:value=".activities.SearchResultActivity" />
+        </activity>
+
+        <activity android:name=".activities.SearchResultActivity"
+            android:parentActivityName=".activities.MainActivity">
+
+            <!-- This intent-filter identifies this activity as "searchable" -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!-- This metadata entry provides further configuration details for searches -->
+            <!-- that are handled by this activity. -->
             <meta-data android:name="android.app.searchable"
                        android:resource="@xml/searchable" />
         </activity>
+
         <activity android:name=".activities.EntryDetailActivity"
             android:parentActivityName=".activities.MainActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY"

@@ -12,5 +12,5 @@
           android:title="@string/action_search"
           app:showAsAction="collapseActionView|never"
           app:actionViewClass="android.support.v7.widget.SearchView"
-          android:visible="false"/>
+          android:visible="true"/>
 </menu>
