@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
@@ -32,14 +33,16 @@ public class EntryDetailFragment extends Fragment {
 
     private static final String ARG_ENTRY_ID = "ENTRY_ID";
 
-    private static DictionaryDatabase mHelper;
-    private static AsyncTask task;
-    private static DictionaryItem mDictionaryItem;
+    private TextView otherReadingsTextView;
 
-    private CollapsingToolbarLayout mCollapsingToolbar;
-    private RecyclerView meaningsRecyclerView;
-    private FloatingActionButton fab;
-    private boolean entrySaved;
+    private static DictionaryDatabase helper;
+    private static AsyncTask task;
+    private static DictionaryItem dictionaryItem;
+
+    private CollapsingToolbarLayout collapsingToolbar;
+    private RecyclerView recyclerView;
+    private FloatingActionButton floatingActionButton;
+    private boolean isEntrySaved;
 
     public static EntryDetailFragment newInstance(int entryId) {
         Bundle args = new Bundle();
@@ -59,7 +62,7 @@ public class EntryDetailFragment extends Fragment {
 
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
-        mHelper = DictionaryDatabase.getInstance(this.getActivity());
+        helper = DictionaryDatabase.getInstance(this.getActivity());
         int entryId = getArguments().getInt(ARG_ENTRY_ID, 0);
         task = new GetEntryTask().execute(entryId);
     }
@@ -73,10 +76,10 @@ public class EntryDetailFragment extends Fragment {
         ((AppCompatActivity) getActivity()).setSupportActionBar((Toolbar) v.findViewById(R.id.toolbar));
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mCollapsingToolbar = (CollapsingToolbarLayout) v.findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar = (CollapsingToolbarLayout) v.findViewById(R.id.collapsing_toolbar);
 
-        fab = (FloatingActionButton) v.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        floatingActionButton = (FloatingActionButton) v.findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // TODO: Add item to favourites
@@ -84,34 +87,36 @@ public class EntryDetailFragment extends Fragment {
             }
         });
 
-        meaningsRecyclerView = (RecyclerView) v.findViewById(R.id.meanings_recyclerview);
+        otherReadingsTextView = (TextView) v.findViewById(R.id.other_forms_element);
+
+        recyclerView = (RecyclerView) v.findViewById(R.id.meanings_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
         // Disables scrolling for RecyclerView,
-        meaningsRecyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setNestedScrollingEnabled(false);
 
         // Makes RecyclerView wrap its content
         layoutManager.setAutoMeasureEnabled(true);
-        meaningsRecyclerView.setLayoutManager(layoutManager);
-        meaningsRecyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
 
         return v;
     }
 
     private void toggleFab() {
-        if(entrySaved) {
-            fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_border_white));
+        if(isEntrySaved) {
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_border_white));
         } else {
-            fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
         }
-        entrySaved = !entrySaved;
+        isEntrySaved = !isEntrySaved;
     }
 
     private void updateViews() {
         // Set the toolbar title to the main kanji element value + reading if it exists,
         // if not then just use the first reading element value
-        List<KanjiElement> kanjiElementList = mDictionaryItem.getKanjiElements();
-        List<ReadingElement> readingElementList = mDictionaryItem.getReadingElements();
+        List<KanjiElement> kanjiElementList = dictionaryItem.getKanjiElements();
+        List<ReadingElement> readingElementList = dictionaryItem.getReadingElements();
         String toolbarTitle;
         if (kanjiElementList != null && !kanjiElementList.isEmpty()) {
             toolbarTitle = kanjiElementList.get(0).getValue()
@@ -120,21 +125,52 @@ public class EntryDetailFragment extends Fragment {
         else toolbarTitle = readingElementList.get(0).getValue();
 
         // TODO: Handle case where value is too big and parts are cutoff, see entry id: 1004000
-        mCollapsingToolbar.setTitle(toolbarTitle);
+        collapsingToolbar.setTitle(toolbarTitle);
 
-        meaningsRecyclerView.setAdapter(new DetailViewAdapter(mDictionaryItem.getSenseElements()));
+        // Set the meanings section
+        recyclerView.setAdapter(new DetailViewAdapter(dictionaryItem.getSenseElements()));
+
+        // TODO: Refactor into RecyclerView
+        // Set the other readings section
+        String readings = "";
+        for(ReadingElement readingElement : readingElementList) {
+            if(!readingElement.getReadingRelation().isEmpty()) {
+                // The reading only applies to certain Kanji Elements
+                for(String readingRelation : readingElement.getReadingRelation()) {
+                    readings += readingRelation + " [" + readingElement.getValue() + "],";
+                }
+
+            } else {
+                // There are no Kanji Elements, so just display every Reading Element value
+                if(kanjiElementList == null || kanjiElementList.isEmpty()) {
+                    readings += readingElement.getValue() + ",";
+                }
+                // The reading is for every Kanji Element
+                for(KanjiElement kanjiElement : kanjiElementList) {
+                    readings += kanjiElement.getValue() + " [" + readingElement.getValue() + "],";
+                }
+            }
+        }
+
+        // Remove trailing comma
+        if(readings.endsWith(",")) {
+            readings = readings.substring(0, readings.length() -1);
+        }
+
+        // Set the resulting string
+        otherReadingsTextView.setText(readings);
     }
 
     @Override
     public void onDestroy() {
         // Cancel the AsyncTask if it is running when Activity is about to close
         // cancel(false) is safer and doesn't force an instant cancellation
-        if(task!=null) {
+        if(task !=null) {
             task.cancel(false);
         }
 
         // Close the SQLiteHelper instance
-        mHelper.close();
+        helper.close();
         super.onDestroy();
     }
 
@@ -142,14 +178,14 @@ public class EntryDetailFragment extends Fragment {
     private class GetEntryTask extends AsyncTask<Integer, Void, DictionaryItem> {
 
         protected DictionaryItem doInBackground(Integer... id) {
-            return mHelper.getEntry(id[0]);
+            return helper.getEntry(id[0]);
         }
 
 
         protected void onPostExecute(DictionaryItem result) {
             // This method is executed in the UIThread
             // with access to the result of the long running task
-            mDictionaryItem = result;
+            dictionaryItem = result;
             updateViews();
         }
     }
