@@ -21,21 +21,21 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private final String LOG_TAG = this.getClass().toString();
 
-    private List<SenseElement> mItems;
+    private List<SenseElement> items;
 
     public DetailViewAdapter(List<SenseElement> items) {
-        mItems = items;
+        this.items = items;
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return items.size();
     }
 
     // If the Sense Element has a part of speech, we want a header as well
     @Override
     public int getItemViewType(int position) {
-        if (mItems.get(position).getPartOfSpeech() == null) {
+        if (items.get(position).getPartOfSpeech() == null) {
             return SENSE_ELEMENT_ITEM;
         } else {
             return SENSE_ELEMENT_ITEM;
@@ -77,12 +77,12 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void configureMeaningWithHeaderViewHolder(SenseElementViewHolder holder, int position) {
-        SenseElement senseElement = mItems.get(position);
+        SenseElement senseElement = items.get(position);
 
         // TODO: Simplify Part of Speech values, currently long and too detailed
         // Get all the Part of Speech elements, and join them into a single string.
         List<String> partOfSpeech = senseElement.getPartOfSpeech();
-        if(partOfSpeech != null) {
+        if(!partOfSpeech.isEmpty()) {
             holder.getPartOfSpeech().setText(TextUtils.join(", ", partOfSpeech));
         } else {
             holder.getPartOfSpeech().setVisibility(View.GONE);
@@ -90,7 +90,7 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         // Get all the glosses for a Sense element, and join them into a single string
         List<String> glosses = senseElement.getGlosses();
-        if(glosses != null) {
+        if(!glosses.isEmpty()) {
             holder.getGlosses().setText(TextUtils.join("; ", glosses));
         } else {
             holder.getGlosses().setVisibility(View.GONE);
@@ -98,7 +98,7 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         // Get all the Field of Application elements, and join them into a single string
         List<String> fieldOfApplication = senseElement.getFieldOfApplication();
-        if(fieldOfApplication != null) {
+        if(!fieldOfApplication.isEmpty()) {
             holder.getFieldOfApplication().setText(TextUtils.join(", ", fieldOfApplication));
         } else {
             holder.getFieldOfApplication().setVisibility(View.GONE);
@@ -106,7 +106,7 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         // Get all the Dialect elements, and join them into a single string
         List<String> dialect = senseElement.getDialect();
-        if(dialect != null) {
+        if(!dialect.isEmpty()) {
             holder.getDialect().setText(TextUtils.join(", ", dialect));
         } else {
             holder.getDialect().setVisibility(View.GONE);

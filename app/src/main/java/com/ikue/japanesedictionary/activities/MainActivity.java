@@ -1,6 +1,5 @@
 package com.ikue.japanesedictionary.activities;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -20,29 +19,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.fragments.CardContentFragment;
 import com.ikue.japanesedictionary.fragments.ListContentFragment;
-import com.ikue.japanesedictionary.R;
-import com.ikue.japanesedictionary.database.DictionaryDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DrawerLayout mDrawerLayout;
-    private static DictionaryDatabase mHelper;
-    private AsyncTask task;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Get a database on startup. Copying from assets folder is all handled
-        // by SQLiteAssetHelper
-        mHelper = DictionaryDatabase.getInstance(this);
-        //task = new GetEntryTask().execute(new Integer(2829739));
 
         // Add Toolbar to Main Screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -58,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Create Navigation drawer and inflate
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
         // Add menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
@@ -77,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 // TODO: handle navigation
 
                 // Closing drawer on item click
-                mDrawerLayout.closeDrawers();
+                drawerLayout.closeDrawers();
                 return true;
             }
         });
@@ -144,20 +135,13 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == android.R.id.home) {
-            mDrawerLayout.openDrawer(GravityCompat.START);
+            drawerLayout.openDrawer(GravityCompat.START);
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onDestroy() {
-        // Cancel the AsyncTask if it is running when Activity is about to close
-        if(task!=null) {
-            task.cancel(false);
-        }
-
-        // Close the SQLiteHelper instance
-        mHelper.close();
         super.onDestroy();
     }
 }
