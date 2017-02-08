@@ -1,0 +1,115 @@
+package com.ikue.japanesedictionary.adapters;
+
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.ikue.japanesedictionary.R;
+import com.ikue.japanesedictionary.models.SenseElement;
+
+import java.util.List;
+
+/**
+ * Created by luke_c on 06/02/2017.
+ */
+
+public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int SENSE_ELEMENT_ITEM = 0;
+
+    private final String LOG_TAG = this.getClass().toString();
+
+    private List<SenseElement> mItems;
+
+    public DetailViewAdapter(List<SenseElement> items) {
+        mItems = items;
+    }
+
+    @Override
+    public int getItemCount() {
+        return mItems.size();
+    }
+
+    // If the Sense Element has a part of speech, we want a header as well
+    @Override
+    public int getItemViewType(int position) {
+        if (mItems.get(position).getPartOfSpeech() == null) {
+            return SENSE_ELEMENT_ITEM;
+        } else {
+            return SENSE_ELEMENT_ITEM;
+        }
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+        RecyclerView.ViewHolder viewHolder;
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+
+        switch (viewType) {
+            case SENSE_ELEMENT_ITEM:
+                View v1 = inflater.inflate(R.layout.sense_element_item, viewGroup, false);
+                viewHolder = new SenseElementViewHolder(v1);
+                break;
+            default:
+                // TODO: Handle unknown view type error more gracefully
+                Log.e(LOG_TAG, "Unknown view type");
+                viewHolder = null;
+                break;
+        }
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        switch (holder.getItemViewType()) {
+            case SENSE_ELEMENT_ITEM:
+                SenseElementViewHolder vh1 = (SenseElementViewHolder) holder;
+                configureMeaningWithHeaderViewHolder(vh1, position);
+                break;
+            default:
+                // TODO: Handle unknown view type error more gracefully
+                Log.e(LOG_TAG, "Unknown view type");
+                break;
+        }
+    }
+
+    private void configureMeaningWithHeaderViewHolder(SenseElementViewHolder holder, int position) {
+        SenseElement senseElement = mItems.get(position);
+
+        // TODO: Simplify Part of Speech values, currently long and too detailed
+        // Get all the Part of Speech elements, and join them into a single string.
+        List<String> partOfSpeech = senseElement.getPartOfSpeech();
+        if(partOfSpeech != null) {
+            holder.getPartOfSpeech().setText(TextUtils.join(", ", partOfSpeech));
+        } else {
+            holder.getPartOfSpeech().setVisibility(View.GONE);
+        }
+
+        // Get all the glosses for a Sense element, and join them into a single string
+        List<String> glosses = senseElement.getGlosses();
+        if(glosses != null) {
+            holder.getGlosses().setText(TextUtils.join("; ", glosses));
+        } else {
+            holder.getGlosses().setVisibility(View.GONE);
+        }
+
+        // Get all the Field of Application elements, and join them into a single string
+        List<String> fieldOfApplication = senseElement.getFieldOfApplication();
+        if(fieldOfApplication != null) {
+            holder.getFieldOfApplication().setText(TextUtils.join(", ", fieldOfApplication));
+        } else {
+            holder.getFieldOfApplication().setVisibility(View.GONE);
+        }
+
+        // Get all the Dialect elements, and join them into a single string
+        List<String> dialect = senseElement.getDialect();
+        if(dialect != null) {
+            holder.getDialect().setText(TextUtils.join(", ", dialect));
+        } else {
+            holder.getDialect().setVisibility(View.GONE);
+        }
+    }
+}

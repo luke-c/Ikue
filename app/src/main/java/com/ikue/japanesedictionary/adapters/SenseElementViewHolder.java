@@ -10,26 +10,35 @@ import com.ikue.japanesedictionary.R;
  * Created by luke_c on 06/02/2017.
  */
 
-public class MeaningViewHolder extends RecyclerView.ViewHolder {
+public class SenseElementViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView glosses, fieldOfApplication, dialect;
+    private TextView partOfSpeech, glosses, fieldOfApplication, dialect;
 
-    public MeaningViewHolder(View v) {
+    public SenseElementViewHolder(View v) {
         super(v);
+        partOfSpeech = (TextView) v.findViewById(R.id.partOfSpeech);
         glosses = (TextView) v.findViewById(R.id.glosses);
         fieldOfApplication = (TextView) v.findViewById(R.id.fieldOfApplication);
         dialect = (TextView) v.findViewById(R.id.dialect);
     }
 
+    public TextView getPartOfSpeech() {
+        return partOfSpeech;
+    }
+
+
     public TextView getDialect() {
         return dialect;
     }
+
 
     public TextView getFieldOfApplication() {
         return fieldOfApplication;
     }
 
+
     public TextView getGlosses() {
         return glosses;
     }
+
 }

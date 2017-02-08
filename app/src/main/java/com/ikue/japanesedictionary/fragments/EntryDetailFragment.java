@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ikue.japanesedictionary.R;
-import com.ikue.japanesedictionary.adapters.RecyclerViewMeaningsAdapter;
+import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
@@ -112,7 +112,7 @@ public class EntryDetailFragment extends Fragment {
         // TODO: Handle case where value is too big and parts are cutoff, see entry id: 1004000
         mCollapsingToolbar.setTitle(toolbarTitle);
 
-        meaningsRecyclerView.setAdapter(new RecyclerViewMeaningsAdapter(mDictionaryItem.getSenseElements()));
+        meaningsRecyclerView.setAdapter(new DetailViewAdapter(mDictionaryItem.getSenseElements()));
     }
 
     @Override
