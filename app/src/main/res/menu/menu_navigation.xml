@@ -2,15 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:icon="@drawable/ic_star"
+            android:icon="@drawable/ic_star_white"
             android:tint="@color/button_grey"
             android:title="One" />
         <item
-            android:icon="@drawable/ic_star"
+            android:icon="@drawable/ic_star_white"
             android:tint="@color/button_grey"
             android:title="Two" />
         <item
-            android:icon="@drawable/ic_star"
+            android:icon="@drawable/ic_star_white"
             android:tint="@color/button_grey"
             android:title="Three" />
     </group>
