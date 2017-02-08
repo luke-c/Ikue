@@ -41,6 +41,6 @@
         android:textColor="@color/medium_grey"
         tools:text="Dialect1, Dialect2, Dialect3"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/body_text_dense" />
+        android:textSize="@dimen/body_text" />
 
 </LinearLayout>

@@ -21,6 +21,7 @@ import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
+import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public class EntryDetailFragment extends Fragment {
     private static final String ARG_ENTRY_ID = "ENTRY_ID";
 
     private TextView otherReadingsTextView;
+    private TextView prioritiesHeaderTextView;
+    private TextView prioritiesTextView;
 
     private static DictionaryDatabase helper;
     private static AsyncTask task;
@@ -88,6 +91,8 @@ public class EntryDetailFragment extends Fragment {
         });
 
         otherReadingsTextView = (TextView) v.findViewById(R.id.other_forms_element);
+        prioritiesHeaderTextView = (TextView) v.findViewById(R.id.priorities_header);
+        prioritiesTextView = (TextView) v.findViewById(R.id.priorities_element);
 
         recyclerView = (RecyclerView) v.findViewById(R.id.meanings_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -137,28 +142,50 @@ public class EntryDetailFragment extends Fragment {
             if(!readingElement.getReadingRelation().isEmpty()) {
                 // The reading only applies to certain Kanji Elements
                 for(String readingRelation : readingElement.getReadingRelation()) {
-                    readings += readingRelation + " [" + readingElement.getValue() + "],";
+                    readings += readingRelation + " [" + readingElement.getValue() + "], ";
                 }
 
             } else {
                 // There are no Kanji Elements, so just display every Reading Element value
                 if(kanjiElementList == null || kanjiElementList.isEmpty()) {
-                    readings += readingElement.getValue() + ",";
+                    readings += readingElement.getValue() + ", ";
                 }
                 // The reading is for every Kanji Element
                 for(KanjiElement kanjiElement : kanjiElementList) {
-                    readings += kanjiElement.getValue() + " [" + readingElement.getValue() + "],";
+                    readings += kanjiElement.getValue() + " [" + readingElement.getValue() + "], ";
                 }
             }
         }
 
-        // Remove trailing comma
-        if(readings.endsWith(",")) {
-            readings = readings.substring(0, readings.length() -1);
+        // Remove trailing comma and space
+        if(readings.endsWith(", ")) {
+            readings = readings.substring(0, readings.length() - 2);
         }
 
         // Set the resulting string
         otherReadingsTextView.setText(readings);
+
+        // TODO: Refactor into RecyclerView
+        // Set the priorities section
+        List<Priority> priorities = dictionaryItem.getPriorities();
+        String kanjiPriorities = "";
+        String readingPriorities = "";
+
+        // If there are no priorities, remove the Priorities TextViews from view
+        if(priorities.isEmpty()) {
+            prioritiesHeaderTextView.setVisibility(View.GONE);
+            prioritiesTextView.setVisibility(View.GONE);
+        } else {
+            for (Priority priority : priorities) {
+                if(priority.isKanjiReadingPriority()) {
+                    kanjiPriorities += " " + priority.getValue();
+                } else if(!priority.isKanjiReadingPriority()) {
+                    readingPriorities += " " + priority.getValue();
+                }
+            }
+            String allPriorities = kanjiPriorities + "\n" + readingPriorities;
+            prioritiesTextView.setText(allPriorities);
+        }
     }
 
     @Override

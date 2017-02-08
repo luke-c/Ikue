@@ -79,6 +79,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="@dimen/body_text_dense"
+                tools:text="@string/detail_desc" />
+
+            <View style="@style/Divider"/>
+
+            <TextView
+                android:id="@+id/priorities_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorAccent"
+                android:text="@string/detail_view_priorities_header"
+                android:textSize="@dimen/article_titles"
+                android:layout_marginBottom="@dimen/md_keylines"
+                android:layout_marginTop="@dimen/md_keylines"/>
+
+            <TextView
+                android:id="@+id/priorities_element"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
                 android:textSize="@dimen/body_text"
                 tools:text="@string/detail_desc" />
         </LinearLayout>
