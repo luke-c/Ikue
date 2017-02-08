@@ -1,6 +1,7 @@
 package com.ikue.japanesedictionary.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ikue.japanesedictionary.R;
+import com.ikue.japanesedictionary.activities.EntryDetailActivity;
 
 /**
  * Created by luke_c on 29/11/2016.
@@ -42,9 +44,9 @@ public class ListContentFragment extends Fragment {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Context context = v.getContext();
-//                    Intent intent = new Intent(context, EntryDetailActivity.class);
-//                    context.startActivity(intent);
+                    Context context = v.getContext();
+                    Intent i = EntryDetailActivity.newIntent(context, 1171270);
+                    context.startActivity(i);
                 }
             });
         }
