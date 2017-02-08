@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +38,8 @@ public class EntryDetailFragment extends Fragment {
 
     private CollapsingToolbarLayout mCollapsingToolbar;
     private RecyclerView meaningsRecyclerView;
+    private FloatingActionButton fab;
+    private boolean entrySaved;
 
     public static EntryDetailFragment newInstance(int entryId) {
         Bundle args = new Bundle();
@@ -73,13 +75,12 @@ public class EntryDetailFragment extends Fragment {
 
         mCollapsingToolbar = (CollapsingToolbarLayout) v.findViewById(R.id.collapsing_toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // TODO: Add item to favourites
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                toggleFab();
             }
         });
 
@@ -95,6 +96,15 @@ public class EntryDetailFragment extends Fragment {
         meaningsRecyclerView.setHasFixedSize(true);
 
         return v;
+    }
+
+    private void toggleFab() {
+        if(entrySaved) {
+            fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_border_white));
+        } else {
+            fab.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
+        }
+        entrySaved = !entrySaved;
     }
 
     private void updateViews() {
