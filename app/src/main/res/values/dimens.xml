@@ -6,7 +6,7 @@
     <dimen name="md_keylines">16dp</dimen>
     <dimen name="tile_padding">8dp</dimen>
     <dimen name="tile_height">160dp</dimen>
-    <dimen name="app_bar_height">256dp</dimen>
+    <dimen name="app_bar_height">192dp</dimen>
     <dimen name="article_keylines">72dp</dimen>
     <dimen name="avator_size">40dp</dimen>
     <dimen name="card_title_height">40dp</dimen>
