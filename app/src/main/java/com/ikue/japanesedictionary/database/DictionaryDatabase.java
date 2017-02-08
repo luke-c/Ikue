@@ -35,7 +35,7 @@ import java.util.List;
 // TODO: Add catch blocks for queries
 public class DictionaryDatabase extends SQLiteAssetHelper {
 
-    private static DictionaryDatabase sInstance;
+    private static DictionaryDatabase instance;
     private static SQLiteDatabase db;
 
     private static final String DATABASE_NAME = "dictionary.db";
@@ -46,10 +46,10 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
     public static synchronized DictionaryDatabase getInstance(Context context) {
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
-        if (sInstance == null) {
-            sInstance = new DictionaryDatabase(context.getApplicationContext());
+        if (instance == null) {
+            instance = new DictionaryDatabase(context.getApplicationContext());
         }
-        return sInstance;
+        return instance;
     }
 
     public DictionaryDatabase(Context context) {
@@ -296,7 +296,9 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
     private static List<String> formatString(String stringToFormat) {
         if(stringToFormat != null && !stringToFormat.isEmpty()) {
             return new ArrayList<>(new LinkedHashSet<>(Arrays.asList(stringToFormat.split("§"))));
+        } else {
+            // We never want a null value in our DictionaryItem, so just return an empty list
+            return new ArrayList<>();
         }
-        return null;
     }
 }

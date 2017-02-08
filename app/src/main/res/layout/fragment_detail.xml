@@ -41,7 +41,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="@dimen/md_keylines"
             android:paddingRight="@dimen/md_keylines"
@@ -53,15 +53,15 @@
                 android:textColor="?attr/colorAccent"
                 android:text="@string/detail_view_meanings_header"
                 android:textSize="@dimen/article_titles"
-                android:layout_marginBottom="@dimen/md_keylines"
+                android:layout_marginBottom="0dp"
                 android:layout_marginTop="@dimen/md_keylines" />
 
-            <TextView
-                android:id="@+id/sense_element"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/meanings_recyclerview"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="@string/detail_location"
-                android:textSize="20sp"/>
+                android:clipToPadding="false"
+                android:paddingTop="0dp"/>
 
             <View style="@style/Divider"/>
 
@@ -76,18 +76,41 @@
 
             <TextView
                 android:id="@+id/other_forms_element"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="@dimen/body_text_dense"
+                tools:text="@string/detail_desc" />
+
+            <View style="@style/Divider"/>
+
+            <TextView
+                android:id="@+id/priorities_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorAccent"
+                android:text="@string/detail_view_priorities_header"
+                android:textSize="@dimen/article_titles"
+                android:layout_marginBottom="@dimen/md_keylines"
+                android:layout_marginTop="@dimen/md_keylines"/>
+
+            <TextView
+                android:id="@+id/priorities_element"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="@dimen/body_text"
                 tools:text="@string/detail_desc" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"
-        android:src="@drawable/ic_star"
+        android:src="@drawable/ic_star_border_white"
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"/>
 

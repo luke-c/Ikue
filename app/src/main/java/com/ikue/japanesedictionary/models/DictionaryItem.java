@@ -9,57 +9,57 @@ import java.util.List;
 public class DictionaryItem {
 
     // A unique number for each entry
-    private int mEntryId;
+    private int entryId;
 
     // Can be 0 or many
-    private List<KanjiElement> mKanjiElements;
+    private List<KanjiElement> kanjiElements;
 
     // Always 1 or many
-    private List<ReadingElement> mReadingElements;
+    private List<ReadingElement> readingElements;
 
     // Always 1 or many
-    private List<SenseElement> mSenseElements;
+    private List<SenseElement> senseElements;
 
     // Can be 0 or many
-    private List<Priority> mPriorities;
+    private List<Priority> priorities;
 
     public int getEntryId() {
-        return mEntryId;
+        return entryId;
     }
 
     public void setEntryId(int entryId) {
-        mEntryId = entryId;
+        this.entryId = entryId;
     }
 
     public List<KanjiElement> getKanjiElements() {
-        return mKanjiElements;
+        return kanjiElements;
     }
 
     public void setKanjiElements(List<KanjiElement> kanjiElements) {
-        mKanjiElements = kanjiElements;
+        this.kanjiElements = kanjiElements;
     }
 
     public List<SenseElement> getSenseElements() {
-        return mSenseElements;
+        return senseElements;
     }
 
     public void setSenseElements(List<SenseElement> senseElements) {
-        mSenseElements = senseElements;
+        this.senseElements = senseElements;
     }
 
     public List<ReadingElement> getReadingElements() {
-        return mReadingElements;
+        return readingElements;
     }
 
     public void setReadingElements(List<ReadingElement> readingElements) {
-        mReadingElements = readingElements;
+        this.readingElements = readingElements;
     }
 
     public List<Priority> getPriorities() {
-        return mPriorities;
+        return priorities;
     }
 
     public void setPriorities(List<Priority> priorities) {
-        mPriorities = priorities;
+        this.priorities = priorities;
     }
 }
