@@ -17,5 +17,5 @@
     <string name="detail_view_meanings_header">Meanings</string>
     <string name="detail_view_other_forms_header">Other forms</string>
     <string name="detail_view_priorities_header">Priorities</string>
-    <string name="search_hint">Search in English or Japanese.</string>
+    <string name="search_hint">Search in English or Japanese</string>
 </resources>
