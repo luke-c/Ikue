@@ -83,6 +83,66 @@ public class MainActivity extends AppCompatActivity {
         fabButton = (FloatingActionButton) findViewById(R.id.fab);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflates menu and adds to action if present
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchMenuItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchMenuItem.getActionView();
+
+        // Set the onClick here so we can guarantee we have a searchMenuItem
+        fabButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Expand the SearchView
+                MenuItemCompat.expandActionView(searchMenuItem);
+            }
+        });
+
+        ComponentName cn = new ComponentName(this, SearchResultActivity.class);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
+
+        // Set a listener on the SearchView
+        MenuItemCompat.setOnActionExpandListener(searchMenuItem,
+                new MenuItemCompat.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        // When the SearchView is expanded, hide the FAB
+                        fabButton.hide();
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        // Once the SearchView is collapsed, show the FAB again
+                        fabButton.show();
+                        return true;
+                    }
+                });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        } else if (id == android.R.id.home) {
+            drawerLayout.openDrawer(GravityCompat.START);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new ListContentFragment(), "History");
@@ -118,65 +178,5 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return fragmentTitleList.get(position);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflates menu and adds to action if present
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchMenuItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchMenuItem.getActionView();
-
-        fabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Expand the SearchView
-                MenuItemCompat.expandActionView(searchMenuItem);
-            }
-        });
-
-        ComponentName cn = new ComponentName(this, SearchResultActivity.class);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
-
-        // Set a listener on the SearchView
-        MenuItemCompat.setOnActionExpandListener(searchMenuItem,
-                new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                // When the SearchView is expanded, hide the FAB
-                fabButton.hide();
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                // Once the SearchView is collapsed, show the FAB again
-                fabButton.show();
-                return true;
-            }
-        });
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == android.R.id.home) {
-            drawerLayout.openDrawer(GravityCompat.START);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }
