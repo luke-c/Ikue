@@ -80,16 +80,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: Hide FAB on open, reshow on close
         fabButton = (FloatingActionButton) findViewById(R.id.fab);
-        fabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Expand the SearchView
-                MenuItemCompat.expandActionView(searchMenuItem);
-            }
-        });
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -138,6 +129,14 @@ public class MainActivity extends AppCompatActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchMenuItem.getActionView();
+
+        fabButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Expand the SearchView
+                MenuItemCompat.expandActionView(searchMenuItem);
+            }
+        });
 
         ComponentName cn = new ComponentName(this, SearchResultActivity.class);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
