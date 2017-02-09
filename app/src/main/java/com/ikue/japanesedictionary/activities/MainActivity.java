@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private SearchView searchView;
     private MenuItem searchMenuItem;
+    private FloatingActionButton fabButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // TODO: Hide FAB on open, reshow on close
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fabButton = (FloatingActionButton) findViewById(R.id.fab);
+        fabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Expand the SearchView
@@ -137,8 +138,27 @@ public class MainActivity extends AppCompatActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchMenuItem.getActionView();
+
         ComponentName cn = new ComponentName(this, SearchResultActivity.class);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
+
+        // Set a listener on the SearchView
+        MenuItemCompat.setOnActionExpandListener(searchMenuItem,
+                new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // When the SearchView is expanded, hide the FAB
+                fabButton.hide();
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // Once the SearchView is collapsed, show the FAB again
+                fabButton.show();
+                return true;
+            }
+        });
 
         return true;
     }
