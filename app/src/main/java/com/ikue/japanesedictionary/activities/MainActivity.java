@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
         // Set Tabs inside the Toolbar
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewpager);
+        tabs.getTabAt(0).setIcon(R.drawable.ic_history_white);
+        tabs.getTabAt(1).setIcon(R.drawable.ic_home_white);
+        tabs.getTabAt(2).setIcon(R.drawable.ic_star_white);
 
         // Create Navigation drawer and inflate
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
