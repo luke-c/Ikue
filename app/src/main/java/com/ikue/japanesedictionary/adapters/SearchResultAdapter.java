@@ -100,6 +100,10 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         String kanjiValue = item.getKanjiElementValue();
         if(!kanjiValue.isEmpty()) {
+            // If I don't reset the view to visible, when the view is recycled and you
+            // scroll back to it the view is still set to gone from previous elements.
+            primaryText.setVisibility(View.VISIBLE);
+            secondaryText.setMaxLines(1);
             primaryText.setText(item.getKanjiElementValue());
         } else {
             primaryText.setVisibility(View.GONE);
