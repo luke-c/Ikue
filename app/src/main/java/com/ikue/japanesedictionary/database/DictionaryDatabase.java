@@ -57,16 +57,81 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public DictionarySearchResultItem searchByKana(String searchQuery) {
-        return new DictionarySearchResultItem();
+    public List<DictionarySearchResultItem> searchByKana(String searchQuery) {
+        return new ArrayList<>();
     }
 
-    public DictionarySearchResultItem searchByKanji(String searchQuery) {
-        return new DictionarySearchResultItem();
+    public List<DictionarySearchResultItem> searchByKanji(String searchQuery) {
+        return new ArrayList<>();
     }
 
-    public DictionarySearchResultItem searchByEnglish(String searchQuery) {
-        return new DictionarySearchResultItem();
+    public List<DictionarySearchResultItem> searchByEnglish(String searchQuery) {
+        // Create a new List of Search Results to store the results of our query
+        List<DictionarySearchResultItem> searchResults = new ArrayList<>();
+
+        // Have to add wildcards here, or query will fail
+        String[] arguments = new String[]{"%" + searchQuery + "%"};
+
+        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
+                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
+                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
+                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
+
+        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
+
+        String join = "LEFT JOIN " + KanjiElementTable.NAME + " AS ke ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = ke."
+                + KanjiElementTable.Cols.ENTRY_ID + " JOIN " + GlossTable.NAME + " AS gloss ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID + " ";
+
+        // TODO: Support various search methods: Non-wildcard, single-wildcard, exact-match
+        String where = "WHERE gloss." + GlossTable.Cols.VALUE + " LIKE ? ";
+
+        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
+
+        Cursor cursor = null;
+
+        try {
+            db = getReadableDatabase();
+            cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
+
+            while(cursor.moveToNext()) {
+                DictionarySearchResultItem result = new DictionarySearchResultItem();
+                int entryId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.ENTRY_ID));
+                String kanjiValue = cursor.getString(cursor.getColumnIndexOrThrow("kanji_value"));
+                String readingValue = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
+                String glossValue = cursor.getString(cursor.getColumnIndexOrThrow("gloss_value"));
+
+                result.setEntryId(entryId);
+
+                // TODO: Get most relevant Kanji and Reading value based on search
+                List<String> formattedKanjiElements = formatString(kanjiValue);
+                if(!formattedKanjiElements.isEmpty()) {
+                    // If the list is empty, trying to call .get will give a IndexOutOfBounds
+                    result.setKanjiElementValue(formatString(kanjiValue).get(0));
+                } else {
+                    result.setKanjiElementValue("");
+                }
+
+                List<String> formattedReadingElements = formatString(readingValue);
+                if(!formattedReadingElements.isEmpty()) {
+                    // If the list is empty, trying to call .get will give a IndexOutOfBounds
+                    result.setReadingElementValue(formatString(readingValue).get(0));
+                } else {
+                    result.setReadingElementValue("");
+                }
+
+                result.setGlossValue(formatString(glossValue));
+
+                searchResults.add(result);
+            }
+            return searchResults;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
     }
 
     public DictionaryItem getEntry(int id) {
