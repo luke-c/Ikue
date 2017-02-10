@@ -21,6 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/favourite_button"
         android:layout_marginLeft="@dimen/md_keylines"
+        android:ellipsize="end"
+        android:maxLines="1"
         tools:text="Kanji Element"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="@dimen/article_subheading" />
@@ -32,6 +34,8 @@
         android:layout_toLeftOf="@id/favourite_button"
         android:layout_below="@id/list_primary"
         android:layout_marginLeft="@dimen/md_keylines"
+        android:ellipsize="end"
+        android:maxLines="1"
         tools:text="Reading Element"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="@dimen/article_subheading" />
