@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:src="@drawable/ic_share_black_24dp"
+        android:src="@drawable/ic_star_border_black"
         />
 
     <TextView
