@@ -4,14 +4,21 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ikue.japanesedictionary.R;
+import com.ikue.japanesedictionary.adapters.SearchResultAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
 import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 
 import java.lang.Character.UnicodeBlock;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by luke_c on 08/02/2017.
@@ -22,7 +29,9 @@ public class SearchResultFragment extends Fragment {
 
     private static DictionaryDatabase helper;
     private static AsyncTask task;
-    private static DictionarySearchResultItem searchResults;
+    private static List<DictionarySearchResultItem> searchResults;
+
+    private RecyclerView recyclerView;
 
     private static final int KANA_TYPE = 0;
     private static final int ROMAJI_TYPE = 1;
@@ -58,7 +67,17 @@ public class SearchResultFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View v = inflater.inflate(R.layout.fragment_search, container, false); // Inflate the view
+
+        recyclerView = (RecyclerView) v.findViewById(R.id.search_recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        return v;
     }
 
     @Override
@@ -75,7 +94,7 @@ public class SearchResultFragment extends Fragment {
     }
 
     private void updateViews() {
-
+        recyclerView.setAdapter(new SearchResultAdapter(this.getContext(), searchResults));
     }
 
     // TODO: Support for Romaji
@@ -99,7 +118,7 @@ public class SearchResultFragment extends Fragment {
     }
 
     // The types specified here are the input data type, the progress type, and the result type
-    private class GetSearchResultsTask extends AsyncTask<Void, Void, DictionarySearchResultItem> {
+    private class GetSearchResultsTask extends AsyncTask<Void, Void, List<DictionarySearchResultItem>> {
 
         private String searchQuery;
         private int type;
@@ -110,7 +129,7 @@ public class SearchResultFragment extends Fragment {
         }
 
         @Override
-        protected DictionarySearchResultItem doInBackground(Void... params) {
+        protected List<DictionarySearchResultItem> doInBackground(Void... params) {
             switch (type) {
                 case KANA_TYPE:
                     return helper.searchByKana(searchQuery);
@@ -123,11 +142,12 @@ public class SearchResultFragment extends Fragment {
                 default:
                     break;
             }
-            return new DictionarySearchResultItem();
+            // Return an empty item for any unknown types
+            return new ArrayList<>();
         }
 
         @Override
-        protected void onPostExecute(DictionarySearchResultItem result) {
+        protected void onPostExecute(List<DictionarySearchResultItem> result) {
             // This method is executed in the UIThread
             // with access to the result of the long running task
             searchResults = result;

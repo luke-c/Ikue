@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         tabs.getTabAt(1).setIcon(R.drawable.ic_home_white);
         tabs.getTabAt(2).setIcon(R.drawable.ic_star_white);
 
+        // Set default tab to 'Home' tab
         viewpager.setCurrentItem(1);
 
         // Create Navigation drawer and inflate
