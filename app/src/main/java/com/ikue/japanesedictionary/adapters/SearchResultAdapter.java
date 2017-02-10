@@ -93,7 +93,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = EntryDetailActivity.newIntent(context, entryId);
+                Intent i = EntryDetailActivity.newIntent(view.getContext(), entryId);
                 context.startActivity(i);
             }
         });
