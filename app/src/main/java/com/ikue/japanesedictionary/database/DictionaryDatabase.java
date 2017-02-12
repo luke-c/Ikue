@@ -59,7 +59,34 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
     }
 
     public List<DictionarySearchResultItem> searchByKana(String searchQuery) {
-        return new ArrayList<>();
+        // TODO: Support various getSearchResults methods: Non-wildcard, single-wildcard, exact-match
+        // Have to add wildcards here, or query will fail
+        String[] arguments = new String[]{"%" + searchQuery + "%"};
+
+        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
+                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
+                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
+                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
+
+        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
+
+        String join = "JOIN " + GlossTable.NAME + " AS gloss ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID
+                + " LEFT JOIN " + KanjiElementTable.NAME + " AS ke ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = ke."  + KanjiElementTable.Cols.ENTRY_ID
+                + " ";
+
+        String where = "WHERE ke." + KanjiElementTable.Cols.ENTRY_ID + " IN ";
+
+        String whereSubQuery = "(SELECT " + ReadingElementTable.Cols.ENTRY_ID + " FROM "
+                + ReadingElementTable.NAME + " WHERE VALUE LIKE ?) ";
+
+        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(select).append(from).append(join).append(where).append(whereSubQuery).append(groupBy);
+
+        return getSearchResults(builder.toString(), arguments);
     }
 
     public List<DictionarySearchResultItem> searchByKanji(String searchQuery) {
