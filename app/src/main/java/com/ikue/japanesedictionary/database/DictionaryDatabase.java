@@ -83,10 +83,9 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(select).append(from).append(join).append(where).append(whereSubQuery).append(groupBy);
+        String query = select + from + join + where + whereSubQuery + groupBy;
 
-        return getSearchResults(builder.toString(), arguments);
+        return getSearchResults(query, arguments);
     }
 
     public List<DictionarySearchResultItem> searchByKanji(String searchQuery) {
@@ -114,10 +113,9 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(select).append(from).append(join).append(where).append(whereSubQuery).append(groupBy);
+        String query = select + from + join + where + whereSubQuery + groupBy;
 
-        return getSearchResults(builder.toString(), arguments);
+        return getSearchResults(query, arguments);
     }
 
     private List<DictionarySearchResultItem> getSearchResults(String query, String[] arguments) {
@@ -192,10 +190,9 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(select).append(from).append(join).append(where).append(whereSubQuery).append(groupBy);
+        String query = select + from + join + where + whereSubQuery + groupBy;
 
-        return getSearchResults(builder.toString(), arguments);
+        return getSearchResults(query.toString(), arguments);
     }
 
     public DictionaryItem getEntry(int id) {
