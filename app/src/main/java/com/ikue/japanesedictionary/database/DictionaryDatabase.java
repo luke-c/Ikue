@@ -26,6 +26,7 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -86,15 +87,21 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
                 + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID + " ";
 
         // TODO: Support various search methods: Non-wildcard, single-wildcard, exact-match
-        String where = "WHERE gloss." + GlossTable.Cols.VALUE + " LIKE ? ";
+        String where = "WHERE gloss." + GlossTable.Cols.ENTRY_ID + " IN ";
+
+        String whereSubQuery = "(SELECT " + GlossTable.Cols.ENTRY_ID + " FROM "
+                + GlossTable.NAME + " WHERE VALUE LIKE ?) ";
 
         String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(select).append(from).append(join).append(where).append(whereSubQuery).append(groupBy);
 
         Cursor cursor = null;
 
         try {
             db = getReadableDatabase();
-            cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
+            cursor = db.rawQuery(builder.toString(), arguments);
 
             while(cursor.moveToNext()) {
                 DictionarySearchResultItem result = new DictionarySearchResultItem();
@@ -105,7 +112,6 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
                 result.setEntryId(entryId);
 
-                // TODO: Get most relevant Kanji and Reading value based on search
                 List<String> formattedKanjiElements = formatString(kanjiValue);
                 if(!formattedKanjiElements.isEmpty()) {
                     // If the list is empty, trying to call .get will give a IndexOutOfBounds
@@ -377,7 +383,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
             return new ArrayList<>(new LinkedHashSet<>(Arrays.asList(stringToFormat.split("§"))));
         } else {
             // We never want a null value in our DictionaryItem, so just return an empty list
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
     }
 }
