@@ -65,6 +65,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         return new ArrayList<>();
     }
 
+    // TODO: Fix query to return all glosses in a sense where there is a match
     public List<DictionarySearchResultItem> searchByEnglish(String searchQuery) {
         // Create a new List of Search Results to store the results of our query
         List<DictionarySearchResultItem> searchResults = new ArrayList<>();
