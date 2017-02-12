@@ -66,11 +66,11 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         return new ArrayList<>();
     }
 
-    // TODO: Fix query to return all glosses in a sense where there is a match
     public List<DictionarySearchResultItem> searchByEnglish(String searchQuery) {
         // Create a new List of Search Results to store the results of our query
         List<DictionarySearchResultItem> searchResults = new ArrayList<>();
 
+        // TODO: Support various search methods: Non-wildcard, single-wildcard, exact-match
         // Have to add wildcards here, or query will fail
         String[] arguments = new String[]{"%" + searchQuery + "%"};
 
@@ -86,7 +86,6 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
                 + KanjiElementTable.Cols.ENTRY_ID + " JOIN " + GlossTable.NAME + " AS gloss ON re."
                 + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID + " ";
 
-        // TODO: Support various search methods: Non-wildcard, single-wildcard, exact-match
         String where = "WHERE gloss." + GlossTable.Cols.ENTRY_ID + " IN ";
 
         String whereSubQuery = "(SELECT " + GlossTable.Cols.ENTRY_ID + " FROM "
@@ -236,10 +235,13 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY r." + ReadingElementTable.Cols._ID;
 
+        StringBuilder builder = new StringBuilder();
+        builder.append(select).append(from).append(join).append(where).append(groupBy);
+
         Cursor cursor = null;
 
         try {
-            cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
+            cursor = db.rawQuery(builder.toString(), arguments);
 
             while(cursor.moveToNext()) {
                 ReadingElement readingElement = new ReadingElement();
@@ -291,10 +293,13 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY se." + SenseElementTable.Cols._ID;
 
+        StringBuilder builder = new StringBuilder();
+        builder.append(select).append(from).append(join).append(where).append(groupBy);
+
         Cursor cursor = null;
 
         try {
-            cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
+            cursor = db.rawQuery(builder.toString(), arguments);
 
             while(cursor.moveToNext()) {
                 SenseElement senseElement = new SenseElement();
