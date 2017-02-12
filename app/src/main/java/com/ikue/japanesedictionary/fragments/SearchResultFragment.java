@@ -22,7 +22,6 @@ import com.ikue.japanesedictionary.database.DictionaryDatabase;
 import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 
 import java.lang.Character.UnicodeBlock;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -160,20 +159,7 @@ public class SearchResultFragment extends Fragment {
 
         @Override
         protected List<DictionarySearchResultItem> doInBackground(Void... params) {
-            switch (type) {
-                case KANA_TYPE:
-                    return helper.searchByKana(searchQuery);
-                case ROMAJI_TYPE:
-                    break;
-                case KANJI_TYPE:
-                    return helper.searchByKanji(searchQuery);
-                case ENGLISH_TYPE:
-                    return helper.searchByEnglish(searchQuery);
-                default:
-                    break;
-            }
-            // Return an empty item for any unknown types
-            return new ArrayList<>();
+            return helper.searchDictionary(searchQuery, type);
         }
 
         @Override
