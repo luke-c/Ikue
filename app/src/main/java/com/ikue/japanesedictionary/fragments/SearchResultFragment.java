@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,7 +36,11 @@ public class SearchResultFragment extends Fragment {
     private static AsyncTask task;
     private static List<DictionarySearchResultItem> searchResults;
 
+    private static int searchType;
+    private static String searchQuery;
+
     private RecyclerView recyclerView;
+    private ContentLoadingProgressBar progressBar;
 
     private static final int KANA_TYPE = 0;
     private static final int ROMAJI_TYPE = 1;
@@ -62,10 +67,8 @@ public class SearchResultFragment extends Fragment {
         // Get a database on startup.
         helper = DictionaryDatabase.getInstance(this.getActivity());
 
-        String searchQuery = getArguments().getString(ARG_SEARCH_TERM, null);
-        int searchType = getSearchType(searchQuery);
-
-        task = new GetSearchResultsTask(searchQuery, searchType).execute();
+        searchQuery = getArguments().getString(ARG_SEARCH_TERM, null);
+        searchType = getSearchType(searchQuery);
     }
 
     @Nullable
@@ -81,6 +84,9 @@ public class SearchResultFragment extends Fragment {
         activity.getSupportActionBar().setTitle(R.string.results_view_toolbar_title);
         setHasOptionsMenu(true);
 
+        // Progressbar
+        progressBar = (ContentLoadingProgressBar) v.findViewById(R.id.search_progress_bar);
+
         // Recycler view
         recyclerView = (RecyclerView) v.findViewById(R.id.search_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -88,6 +94,11 @@ public class SearchResultFragment extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
+
+        // We need to run the AsyncTask here instead of onCreate so we know that ProgressBar has been
+        // instantiated. If we run it on onCreate the AsyncTask will try to show a ProgressBar on a
+        // possible non-existing ProgressBar and crash.
+        task = new GetSearchResultsTask().execute();
 
         return v;
     }
@@ -148,18 +159,15 @@ public class SearchResultFragment extends Fragment {
 
     // The types specified here are the input data type, the progress type, and the result type
     private class GetSearchResultsTask extends AsyncTask<Void, Void, List<DictionarySearchResultItem>> {
-
-        private String searchQuery;
-        private int type;
-
-        public GetSearchResultsTask(String searchQuery, int type) {
-            this.searchQuery = searchQuery;
-            this.type = type;
+        @Override
+        protected void onPreExecute() {
+            // Show the ProgressBar just before we search the database
+            progressBar.show();
         }
 
         @Override
         protected List<DictionarySearchResultItem> doInBackground(Void... params) {
-            return helper.searchDictionary(searchQuery, type);
+            return helper.searchDictionary(searchQuery, searchType);
         }
 
         @Override
@@ -167,7 +175,10 @@ public class SearchResultFragment extends Fragment {
             // This method is executed in the UIThread
             // with access to the result of the long running task
             searchResults = result;
+
+            // Update the view and hide the ProgressBar
             updateViews();
+            progressBar.hide();
         }
     }
 }
