@@ -61,6 +61,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
     public DictionaryDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        //setForcedUpgrade();
     }
 
     private static String getSearchByKanaQuery() {

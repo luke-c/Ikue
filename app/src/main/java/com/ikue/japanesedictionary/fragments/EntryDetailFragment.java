@@ -67,6 +67,7 @@ public class EntryDetailFragment extends Fragment {
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
         helper = DictionaryDatabase.getInstance(this.getActivity());
+
         int entryId = getArguments().getInt(ARG_ENTRY_ID, 0);
         task = new GetEntryTask().execute(entryId);
     }
@@ -220,6 +221,14 @@ public class EntryDetailFragment extends Fragment {
         helper.close();
         super.onDestroy();
     }
+
+    // TODO: Save DictionaryItem, and restore on configuration change
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+
 
     // The types specified here are the input data type, the progress type, and the result type
     private class GetEntryTask extends AsyncTask<Integer, Void, DictionaryItem> {
