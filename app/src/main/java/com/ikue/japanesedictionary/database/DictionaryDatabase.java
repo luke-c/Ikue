@@ -139,10 +139,9 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         String query;
         switch (searchType) {
             case KANA_TYPE:
+            case ROMAJI_TYPE:
                 query = getSearchByKanaQuery();
                 break;
-            case ROMAJI_TYPE:
-                return Collections.emptyList();
             case KANJI_TYPE:
                 query = getSearchByKanjiQuery();
                 break;

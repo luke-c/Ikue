@@ -3,6 +3,7 @@ package com.ikue.japanesedictionary.fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,8 @@ import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 
 import java.lang.Character.UnicodeBlock;
 import java.util.List;
+
+import utils.WanaKanaJava;
 
 /**
  * Created by luke_c on 08/02/2017.
@@ -135,10 +138,38 @@ public class SearchResultFragment extends Fragment {
 
     private void updateViews() {
         recyclerView.setAdapter(new SearchResultAdapter(this.getContext(), searchResults));
+
+        // TODO: Fix ProgressBar not showing on executing new AsyncTask
+        // Give the user the option to show Romaji results instead
+        if(searchType == ENGLISH_TYPE) {
+            Snackbar.make(getView(), R.string.search_view_snackbar_english, Snackbar.LENGTH_INDEFINITE)
+            .setAction(R.string.search_view_snackbar_english_action, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    searchType = ROMAJI_TYPE;
+                    WanaKanaJava wk = new WanaKanaJava(false);
+                    searchQuery = wk.toHiragana(searchQuery);
+                    new GetSearchResultsTask().execute();
+                }
+            }).show();
+
+            // Give the user the option to show English results instead, due to our naive
+            // classification of Romaji
+        } else if(searchType == ROMAJI_TYPE) {
+            Snackbar.make(getView(), R.string.search_view_snackbar_romaji, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.search_view_snackbar_romaji_action, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            searchType = ENGLISH_TYPE;
+                            WanaKanaJava wk = new WanaKanaJava(false);
+                            searchQuery = wk.toRomaji(searchQuery);
+                            new GetSearchResultsTask().execute();
+                        }
+                    }).show();
+        }
     }
 
-    // TODO: Support for Romaji
-    // Get what type the search term is. Can either be Kanji, Kana, or English.
+    // Get what type the search term is. Can either be Kanji, Kana, Romaji, or English.
     private int getSearchType(String searchTerm) {
         boolean containsKana = false;
 
@@ -150,11 +181,33 @@ public class SearchResultFragment extends Fragment {
                 return KANJI_TYPE;
                 // If the current character is a Hiragana or Katakana character
             } else if(UnicodeBlock.of(c) == UnicodeBlock.HIRAGANA || UnicodeBlock.of(c) == UnicodeBlock.KATAKANA) {
+                // We can't immediately return a KANA_TYPE yet because there could be Kanji
+                // characters further in the string
                 containsKana = true;
             }
         }
-        // If by the end there was no Kana characters, search in English
-        return containsKana ? KANA_TYPE : ENGLISH_TYPE;
+        // If we have parsed the whole string, have not encountered a Kanji character, and there
+        // is at least one Kana character in the string then we know to search the Reading Element
+        if (containsKana) {
+            return KANA_TYPE;
+        } else {
+            // False because we don't care about obsolete Kana
+            WanaKanaJava wk = new WanaKanaJava(false);
+            String romajiForm = wk.toHiragana(searchTerm);
+
+            for(char c : romajiForm.toCharArray()) {
+                // If a character couldn't be converted to Hiragana, then we can assume the user
+                // meant to search in English (or mistyped when using Romaji)
+                if(UnicodeBlock.of(c) != UnicodeBlock.HIRAGANA) {
+                    return ENGLISH_TYPE;
+                }
+            }
+            // If every character successfully converted to Romaji, then we assume the user
+            // meant to search in Romaji. (Naive!)
+            // TODO: Additional checks before assuming Romaji
+            searchQuery = romajiForm;
+            return ROMAJI_TYPE;
+        }
     }
 
     // The types specified here are the input data type, the progress type, and the result type
