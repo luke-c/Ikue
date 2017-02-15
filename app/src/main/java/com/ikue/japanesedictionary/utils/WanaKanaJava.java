@@ -1,4 +1,4 @@
-package utils;
+package com.ikue.japanesedictionary.utils;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
