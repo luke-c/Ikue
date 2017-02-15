@@ -22,6 +22,7 @@ import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
 import com.ikue.japanesedictionary.models.SenseElement;
+import com.ikue.japanesedictionary.utils.WanaKanaJava;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.util.ArrayList;
@@ -136,7 +137,13 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         String query;
         switch (searchType) {
             case KANA_TYPE:
+                query = getSearchByKanaQuery();
+                break;
             case ROMAJI_TYPE:
+                // If the search type is romaji, we need to convert the search string to kana form
+                // so we can search
+                WanaKanaJava wanaKanaJava = new WanaKanaJava(false);
+                searchTerm = wanaKanaJava.toKana(searchTerm);
                 query = getSearchByKanaQuery();
                 break;
             case KANJI_TYPE:
