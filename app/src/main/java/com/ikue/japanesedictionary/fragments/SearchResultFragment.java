@@ -22,11 +22,14 @@ import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.SearchResultAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
 import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
+import com.ikue.japanesedictionary.utils.Constants.SearchTypes;
+import com.ikue.japanesedictionary.utils.SearchUtils;
+import com.ikue.japanesedictionary.utils.WanaKanaJava;
 
-import java.lang.Character.UnicodeBlock;
 import java.util.List;
 
-import utils.WanaKanaJava;
+import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ENGLISH_TYPE;
+import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ROMAJI_TYPE;
 
 /**
  * Created by luke_c on 08/02/2017.
@@ -38,17 +41,13 @@ public class SearchResultFragment extends Fragment {
     private static DictionaryDatabase helper;
     private static AsyncTask task;
     private static List<DictionarySearchResultItem> searchResults;
+    private static WanaKanaJava wanaKanaJava;
 
     private static int searchType;
     private static String searchQuery;
 
     private RecyclerView recyclerView;
     private ContentLoadingProgressBar progressBar;
-
-    private static final int KANA_TYPE = 0;
-    private static final int ROMAJI_TYPE = 1;
-    private static final int KANJI_TYPE = 2;
-    private static final int ENGLISH_TYPE = 3;
 
     public static SearchResultFragment newInstance(String query) {
         Bundle args = new Bundle();
@@ -67,20 +66,31 @@ public class SearchResultFragment extends Fragment {
         // Retain the fragment so rotation does not repeatedly fire off new AsyncTasks
         setRetainInstance(true);
 
+        wanaKanaJava = new WanaKanaJava(false);
+
         // Get a database on startup.
         helper = DictionaryDatabase.getInstance(this.getActivity());
 
+        // Get the string the user searched for from the received Intent, and get the type
         searchQuery = getArguments().getString(ARG_SEARCH_TERM, null);
-        searchType = getSearchType(searchQuery);
+        searchType = SearchUtils.getSearchType(searchQuery);
+
+        // If we will search in Romaji, then make sure we convert to Kana first
+        if(searchType == SearchTypes.ROMAJI_TYPE) {
+            searchQuery = wanaKanaJava.toKana(searchQuery);
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_search, container, false); // Inflate the view
+        return inflater.inflate(R.layout.fragment_search, container, false); // Inflate the view
+    }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // Toolbar
-        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -88,10 +98,10 @@ public class SearchResultFragment extends Fragment {
         setHasOptionsMenu(true);
 
         // Progressbar
-        progressBar = (ContentLoadingProgressBar) v.findViewById(R.id.search_progress_bar);
+        progressBar = (ContentLoadingProgressBar) view.findViewById(R.id.search_progress_bar);
 
         // Recycler view
-        recyclerView = (RecyclerView) v.findViewById(R.id.search_recycler_view);
+        recyclerView = (RecyclerView) view.findViewById(R.id.search_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -102,8 +112,6 @@ public class SearchResultFragment extends Fragment {
         // instantiated. If we run it on onCreate the AsyncTask will try to show a ProgressBar on a
         // possible non-existing ProgressBar and crash.
         task = new GetSearchResultsTask().execute();
-
-        return v;
     }
 
     @Override
@@ -138,7 +146,10 @@ public class SearchResultFragment extends Fragment {
 
     private void updateViews() {
         recyclerView.setAdapter(new SearchResultAdapter(this.getContext(), searchResults));
+        showSwitchSearchSnackbar();
+    }
 
+    private void showSwitchSearchSnackbar() {
         // TODO: Fix ProgressBar not showing on executing new AsyncTask
         // Give the user the option to show Romaji results instead
         if(searchType == ENGLISH_TYPE) {
@@ -147,8 +158,7 @@ public class SearchResultFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     searchType = ROMAJI_TYPE;
-                    WanaKanaJava wk = new WanaKanaJava(false);
-                    searchQuery = wk.toHiragana(searchQuery);
+                    searchQuery = wanaKanaJava.toHiragana(searchQuery);
                     new GetSearchResultsTask().execute();
                 }
             }).show();
@@ -161,54 +171,13 @@ public class SearchResultFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
                             searchType = ENGLISH_TYPE;
-                            WanaKanaJava wk = new WanaKanaJava(false);
-                            searchQuery = wk.toRomaji(searchQuery);
+                            searchQuery = wanaKanaJava.toRomaji(searchQuery);
                             new GetSearchResultsTask().execute();
                         }
                     }).show();
         }
     }
 
-    // Get what type the search term is. Can either be Kanji, Kana, Romaji, or English.
-    private int getSearchType(String searchTerm) {
-        boolean containsKana = false;
-
-        // Check every character of the string
-        for(char c : searchTerm.toCharArray()) {
-            // If the current character is a Kanji (or Chinese/Korean character)
-            if(UnicodeBlock.of(c) == UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
-                // Once we find a single Kanji character, we know to search the Kanji Element
-                return KANJI_TYPE;
-                // If the current character is a Hiragana or Katakana character
-            } else if(UnicodeBlock.of(c) == UnicodeBlock.HIRAGANA || UnicodeBlock.of(c) == UnicodeBlock.KATAKANA) {
-                // We can't immediately return a KANA_TYPE yet because there could be Kanji
-                // characters further in the string
-                containsKana = true;
-            }
-        }
-        // If we have parsed the whole string, have not encountered a Kanji character, and there
-        // is at least one Kana character in the string then we know to search the Reading Element
-        if (containsKana) {
-            return KANA_TYPE;
-        } else {
-            // False because we don't care about obsolete Kana
-            WanaKanaJava wk = new WanaKanaJava(false);
-            String romajiForm = wk.toHiragana(searchTerm);
-
-            for(char c : romajiForm.toCharArray()) {
-                // If a character couldn't be converted to Hiragana, then we can assume the user
-                // meant to search in English (or mistyped when using Romaji)
-                if(UnicodeBlock.of(c) != UnicodeBlock.HIRAGANA) {
-                    return ENGLISH_TYPE;
-                }
-            }
-            // If every character successfully converted to Romaji, then we assume the user
-            // meant to search in Romaji. (Naive!)
-            // TODO: Additional checks before assuming Romaji
-            searchQuery = romajiForm;
-            return ROMAJI_TYPE;
-        }
-    }
 
     // The types specified here are the input data type, the progress type, and the result type
     private class GetSearchResultsTask extends AsyncTask<Void, Void, List<DictionarySearchResultItem>> {
