@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.*;
+
 /**
  * Created by luke_c on 01/02/2017.
  */
@@ -42,11 +44,6 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
     private static final String DATABASE_NAME = "dictionary.db";
     private static final int DATABASE_VERSION = 1;
-
-    private static final int KANA_TYPE = 0;
-    private static final int ROMAJI_TYPE = 1;
-    private static final int KANJI_TYPE = 2;
-    private static final int ENGLISH_TYPE = 3;
 
     private final String LOG_TAG = this.getClass().toString();
 
