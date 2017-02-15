@@ -76,7 +76,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
                 + ReadingElementTable.Cols.ENTRY_ID + " = ke."  + KanjiElementTable.Cols.ENTRY_ID
                 + " ";
 
-        String where = "WHERE ke." + KanjiElementTable.Cols.ENTRY_ID + " IN ";
+        String where = "WHERE re." + ReadingElementTable.Cols.ENTRY_ID + " IN ";
 
         String whereSubQuery = "(SELECT " + ReadingElementTable.Cols.ENTRY_ID + " FROM "
                 + ReadingElementTable.NAME + " WHERE VALUE LIKE ?) ";
