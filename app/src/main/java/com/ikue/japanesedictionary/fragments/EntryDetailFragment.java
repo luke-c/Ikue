@@ -142,7 +142,7 @@ public class EntryDetailFragment extends Fragment implements OnShortTaskComplete
     }
 
     private void toggleFab() {
-        if(isEntrySaved) {
+        if (isEntrySaved) {
             floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_border_white));
         } else {
             floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
@@ -165,8 +165,7 @@ public class EntryDetailFragment extends Fragment implements OnShortTaskComplete
         if (kanjiElementList != null && !kanjiElementList.isEmpty()) {
             toolbarTitle = kanjiElementList.get(0).getValue()
                     + " [" + readingElementList.get(0).getValue() + "]";
-        }
-        else toolbarTitle = readingElementList.get(0).getValue();
+        } else toolbarTitle = readingElementList.get(0).getValue();
 
         // TODO: Handle case where value is too big and parts are cutoff, see entry id: 1004000
         collapsingToolbar.setTitle(toolbarTitle);
@@ -177,20 +176,20 @@ public class EntryDetailFragment extends Fragment implements OnShortTaskComplete
         // TODO: Refactor into RecyclerView
         // Set the other readings section
         String readings = "";
-        for(ReadingElement readingElement : readingElementList) {
-            if(!readingElement.getReadingRelation().isEmpty()) {
+        for (ReadingElement readingElement : readingElementList) {
+            if (!readingElement.getReadingRelation().isEmpty()) {
                 // The reading only applies to certain Kanji Elements
-                for(String readingRelation : readingElement.getReadingRelation()) {
+                for (String readingRelation : readingElement.getReadingRelation()) {
                     readings += readingRelation + " [" + readingElement.getValue() + "], ";
                 }
 
             } else {
                 // There are no Kanji Elements, so just display every Reading Element value
-                if(kanjiElementList == null || kanjiElementList.isEmpty()) {
+                if (kanjiElementList == null || kanjiElementList.isEmpty()) {
                     readings += readingElement.getValue() + ", ";
                 } else {
                     // The reading is for every Kanji Element
-                    for(KanjiElement kanjiElement : kanjiElementList) {
+                    for (KanjiElement kanjiElement : kanjiElementList) {
                         readings += kanjiElement.getValue() + " [" + readingElement.getValue() + "], ";
                     }
                 }
@@ -198,7 +197,7 @@ public class EntryDetailFragment extends Fragment implements OnShortTaskComplete
         }
 
         // Remove trailing comma and space
-        if(readings.endsWith(", ")) {
+        if (readings.endsWith(", ")) {
             readings = readings.substring(0, readings.length() - 2);
         }
 
@@ -212,14 +211,14 @@ public class EntryDetailFragment extends Fragment implements OnShortTaskComplete
         String readingPriorities = "";
 
         // If there are no priorities, remove the Priorities TextViews from view
-        if(priorities.isEmpty()) {
+        if (priorities.isEmpty()) {
             prioritiesHeaderTextView.setVisibility(View.GONE);
             prioritiesTextView.setVisibility(View.GONE);
         } else {
             for (Priority priority : priorities) {
-                if(priority.isKanjiReadingPriority()) {
+                if (priority.isKanjiReadingPriority()) {
                     kanjiPriorities += " " + priority.getValue();
-                } else if(!priority.isKanjiReadingPriority()) {
+                } else if (!priority.isKanjiReadingPriority()) {
                     readingPriorities += " " + priority.getValue();
                 }
             }
@@ -232,7 +231,7 @@ public class EntryDetailFragment extends Fragment implements OnShortTaskComplete
     public void onDestroy() {
         // Cancel the AsyncTask if it is running when Activity is about to close
         // cancel(false) is safer and doesn't force an instant cancellation
-        if(task !=null) {
+        if (task != null) {
             task.cancel(false);
         }
 

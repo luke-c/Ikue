@@ -15,7 +15,7 @@ public class GetEntryDetailTask extends AsyncTask<Void, Void, DictionaryItem> {
     private DictionaryDatabase helper;
     private int entryId;
 
-    public GetEntryDetailTask(OnShortTaskCompleted listener , DictionaryDatabase helper, int entryId) {
+    public GetEntryDetailTask(OnShortTaskCompleted listener, DictionaryDatabase helper, int entryId) {
         this.listener = listener;
         this.helper = helper;
         this.entryId = entryId;

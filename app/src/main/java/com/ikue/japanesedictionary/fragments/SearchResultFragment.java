@@ -134,7 +134,7 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
     public void onDestroy() {
         // Cancel the AsyncTask if it is running when Activity is about to close
         // cancel(false) is safer and doesn't force an instant cancellation
-        if(task !=null) {
+        if (task != null) {
             task.cancel(false);
         }
 
@@ -156,7 +156,7 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
 
     @Override
     public void toggleProgressBar(boolean toShow) {
-        if(toShow) {
+        if (toShow) {
             progressBar.show();
         } else {
             progressBar.hide();
@@ -165,10 +165,10 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
 
     private void showSwitchSearchSnackbar() {
         // First make sure the view is not null
-        if(getView() != null) {
+        if (getView() != null) {
             // TODO: Fix ProgressBar not showing on executing new AsyncTask
             // Give the user the option to show Romaji results instead
-            if(searchType == ENGLISH_TYPE) {
+            if (searchType == ENGLISH_TYPE) {
                 Snackbar.make(getView(), R.string.search_view_snackbar_english, Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.search_view_snackbar_english_action, new View.OnClickListener() {
                             @Override
@@ -180,7 +180,7 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
 
                 // Give the user the option to show English results instead, due to our naive
                 // classification of Romaji
-            } else if(searchType == ROMAJI_TYPE) {
+            } else if (searchType == ROMAJI_TYPE) {
                 Snackbar.make(getView(), R.string.search_view_snackbar_romaji, Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.search_view_snackbar_romaji_action, new View.OnClickListener() {
                             @Override

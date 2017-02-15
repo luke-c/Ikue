@@ -13,13 +13,13 @@ public class SearchUtils {
         boolean containsKana = false;
 
         // Check every character of the string
-        for(char c : searchTerm.toCharArray()) {
+        for (char c : searchTerm.toCharArray()) {
             // If the current character is a Kanji (or Chinese/Korean character)
-            if(Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
                 // Once we find a single Kanji character, we know to search the Kanji Element
                 return KANJI_TYPE;
                 // If the current character is a Hiragana or Katakana character
-            } else if(Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HIRAGANA
+            } else if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.HIRAGANA
                     || Character.UnicodeBlock.of(c) == Character.UnicodeBlock.KATAKANA) {
                 // We can't immediately return a KANA_TYPE yet because there could be Kanji
                 // characters further in the string
@@ -35,10 +35,10 @@ public class SearchUtils {
             WanaKanaJava wk = new WanaKanaJava(false);
             String romajiForm = wk.toHiragana(searchTerm);
 
-            for(char c : romajiForm.toCharArray()) {
+            for (char c : romajiForm.toCharArray()) {
                 // If a character couldn't be converted to Hiragana, then we can assume the user
                 // meant to search in English (or mistyped when using Romaji)
-                if(Character.UnicodeBlock.of(c) != Character.UnicodeBlock.HIRAGANA) {
+                if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.HIRAGANA) {
                     return ENGLISH_TYPE;
                 }
             }

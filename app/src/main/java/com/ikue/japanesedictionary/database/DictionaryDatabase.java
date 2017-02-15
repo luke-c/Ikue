@@ -73,7 +73,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         String join = "JOIN " + GlossTable.NAME + " AS gloss ON re."
                 + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID
                 + " LEFT JOIN " + KanjiElementTable.NAME + " AS ke ON re."
-                + ReadingElementTable.Cols.ENTRY_ID + " = ke."  + KanjiElementTable.Cols.ENTRY_ID
+                + ReadingElementTable.Cols.ENTRY_ID + " = ke." + KanjiElementTable.Cols.ENTRY_ID
                 + " ";
 
         String where = "WHERE re." + ReadingElementTable.Cols.ENTRY_ID + " IN ";
@@ -97,7 +97,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         String join = "JOIN " + GlossTable.NAME + " AS gloss ON re."
                 + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID
                 + " JOIN " + KanjiElementTable.NAME + " AS ke ON re."
-                + ReadingElementTable.Cols.ENTRY_ID + " = ke."  + KanjiElementTable.Cols.ENTRY_ID
+                + ReadingElementTable.Cols.ENTRY_ID + " = ke." + KanjiElementTable.Cols.ENTRY_ID
                 + " ";
 
         String where = "WHERE ke." + KanjiElementTable.Cols.ENTRY_ID + " IN ";
@@ -169,7 +169,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
             db = getReadableDatabase();
             cursor = db.rawQuery(query, arguments);
 
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 DictionarySearchResultItem result = new DictionarySearchResultItem();
                 int entryId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.ENTRY_ID));
                 String kanjiValue = cursor.getString(cursor.getColumnIndexOrThrow("kanji_value"));
@@ -179,7 +179,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
                 result.setEntryId(entryId);
 
                 List<String> formattedKanjiElements = formatString(kanjiValue);
-                if(!formattedKanjiElements.isEmpty()) {
+                if (!formattedKanjiElements.isEmpty()) {
                     // If the list is empty, trying to call .get will give a IndexOutOfBounds
                     result.setKanjiElementValue(formatString(kanjiValue).get(0));
                 } else {
@@ -187,7 +187,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
                 }
 
                 List<String> formattedReadingElements = formatString(readingValue);
-                if(!formattedReadingElements.isEmpty()) {
+                if (!formattedReadingElements.isEmpty()) {
                     // If the list is empty, trying to call .get will give a IndexOutOfBounds
                     result.setReadingElementValue(formatString(readingValue).get(0));
                 } else {
@@ -223,11 +223,10 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
             return entry;
         }
         // TODO: Handle errors more gracefully
-        catch (SQLException error){
-            Log.e(LOG_TAG ,error.getMessage());
+        catch (SQLException error) {
+            Log.e(LOG_TAG, error.getMessage());
             return new DictionaryItem();
-        }
-        finally {
+        } finally {
             db.close();
         }
     }
@@ -251,17 +250,17 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         try {
             // Execute the query
             cursor = db.query(
-              KanjiElementTable.NAME, // Table to query
-              projection, // The columns to return
-              selection, // The columns for the WHERE clause
-              selectionArgs, // The values for the WHERE clause
-              null, // Group by
-              null, // Filter by
-              null  // Sort order
+                    KanjiElementTable.NAME, // Table to query
+                    projection, // The columns to return
+                    selection, // The columns for the WHERE clause
+                    selectionArgs, // The values for the WHERE clause
+                    null, // Group by
+                    null, // Filter by
+                    null  // Sort order
             );
 
             // Iterate over the rows returned and assign to the POJO
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 KanjiElement kanjiElement = new KanjiElement();
                 int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols._ID));
                 String value = cursor.getString(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols.VALUE));
@@ -310,7 +309,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         try {
             cursor = db.rawQuery(builder.toString(), arguments);
 
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 ReadingElement readingElement = new ReadingElement();
                 int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols._ID));
                 String value = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
@@ -368,7 +367,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         try {
             cursor = db.rawQuery(builder.toString(), arguments);
 
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 SenseElement senseElement = new SenseElement();
                 int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(SenseElementTable.Cols._ID));
                 String posValue = cursor.getString(cursor.getColumnIndexOrThrow("pos_value"));
@@ -423,7 +422,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
             );
 
             // Iterate over the rows returned and assign to the POJO
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 Priority priority = new Priority();
                 int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(PriorityTable.Cols._ID));
                 String value = cursor.getString(cursor.getColumnIndexOrThrow(PriorityTable.Cols.VALUE));
@@ -451,7 +450,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
     // convert to a LinkedHashSet to remove duplicate values.
     @Nullable
     private static List<String> formatString(String stringToFormat) {
-        if(stringToFormat != null && !stringToFormat.isEmpty()) {
+        if (stringToFormat != null && !stringToFormat.isEmpty()) {
             return new ArrayList<>(new LinkedHashSet<>(Arrays.asList(stringToFormat.split("§"))));
         } else {
             // We never want a null value in our DictionaryItem, so just return an empty list

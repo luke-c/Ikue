@@ -18,7 +18,7 @@ public class SearchDatabaseTask extends AsyncTask<Void, Void, List<DictionarySea
     private String searchQuery;
     private int searchType;
 
-    public SearchDatabaseTask(OnTaskCompleted listener , DictionaryDatabase helper, String searchQuery, int searchType) {
+    public SearchDatabaseTask(OnTaskCompleted listener, DictionaryDatabase helper, String searchQuery, int searchType) {
         this.listener = listener;
         this.helper = helper;
         this.searchQuery = searchQuery;
