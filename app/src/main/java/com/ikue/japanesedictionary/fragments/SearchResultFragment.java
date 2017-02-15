@@ -92,6 +92,7 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
         if (activity.getSupportActionBar() != null) {
             activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             activity.getSupportActionBar().setTitle(R.string.results_view_toolbar_title);
+            activity.getSupportActionBar().setSubtitle(searchQuery);
         }
         setHasOptionsMenu(true);
 
