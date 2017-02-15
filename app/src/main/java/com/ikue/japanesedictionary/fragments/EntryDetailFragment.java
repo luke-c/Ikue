@@ -20,6 +20,8 @@ import android.widget.TextView;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDatabase;
+import com.ikue.japanesedictionary.database.GetEntryDetailTask;
+import com.ikue.japanesedictionary.interfaces.OnShortTaskCompleted;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
@@ -31,7 +33,7 @@ import java.util.List;
  * Created by luke_c on 05/02/2017.
  */
 
-public class EntryDetailFragment extends Fragment {
+public class EntryDetailFragment extends Fragment implements OnShortTaskCompleted {
 
     private static final String ARG_ENTRY_ID = "ENTRY_ID";
 
@@ -42,6 +44,9 @@ public class EntryDetailFragment extends Fragment {
     private static DictionaryDatabase helper;
     private static AsyncTask task;
     private static DictionaryItem dictionaryItem;
+    private static OnShortTaskCompleted listener;
+
+    private static int entryId;
 
     private CollapsingToolbarLayout collapsingToolbar;
     private RecyclerView recyclerView;
@@ -64,29 +69,35 @@ public class EntryDetailFragment extends Fragment {
         // Retain the fragment so rotation does not repeatedly fire off new AsyncTasks
         setRetainInstance(true);
 
+        listener = this;
+
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
         helper = DictionaryDatabase.getInstance(this.getActivity());
 
-        int entryId = getArguments().getInt(ARG_ENTRY_ID, 0);
-        task = new GetEntryTask().execute(entryId);
+        entryId = getArguments().getInt(ARG_ENTRY_ID, 0);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_detail, container, false); // Inflate the view
+        return inflater.inflate(R.layout.fragment_detail, container, false); // Inflate the view
+    }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // Toolbar
-        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         setHasOptionsMenu(true);
 
-        collapsingToolbar = (CollapsingToolbarLayout) v.findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
 
-        floatingActionButton = (FloatingActionButton) v.findViewById(R.id.fab);
+        floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,11 +106,11 @@ public class EntryDetailFragment extends Fragment {
             }
         });
 
-        otherReadingsTextView = (TextView) v.findViewById(R.id.other_forms_element);
-        prioritiesHeaderTextView = (TextView) v.findViewById(R.id.priorities_header);
-        prioritiesTextView = (TextView) v.findViewById(R.id.priorities_element);
+        otherReadingsTextView = (TextView) view.findViewById(R.id.other_forms_element);
+        prioritiesHeaderTextView = (TextView) view.findViewById(R.id.priorities_header);
+        prioritiesTextView = (TextView) view.findViewById(R.id.priorities_element);
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.meanings_recyclerview);
+        recyclerView = (RecyclerView) view.findViewById(R.id.meanings_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
         // Disables scrolling for RecyclerView,
@@ -110,7 +121,8 @@ public class EntryDetailFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        return v;
+        task = new GetEntryDetailTask(listener, helper, entryId).execute();
+
     }
 
     @Override
@@ -136,6 +148,12 @@ public class EntryDetailFragment extends Fragment {
             floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
         }
         isEntrySaved = !isEntrySaved;
+    }
+
+    @Override
+    public void onResult(DictionaryItem result) {
+        dictionaryItem = result;
+        updateViews();
     }
 
     private void updateViews() {
@@ -220,29 +238,5 @@ public class EntryDetailFragment extends Fragment {
         // Close the SQLiteHelper instance
         helper.close();
         super.onDestroy();
-    }
-
-    // TODO: Save DictionaryItem, and restore on configuration change
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-
-
-    // The types specified here are the input data type, the progress type, and the result type
-    private class GetEntryTask extends AsyncTask<Integer, Void, DictionaryItem> {
-
-        protected DictionaryItem doInBackground(Integer... id) {
-            return helper.getEntry(id[0]);
-        }
-
-
-        protected void onPostExecute(DictionaryItem result) {
-            // This method is executed in the UIThread
-            // with access to the result of the long running task
-            dictionaryItem = result;
-            updateViews();
-        }
     }
 }
