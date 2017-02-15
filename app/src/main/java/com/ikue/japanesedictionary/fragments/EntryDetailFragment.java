@@ -188,10 +188,11 @@ public class EntryDetailFragment extends Fragment implements OnShortTaskComplete
                 // There are no Kanji Elements, so just display every Reading Element value
                 if(kanjiElementList == null || kanjiElementList.isEmpty()) {
                     readings += readingElement.getValue() + ", ";
-                }
-                // The reading is for every Kanji Element
-                for(KanjiElement kanjiElement : kanjiElementList) {
-                    readings += kanjiElement.getValue() + " [" + readingElement.getValue() + "], ";
+                } else {
+                    // The reading is for every Kanji Element
+                    for(KanjiElement kanjiElement : kanjiElementList) {
+                        readings += kanjiElement.getValue() + " [" + readingElement.getValue() + "], ";
+                    }
                 }
             }
         }
