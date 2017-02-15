@@ -57,7 +57,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         return instance;
     }
 
-    public DictionaryDatabase(Context context) {
+    private DictionaryDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         //setForcedUpgrade();
     }
