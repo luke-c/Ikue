@@ -25,7 +25,7 @@
         android:maxLines="1"
         tools:text="Kanji Element"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/article_subheading" />
+        android:textSize="@dimen/article_subheading"/>
 
     <TextView
         android:id="@+id/list_primary2"

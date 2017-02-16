@@ -2,6 +2,7 @@ package com.ikue.japanesedictionary.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -114,11 +115,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         secondaryText.setText(TextUtils.join(", ", item.getGlossValue()));
 
-        ImageView favouriteButton = viewHolder.favouriteButton;
+        final ImageView favouriteButton = viewHolder.favouriteButton;
         favouriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // do something
+                favouriteButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_black));
             }
         });
     }
