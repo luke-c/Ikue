@@ -33,7 +33,8 @@ public class SearchDatabaseTask extends AsyncTask<Void, Void, List<DictionarySea
 
     @Override
     protected List<DictionarySearchResultItem> doInBackground(Void... params) {
-        return helper.searchDictionary(searchQuery, searchType);
+        // Make sure to trim any leading or trailing whitespace in the search query
+        return helper.searchDictionary(searchQuery.trim(), searchType);
     }
 
     @Override
