@@ -33,12 +33,13 @@ public class SearchUtils {
         } else {
             // False because we don't care about obsolete Kana
             WanaKanaJava wk = new WanaKanaJava(false);
-            String romajiForm = wk.toHiragana(searchTerm);
+            String kanaForm = wk.toKana(searchTerm);
 
-            for (char c : romajiForm.toCharArray()) {
-                // If a character couldn't be converted to Hiragana, then we can assume the user
-                // meant to search in English (or mistyped when using Romaji)
-                if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.HIRAGANA) {
+            for (char c : kanaForm.toCharArray()) {
+                // If a character couldn't be converted to Hiragana or Katakana, then we can assume
+                // the user meant to search in English (or mistyped when using Romaji)
+                if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.HIRAGANA
+                        && Character.UnicodeBlock.of(c) != Character.UnicodeBlock.KATAKANA) {
                     return ENGLISH_TYPE;
                 }
             }
