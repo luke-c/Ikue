@@ -22,6 +22,7 @@ import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
 import com.ikue.japanesedictionary.models.SenseElement;
+import com.ikue.japanesedictionary.utils.SearchUtils;
 import com.ikue.japanesedictionary.utils.WanaKanaJava;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
@@ -140,10 +141,16 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
                 query = getSearchByKanaQuery();
                 break;
             case ROMAJI_TYPE:
-                // If the search type is romaji, we need to convert the search string to kana form
-                // so we can search
+                // TODO: Case insensitive Kana search. Show Hiragana and Katakana results
                 WanaKanaJava wanaKanaJava = new WanaKanaJava(false);
-                searchTerm = wanaKanaJava.toKana(searchTerm);
+
+                // If the search type is romaji, we need to convert the search string to kana form
+                // so we can search. If the search term is all uppercase then search in Katakana
+                if(SearchUtils.isStringAllUppercase(searchTerm)) {
+                    searchTerm = wanaKanaJava.toKatakana(searchTerm);
+                } else {
+                    searchTerm = wanaKanaJava.toHiragana(searchTerm);
+                }
                 query = getSearchByKanaQuery();
                 break;
             case KANJI_TYPE:
