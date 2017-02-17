@@ -49,4 +49,13 @@ public class SearchUtils {
             return ROMAJI_TYPE;
         }
     }
+
+    public static boolean isStringAllUppercase(String string) {
+        for (char c : string.toCharArray()) {
+            if(!Character.isUpperCase(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
