@@ -39,28 +39,28 @@ import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.*;
  */
 
 // TODO: Add catch blocks for queries
-public class DictionaryDatabase extends SQLiteAssetHelper {
+public class DictionaryDbHelper extends SQLiteAssetHelper {
 
-    private static DictionaryDatabase instance;
+    private static DictionaryDbHelper instance;
     private static SQLiteDatabase db;
 
     private static final String DATABASE_NAME = "dictionary.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private final String LOG_TAG = this.getClass().toString();
 
-    public static synchronized DictionaryDatabase getInstance(Context context) {
+    public static synchronized DictionaryDbHelper getInstance(Context context) {
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         if (instance == null) {
-            instance = new DictionaryDatabase(context.getApplicationContext());
+            instance = new DictionaryDbHelper(context.getApplicationContext());
         }
         return instance;
     }
 
-    private DictionaryDatabase(Context context) {
+    private DictionaryDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        //setForcedUpgrade();
+        setForcedUpgrade();
     }
 
     private static String getSearchByKanaQuery(boolean hasWildcard) {
