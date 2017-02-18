@@ -156,8 +156,73 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     }
 
     public List<DictionarySearchResultItem> getAllFavourites() {
-        List<DictionarySearchResultItem> favourites = Collections.emptyList();
-        return favourites;
+        List<DictionarySearchResultItem> favourites = new ArrayList<>();
+
+        String select = "SELECT re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
+                + DictionaryDbSchema.Jmdict.KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
+                + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
+                + DictionaryDbSchema.Jmdict.GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
+
+        String from = "FROM " + DictionaryDbSchema.Jmdict.ReadingElementTable.NAME + " AS re ";
+
+        String join = "JOIN " + DictionaryDbSchema.Jmdict.GlossTable.NAME + " AS gloss ON re."
+                + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + " = gloss." + DictionaryDbSchema.Jmdict.GlossTable.Cols.ENTRY_ID
+                + " LEFT JOIN " + DictionaryDbSchema.Jmdict.KanjiElementTable.NAME + " AS ke ON re."
+                + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + " = ke." + DictionaryDbSchema.Jmdict.KanjiElementTable.Cols.ENTRY_ID
+                + " ";
+
+        String where = "WHERE re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + " IN ";
+
+        String whereSubQuery = "(SELECT " + DictionaryDbSchema.User.FavouritesTable.Cols.ENTRY_ID + " FROM "
+                + DictionaryDbSchema.User.FavouritesTable.NAME + " ";
+
+        String groupBy = "GROUP BY re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID;
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(select).append(from).append(join).append(where).append(whereSubQuery).append(groupBy);
+
+        Cursor cursor = null;
+
+        try {
+            db = getReadableDatabase();
+            cursor = db.rawQuery(builder.toString(), new String[]{});
+
+            while (cursor.moveToNext()) {
+                DictionarySearchResultItem result = new DictionarySearchResultItem();
+                int entryId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.ENTRY_ID));
+                String kanjiValue = cursor.getString(cursor.getColumnIndexOrThrow("kanji_value"));
+                String readingValue = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
+                String glossValue = cursor.getString(cursor.getColumnIndexOrThrow("gloss_value"));
+
+                result.setEntryId(entryId);
+
+                List<String> formattedKanjiElements = formatString(kanjiValue);
+                if (!formattedKanjiElements.isEmpty()) {
+                    // If the list is empty, trying to call .get will give a IndexOutOfBounds
+                    result.setKanjiElementValue(formatString(kanjiValue).get(0));
+                } else {
+                    result.setKanjiElementValue("");
+                }
+
+                List<String> formattedReadingElements = formatString(readingValue);
+                if (!formattedReadingElements.isEmpty()) {
+                    // If the list is empty, trying to call .get will give a IndexOutOfBounds
+                    result.setReadingElementValue(formatString(readingValue).get(0));
+                } else {
+                    result.setReadingElementValue("");
+                }
+
+                result.setGlossValue(formatString(glossValue));
+
+                favourites.add(result);
+            }
+            return favourites;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
     }
 
     public DictionaryItem getEntry(int id) {
