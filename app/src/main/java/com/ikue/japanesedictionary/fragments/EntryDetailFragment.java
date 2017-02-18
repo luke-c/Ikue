@@ -19,9 +19,9 @@ import android.widget.TextView;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
-import com.ikue.japanesedictionary.database.DictionaryDatabase;
+import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.GetEntryDetailTask;
-import com.ikue.japanesedictionary.interfaces.OnShortTaskCompleted;
+import com.ikue.japanesedictionary.interfaces.DetailAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
@@ -33,7 +33,7 @@ import java.util.List;
  * Created by luke_c on 05/02/2017.
  */
 
-public class EntryDetailFragment extends Fragment implements OnShortTaskCompleted {
+public class EntryDetailFragment extends Fragment implements DetailAsyncCallbacks {
 
     private static final String ARG_ENTRY_ID = "ENTRY_ID";
 
@@ -41,10 +41,10 @@ public class EntryDetailFragment extends Fragment implements OnShortTaskComplete
     private TextView prioritiesHeaderTextView;
     private TextView prioritiesTextView;
 
-    private static DictionaryDatabase helper;
+    private static DictionaryDbHelper helper;
     private static AsyncTask task;
     private static DictionaryItem dictionaryItem;
-    private static OnShortTaskCompleted listener;
+    private static DetailAsyncCallbacks listener;
 
     private static int entryId;
 
@@ -73,7 +73,7 @@ public class EntryDetailFragment extends Fragment implements OnShortTaskComplete
 
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
-        helper = DictionaryDatabase.getInstance(this.getActivity());
+        helper = DictionaryDbHelper.getInstance(this.getActivity());
 
         entryId = getArguments().getInt(ARG_ENTRY_ID, 0);
     }

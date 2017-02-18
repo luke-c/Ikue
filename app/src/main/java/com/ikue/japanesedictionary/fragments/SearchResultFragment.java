@@ -20,9 +20,9 @@ import android.view.ViewGroup;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.SearchResultAdapter;
-import com.ikue.japanesedictionary.database.DictionaryDatabase;
+import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.SearchDatabaseTask;
-import com.ikue.japanesedictionary.interfaces.OnTaskCompleted;
+import com.ikue.japanesedictionary.interfaces.SearchAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 import com.ikue.japanesedictionary.utils.SearchUtils;
 
@@ -35,15 +35,15 @@ import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ROMAJI_TYP
  * Created by luke_c on 08/02/2017.
  */
 
-public class SearchResultFragment extends Fragment implements OnTaskCompleted {
+public class SearchResultFragment extends Fragment implements SearchAsyncCallbacks {
     private static final String ARG_SEARCH_TERM = "SEARCH_TERM";
 
     // Singleton variable. DO NOT CHANGE
-    private static DictionaryDatabase helper;
+    private static DictionaryDbHelper helper;
 
     private static AsyncTask task;
     private static List<DictionarySearchResultItem> searchResults;
-    private OnTaskCompleted listener;
+    private SearchAsyncCallbacks listener;
 
     private static int searchType;
     private static String searchQuery;
@@ -72,7 +72,7 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
         listener = this;
 
         // Get a database on startup.
-        helper = DictionaryDatabase.getInstance(this.getActivity());
+        helper = DictionaryDbHelper.getInstance(this.getActivity());
 
         // Get the string the user searched for from the received Intent, and get the type
         searchQuery = getArguments().getString(ARG_SEARCH_TERM, null);

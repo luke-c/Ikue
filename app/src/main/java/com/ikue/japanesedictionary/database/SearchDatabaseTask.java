@@ -2,7 +2,7 @@ package com.ikue.japanesedictionary.database;
 
 import android.os.AsyncTask;
 
-import com.ikue.japanesedictionary.interfaces.OnTaskCompleted;
+import com.ikue.japanesedictionary.interfaces.SearchAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 
 import java.util.List;
@@ -14,12 +14,13 @@ import java.util.List;
 // TODO: Switch to AsyncTaskLoader so the task can survive configuration changes
 // The types specified here are the input data type, the progress type, and the result type
 public class SearchDatabaseTask extends AsyncTask<Void, Void, List<DictionarySearchResultItem>> {
-    private OnTaskCompleted listener;
-    private DictionaryDatabase helper;
+    private SearchAsyncCallbacks listener;
+    private DictionaryDbHelper helper;
     private String searchQuery;
     private int searchType;
 
-    public SearchDatabaseTask(OnTaskCompleted listener, DictionaryDatabase helper, String searchQuery, int searchType) {
+    public SearchDatabaseTask(SearchAsyncCallbacks listener, DictionaryDbHelper helper,
+                              String searchQuery, int searchType) {
         this.listener = listener;
         this.helper = helper;
         this.searchQuery = searchQuery;

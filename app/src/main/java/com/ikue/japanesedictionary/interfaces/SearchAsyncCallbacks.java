@@ -8,7 +8,7 @@ import java.util.List;
  * Created by luke_c on 15/02/2017.
  */
 
-public interface OnTaskCompleted {
+public interface SearchAsyncCallbacks {
     void toggleProgressBar(boolean toShow);
 
     void onResult(List<DictionarySearchResultItem> results);
