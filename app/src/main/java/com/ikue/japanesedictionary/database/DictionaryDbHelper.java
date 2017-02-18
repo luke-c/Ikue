@@ -34,6 +34,9 @@ import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.KANA_TYPE;
 import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.KANJI_TYPE;
 import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ROMAJI_TYPE;
 import static com.ikue.japanesedictionary.utils.DbUtils.formatString;
+import static com.ikue.japanesedictionary.utils.DbUtils.getSearchByEnglishQuery;
+import static com.ikue.japanesedictionary.utils.DbUtils.getSearchByKanaQuery;
+import static com.ikue.japanesedictionary.utils.DbUtils.getSearchByKanjiQuery;
 
 /**
  * Created by luke_c on 01/02/2017.
@@ -67,82 +70,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         setForcedUpgrade();
     }
 
-    private static String getSearchByKanaQuery(boolean hasWildcard) {
-        String searchType = hasWildcard ? "LIKE" : "=";
 
-        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
-                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
-                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
-                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
-
-        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
-
-        String join = "JOIN " + GlossTable.NAME + " AS gloss ON re."
-                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID
-                + " LEFT JOIN " + KanjiElementTable.NAME + " AS ke ON re."
-                + ReadingElementTable.Cols.ENTRY_ID + " = ke." + KanjiElementTable.Cols.ENTRY_ID
-                + " ";
-
-        String where = "WHERE re." + ReadingElementTable.Cols.ENTRY_ID + " IN ";
-
-        String whereSubQuery = "(SELECT " + ReadingElementTable.Cols.ENTRY_ID + " FROM "
-                + ReadingElementTable.NAME + " WHERE VALUE " + searchType + " ?) ";
-
-        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
-
-        return select + from + join + where + whereSubQuery + groupBy;
-    }
-
-    private static String getSearchByKanjiQuery(boolean hasWildcard) {
-        String searchType = hasWildcard ? "LIKE" : "=";
-
-        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
-                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
-                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
-                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
-
-        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
-
-        String join = "JOIN " + GlossTable.NAME + " AS gloss ON re."
-                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID
-                + " JOIN " + KanjiElementTable.NAME + " AS ke ON re."
-                + ReadingElementTable.Cols.ENTRY_ID + " = ke." + KanjiElementTable.Cols.ENTRY_ID
-                + " ";
-
-        String where = "WHERE ke." + KanjiElementTable.Cols.ENTRY_ID + " IN ";
-
-        String whereSubQuery = "(SELECT " + KanjiElementTable.Cols.ENTRY_ID + " FROM "
-                + KanjiElementTable.NAME + " WHERE VALUE " + searchType + " ?) ";
-
-        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
-
-        return select + from + join + where + whereSubQuery + groupBy;
-    }
-
-    private static String getSearchByEnglishQuery(boolean hasWildcard) {
-        String searchType = hasWildcard ? "LIKE" : "=";
-
-        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
-                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
-                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
-                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
-
-        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
-
-        String join = "LEFT JOIN " + KanjiElementTable.NAME + " AS ke ON re."
-                + ReadingElementTable.Cols.ENTRY_ID + " = ke."
-                + KanjiElementTable.Cols.ENTRY_ID + " JOIN " + GlossTable.NAME + " AS gloss ON re."
-                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID + " ";
-
-        String where = "WHERE gloss." + GlossTable.Cols.ENTRY_ID + " IN ";
-
-        String whereSubQuery = "(SELECT " + GlossTable.Cols.ENTRY_ID + " FROM "
-                + GlossTable.NAME + " WHERE VALUE " + searchType + " ?) ";
-
-        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
-
-        return select + from + join + where + whereSubQuery + groupBy;
-    }
 
     public List<DictionarySearchResultItem> searchDictionary(String searchTerm, int searchType) {
         String query;
@@ -225,6 +153,11 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             }
             db.close();
         }
+    }
+
+    public List<DictionarySearchResultItem> getAllFavourites() {
+        List<DictionarySearchResultItem> favourites = Collections.emptyList();
+        return favourites;
     }
 
     public DictionaryItem getEntry(int id) {
