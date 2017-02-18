@@ -60,6 +60,9 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
     private DictionaryDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+        // When the version number increases, always force a complete upgrade. This will lose all
+        // data so make sure to export user data beforehand and import after
         setForcedUpgrade();
     }
 
