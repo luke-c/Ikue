@@ -255,7 +255,7 @@ public class WanaKanaJava
                         chunkSize = 1;
                         // I removed the "n"->"ん" mapping because the IME wouldn't let me type "na" for "な" without returning "んあ",
                         // so the chunk needs to be manually set to a value that will map to "ん"
-                        chunk = "nn";
+                        chunk = "n";
                         chunkLC = chunk.toLowerCase();
                     }
                 }
@@ -703,6 +703,7 @@ public class WanaKanaJava
         mRtoJ.put("wo", "を");
         mRtoJ.put("lwe", "ゎ");
         mRtoJ.put("xwa", "ゎ");
+        mRtoJ.put("n", "ん");
         mRtoJ.put("nn", "ん");
         mRtoJ.put("'n '", "ん");
         mRtoJ.put("xn", "ん");
