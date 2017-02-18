@@ -38,7 +38,9 @@ import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ROMAJI_TYP
 public class SearchResultFragment extends Fragment implements OnTaskCompleted {
     private static final String ARG_SEARCH_TERM = "SEARCH_TERM";
 
+    // Singleton variable. DO NOT CHANGE
     private static DictionaryDatabase helper;
+
     private static AsyncTask task;
     private static List<DictionarySearchResultItem> searchResults;
     private OnTaskCompleted listener;
@@ -74,7 +76,7 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
 
         // Get the string the user searched for from the received Intent, and get the type
         searchQuery = getArguments().getString(ARG_SEARCH_TERM, null);
-        searchType = SearchUtils.getSearchType(searchQuery);
+        searchType = SearchUtils.getSearchType(SearchUtils.removeWildcards(searchQuery));
     }
 
     @Nullable
@@ -156,6 +158,7 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
 
     @Override
     public void toggleProgressBar(boolean toShow) {
+        // TODO: Fix ProgressBar not showing on executing new AsyncTask
         if (toShow) {
             progressBar.show();
         } else {
@@ -166,7 +169,6 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
     private void showSwitchSearchSnackbar() {
         // First make sure the view is not null
         if (getView() != null) {
-            // TODO: Fix ProgressBar not showing on executing new AsyncTask
             // Give the user the option to show Romaji results instead
             if (searchType == ENGLISH_TYPE) {
                 Snackbar.make(getView(), R.string.search_view_snackbar_english, Snackbar.LENGTH_INDEFINITE)
@@ -181,6 +183,7 @@ public class SearchResultFragment extends Fragment implements OnTaskCompleted {
                 // Give the user the option to show English results instead, due to our naive
                 // classification of Romaji
             } else if (searchType == ROMAJI_TYPE) {
+                // TODO: Show the actual term the user searched for (Hiragana or Katakana)
                 Snackbar.make(getView(), R.string.search_view_snackbar_romaji, Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.search_view_snackbar_romaji_action, new View.OnClickListener() {
                             @Override

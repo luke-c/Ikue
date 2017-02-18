@@ -11,6 +11,7 @@ import java.util.List;
  * Created by luke_c on 15/02/2017.
  */
 
+// TODO: Switch to AsyncTaskLoader so the task can survive configuration changes
 // The types specified here are the input data type, the progress type, and the result type
 public class SearchDatabaseTask extends AsyncTask<Void, Void, List<DictionarySearchResultItem>> {
     private OnTaskCompleted listener;

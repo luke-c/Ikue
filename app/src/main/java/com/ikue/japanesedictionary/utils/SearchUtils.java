@@ -15,11 +15,8 @@ public class SearchUtils {
     public static int getSearchType(String searchTerm) {
         boolean containsKana = false;
 
-        // We need to remove any wildcard/exact match characters before checking the search type
-        String plainSearchTerm = searchTerm.replaceAll("%+|_+", "");
-
         // Check every character of the string
-        for (char c : plainSearchTerm.toCharArray()) {
+        for (char c : searchTerm.toCharArray()) {
             // If the current character is a Kanji (or Chinese/Korean character)
             if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) {
                 // Once we find a single Kanji character, we know to search the Kanji Element
@@ -39,7 +36,7 @@ public class SearchUtils {
         } else {
             // False because we don't care about obsolete Kana
             WanaKanaJava wk = new WanaKanaJava(false);
-            String kanaForm = wk.toKana(plainSearchTerm);
+            String kanaForm = wk.toKana(searchTerm);
 
             for (char c : kanaForm.toCharArray()) {
                 // If a character couldn't be converted to Hiragana or Katakana, then we can assume
@@ -66,12 +63,21 @@ public class SearchUtils {
     }
 
     public static boolean containsWildcards(String string) {
-        Pattern pattern = Pattern.compile("%+|_+");
+        Pattern pattern = Pattern.compile("\\*+|\\?+");
         Matcher matcher = pattern.matcher(string);
         // Check if any wildcards are being used
         if (matcher.find()) {
             return true;
         }
         return false;
+    }
+
+    public static String removeWildcards(String string) {
+        return string.replaceAll("\\*+|\\?+", "");
+    }
+
+    public static String getTrueWildcardString(String string) {
+        String firstRound = string.replaceAll("\\*", "%");
+        return firstRound.replaceAll("\\?", "_");
     }
 }

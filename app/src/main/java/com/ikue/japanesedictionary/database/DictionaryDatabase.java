@@ -63,7 +63,9 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         //setForcedUpgrade();
     }
 
-    private static String getSearchByKanaQuery() {
+    private static String getSearchByKanaQuery(boolean hasWildcard) {
+        String searchType = hasWildcard ? "LIKE" : "=";
+
         String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
                 + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
                 + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
@@ -80,14 +82,16 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         String where = "WHERE re." + ReadingElementTable.Cols.ENTRY_ID + " IN ";
 
         String whereSubQuery = "(SELECT " + ReadingElementTable.Cols.ENTRY_ID + " FROM "
-                + ReadingElementTable.NAME + " WHERE VALUE LIKE ?) ";
+                + ReadingElementTable.NAME + " WHERE VALUE " + searchType + " ?) ";
 
         String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
 
         return select + from + join + where + whereSubQuery + groupBy;
     }
 
-    private static String getSearchByKanjiQuery() {
+    private static String getSearchByKanjiQuery(boolean hasWildcard) {
+        String searchType = hasWildcard ? "LIKE" : "=";
+
         String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
                 + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
                 + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
@@ -104,14 +108,16 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         String where = "WHERE ke." + KanjiElementTable.Cols.ENTRY_ID + " IN ";
 
         String whereSubQuery = "(SELECT " + KanjiElementTable.Cols.ENTRY_ID + " FROM "
-                + KanjiElementTable.NAME + " WHERE VALUE LIKE ?) ";
+                + KanjiElementTable.NAME + " WHERE VALUE " + searchType + " ?) ";
 
         String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
 
         return select + from + join + where + whereSubQuery + groupBy;
     }
 
-    private static String getSearchByEnglishQuery() {
+    private static String getSearchByEnglishQuery(boolean hasWildcard) {
+        String searchType = hasWildcard ? "LIKE" : "=";
+
         String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
                 + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
                 + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
@@ -127,7 +133,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         String where = "WHERE gloss." + GlossTable.Cols.ENTRY_ID + " IN ";
 
         String whereSubQuery = "(SELECT " + GlossTable.Cols.ENTRY_ID + " FROM "
-                + GlossTable.NAME + " WHERE VALUE LIKE ?) ";
+                + GlossTable.NAME + " WHERE VALUE " + searchType + " ?) ";
 
         String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
 
@@ -136,9 +142,13 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
     public List<DictionarySearchResultItem> searchDictionary(String searchTerm, int searchType) {
         String query;
+
+        // Check for any wildcards in the search, ? or * operators
+        boolean hasWildcard = SearchUtils.containsWildcards(searchTerm);
+
         switch (searchType) {
             case KANA_TYPE:
-                query = getSearchByKanaQuery();
+                query = getSearchByKanaQuery(hasWildcard);
                 break;
             case ROMAJI_TYPE:
                 // TODO: Case insensitive Kana search. Show Hiragana and Katakana results
@@ -146,26 +156,25 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
                 // If the search type is romaji, we need to convert the search string to kana form
                 // so we can search. If the search term is all uppercase then search in Katakana
-                if(SearchUtils.isStringAllUppercase(searchTerm)) {
+                if(SearchUtils.isStringAllUppercase(SearchUtils.removeWildcards(searchTerm))) {
                     searchTerm = wanaKanaJava.toKatakana(searchTerm);
                 } else {
                     searchTerm = wanaKanaJava.toHiragana(searchTerm);
                 }
-                query = getSearchByKanaQuery();
+                query = getSearchByKanaQuery(hasWildcard);
                 break;
             case KANJI_TYPE:
-                query = getSearchByKanjiQuery();
+                query = getSearchByKanjiQuery(hasWildcard);
                 break;
             case ENGLISH_TYPE:
-                query = getSearchByEnglishQuery();
+                query = getSearchByEnglishQuery(hasWildcard);
                 break;
             default:
                 return Collections.emptyList();
         }
 
-        // TODO: Support various getSearchResults methods: Non-wildcard, single-wildcard, exact-match
-        // Have to add wildcards here, or query will fail
-        String[] arguments = new String[]{"%" + searchTerm + "%"};
+        // Make sure to convert any ? and * to _ and % respectively before searching
+        String[] arguments = new String[]{SearchUtils.getTrueWildcardString(searchTerm)};
 
         // Create a new List of Search Results to store the results of our query
         List<DictionarySearchResultItem> searchResults = new ArrayList<>();
