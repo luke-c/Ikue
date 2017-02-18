@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.GlossTable;
@@ -27,12 +26,14 @@ import com.ikue.japanesedictionary.utils.WanaKanaJava;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 
-import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.*;
+import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ENGLISH_TYPE;
+import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.KANA_TYPE;
+import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.KANJI_TYPE;
+import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ROMAJI_TYPE;
+import static com.ikue.japanesedictionary.utils.DbUtils.formatString;
 
 /**
  * Created by luke_c on 01/02/2017.
@@ -462,18 +463,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             if (cursor != null) {
                 cursor.close();
             }
-        }
-    }
-
-    // Split the string on the separator character into a list, then
-    // convert to a LinkedHashSet to remove duplicate values.
-    @Nullable
-    private static List<String> formatString(String stringToFormat) {
-        if (stringToFormat != null && !stringToFormat.isEmpty()) {
-            return new ArrayList<>(new LinkedHashSet<>(Arrays.asList(stringToFormat.split("§"))));
-        } else {
-            // We never want a null value in our DictionaryItem, so just return an empty list
-            return Collections.emptyList();
         }
     }
 }
