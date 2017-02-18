@@ -102,4 +102,15 @@ public class DictionaryDbSchema {
             }
         }
     }
+
+    public static final class User {
+
+        public static final class FavouritesTable {
+            public static final String NAME = "User_Favourites";
+
+            public static final class Cols {
+                public static final String ENTRY_ID = "ENTRY_ID";
+            }
+        }
+    }
 }
