@@ -17,43 +17,213 @@ import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseEleme
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseFieldTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SensePosTable;
 import com.ikue.japanesedictionary.models.DictionaryItem;
+import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
 import com.ikue.japanesedictionary.models.SenseElement;
+import com.ikue.japanesedictionary.utils.SearchUtils;
+import com.ikue.japanesedictionary.utils.WanaKanaJava;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+
+import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.*;
 
 /**
  * Created by luke_c on 01/02/2017.
  */
 
 // TODO: Add catch blocks for queries
-public class DictionaryDatabase extends SQLiteAssetHelper {
+public class DictionaryDbHelper extends SQLiteAssetHelper {
 
-    private static DictionaryDatabase instance;
+    private static DictionaryDbHelper instance;
     private static SQLiteDatabase db;
 
     private static final String DATABASE_NAME = "dictionary.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private final String LOG_TAG = this.getClass().toString();
 
-    public static synchronized DictionaryDatabase getInstance(Context context) {
+    public static synchronized DictionaryDbHelper getInstance(Context context) {
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         if (instance == null) {
-            instance = new DictionaryDatabase(context.getApplicationContext());
+            instance = new DictionaryDbHelper(context.getApplicationContext());
         }
         return instance;
     }
 
-    public DictionaryDatabase(Context context) {
+    private DictionaryDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+        // When the version number increases, always force a complete upgrade. This will lose all
+        // data so make sure to export user data beforehand and import after
+        setForcedUpgrade();
+    }
+
+    private static String getSearchByKanaQuery(boolean hasWildcard) {
+        String searchType = hasWildcard ? "LIKE" : "=";
+
+        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
+                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
+                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
+                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
+
+        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
+
+        String join = "JOIN " + GlossTable.NAME + " AS gloss ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID
+                + " LEFT JOIN " + KanjiElementTable.NAME + " AS ke ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = ke." + KanjiElementTable.Cols.ENTRY_ID
+                + " ";
+
+        String where = "WHERE re." + ReadingElementTable.Cols.ENTRY_ID + " IN ";
+
+        String whereSubQuery = "(SELECT " + ReadingElementTable.Cols.ENTRY_ID + " FROM "
+                + ReadingElementTable.NAME + " WHERE VALUE " + searchType + " ?) ";
+
+        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
+
+        return select + from + join + where + whereSubQuery + groupBy;
+    }
+
+    private static String getSearchByKanjiQuery(boolean hasWildcard) {
+        String searchType = hasWildcard ? "LIKE" : "=";
+
+        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
+                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
+                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
+                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
+
+        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
+
+        String join = "JOIN " + GlossTable.NAME + " AS gloss ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID
+                + " JOIN " + KanjiElementTable.NAME + " AS ke ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = ke." + KanjiElementTable.Cols.ENTRY_ID
+                + " ";
+
+        String where = "WHERE ke." + KanjiElementTable.Cols.ENTRY_ID + " IN ";
+
+        String whereSubQuery = "(SELECT " + KanjiElementTable.Cols.ENTRY_ID + " FROM "
+                + KanjiElementTable.NAME + " WHERE VALUE " + searchType + " ?) ";
+
+        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
+
+        return select + from + join + where + whereSubQuery + groupBy;
+    }
+
+    private static String getSearchByEnglishQuery(boolean hasWildcard) {
+        String searchType = hasWildcard ? "LIKE" : "=";
+
+        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
+                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
+                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
+                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
+
+        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
+
+        String join = "LEFT JOIN " + KanjiElementTable.NAME + " AS ke ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = ke."
+                + KanjiElementTable.Cols.ENTRY_ID + " JOIN " + GlossTable.NAME + " AS gloss ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID + " ";
+
+        String where = "WHERE gloss." + GlossTable.Cols.ENTRY_ID + " IN ";
+
+        String whereSubQuery = "(SELECT " + GlossTable.Cols.ENTRY_ID + " FROM "
+                + GlossTable.NAME + " WHERE VALUE " + searchType + " ?) ";
+
+        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID;
+
+        return select + from + join + where + whereSubQuery + groupBy;
+    }
+
+    public List<DictionarySearchResultItem> searchDictionary(String searchTerm, int searchType) {
+        String query;
+
+        // Check for any wildcards in the search, ? or * operators
+        boolean hasWildcard = SearchUtils.containsWildcards(searchTerm);
+
+        switch (searchType) {
+            case KANA_TYPE:
+                query = getSearchByKanaQuery(hasWildcard);
+                break;
+            case ROMAJI_TYPE:
+                // TODO: Case insensitive Kana search. Show Hiragana and Katakana results
+                WanaKanaJava wanaKanaJava = new WanaKanaJava(false);
+
+                // If the search type is romaji, we need to convert the search string to kana form
+                // so we can search. If the search term is all uppercase then search in Katakana
+                if(SearchUtils.isStringAllUppercase(SearchUtils.removeWildcards(searchTerm))) {
+                    searchTerm = wanaKanaJava.toKatakana(searchTerm);
+                } else {
+                    searchTerm = wanaKanaJava.toHiragana(searchTerm);
+                }
+                query = getSearchByKanaQuery(hasWildcard);
+                break;
+            case KANJI_TYPE:
+                query = getSearchByKanjiQuery(hasWildcard);
+                break;
+            case ENGLISH_TYPE:
+                query = getSearchByEnglishQuery(hasWildcard);
+                break;
+            default:
+                return Collections.emptyList();
+        }
+
+        // Make sure to convert any ? and * to _ and % respectively before searching
+        String[] arguments = new String[]{SearchUtils.getTrueWildcardString(searchTerm)};
+
+        // Create a new List of Search Results to store the results of our query
+        List<DictionarySearchResultItem> searchResults = new ArrayList<>();
+
+        Cursor cursor = null;
+
+        try {
+            db = getReadableDatabase();
+            cursor = db.rawQuery(query, arguments);
+
+            while (cursor.moveToNext()) {
+                DictionarySearchResultItem result = new DictionarySearchResultItem();
+                int entryId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.ENTRY_ID));
+                String kanjiValue = cursor.getString(cursor.getColumnIndexOrThrow("kanji_value"));
+                String readingValue = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
+                String glossValue = cursor.getString(cursor.getColumnIndexOrThrow("gloss_value"));
+
+                result.setEntryId(entryId);
+
+                List<String> formattedKanjiElements = formatString(kanjiValue);
+                if (!formattedKanjiElements.isEmpty()) {
+                    // If the list is empty, trying to call .get will give a IndexOutOfBounds
+                    result.setKanjiElementValue(formatString(kanjiValue).get(0));
+                } else {
+                    result.setKanjiElementValue("");
+                }
+
+                List<String> formattedReadingElements = formatString(readingValue);
+                if (!formattedReadingElements.isEmpty()) {
+                    // If the list is empty, trying to call .get will give a IndexOutOfBounds
+                    result.setReadingElementValue(formatString(readingValue).get(0));
+                } else {
+                    result.setReadingElementValue("");
+                }
+
+                result.setGlossValue(formatString(glossValue));
+
+                searchResults.add(result);
+            }
+            return searchResults;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
     }
 
     public DictionaryItem getEntry(int id) {
@@ -72,11 +242,10 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
             return entry;
         }
         // TODO: Handle errors more gracefully
-        catch (SQLException error){
-            Log.e(LOG_TAG ,error.getMessage());
+        catch (SQLException error) {
+            Log.e(LOG_TAG, error.getMessage());
             return new DictionaryItem();
-        }
-        finally {
+        } finally {
             db.close();
         }
     }
@@ -100,17 +269,17 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
         try {
             // Execute the query
             cursor = db.query(
-              KanjiElementTable.NAME, // Table to query
-              projection, // The columns to return
-              selection, // The columns for the WHERE clause
-              selectionArgs, // The values for the WHERE clause
-              null, // Group by
-              null, // Filter by
-              null  // Sort order
+                    KanjiElementTable.NAME, // Table to query
+                    projection, // The columns to return
+                    selection, // The columns for the WHERE clause
+                    selectionArgs, // The values for the WHERE clause
+                    null, // Group by
+                    null, // Filter by
+                    null  // Sort order
             );
 
             // Iterate over the rows returned and assign to the POJO
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 KanjiElement kanjiElement = new KanjiElement();
                 int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols._ID));
                 String value = cursor.getString(cursor.getColumnIndexOrThrow(KanjiElementTable.Cols.VALUE));
@@ -151,12 +320,15 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY r." + ReadingElementTable.Cols._ID;
 
+        StringBuilder builder = new StringBuilder();
+        builder.append(select).append(from).append(join).append(where).append(groupBy);
+
         Cursor cursor = null;
 
         try {
-            cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
+            cursor = db.rawQuery(builder.toString(), arguments);
 
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 ReadingElement readingElement = new ReadingElement();
                 int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols._ID));
                 String value = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
@@ -206,12 +378,15 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY se." + SenseElementTable.Cols._ID;
 
+        StringBuilder builder = new StringBuilder();
+        builder.append(select).append(from).append(join).append(where).append(groupBy);
+
         Cursor cursor = null;
 
         try {
-            cursor = db.rawQuery(select + from + join + where + groupBy, arguments);
+            cursor = db.rawQuery(builder.toString(), arguments);
 
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 SenseElement senseElement = new SenseElement();
                 int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(SenseElementTable.Cols._ID));
                 String posValue = cursor.getString(cursor.getColumnIndexOrThrow("pos_value"));
@@ -266,7 +441,7 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
             );
 
             // Iterate over the rows returned and assign to the POJO
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 Priority priority = new Priority();
                 int elementId = cursor.getInt(cursor.getColumnIndexOrThrow(PriorityTable.Cols._ID));
                 String value = cursor.getString(cursor.getColumnIndexOrThrow(PriorityTable.Cols.VALUE));
@@ -294,11 +469,11 @@ public class DictionaryDatabase extends SQLiteAssetHelper {
     // convert to a LinkedHashSet to remove duplicate values.
     @Nullable
     private static List<String> formatString(String stringToFormat) {
-        if(stringToFormat != null && !stringToFormat.isEmpty()) {
+        if (stringToFormat != null && !stringToFormat.isEmpty()) {
             return new ArrayList<>(new LinkedHashSet<>(Arrays.asList(stringToFormat.split("§"))));
         } else {
             // We never want a null value in our DictionaryItem, so just return an empty list
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
     }
 }
