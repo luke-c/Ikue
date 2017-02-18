@@ -53,6 +53,7 @@ public class SearchUtils {
         }
     }
 
+    // Check if a given string is all uppercase
     public static boolean isStringAllUppercase(String string) {
         for (char c : string.toCharArray()) {
             if(!Character.isUpperCase(c)) {
@@ -62,6 +63,7 @@ public class SearchUtils {
         return true;
     }
 
+    // Check a given string for any pseudo wildcard characters
     public static boolean containsWildcards(String string) {
         Pattern pattern = Pattern.compile("\\*+|\\?+");
         Matcher matcher = pattern.matcher(string);
@@ -72,10 +74,13 @@ public class SearchUtils {
         return false;
     }
 
+    // Remove any pseudo wildcard characters from a given string
     public static String removeWildcards(String string) {
         return string.replaceAll("\\*+|\\?+", "");
     }
 
+    // Replace the pseudo wildcard characters we use with the real ones to query
+    // with SQLite
     public static String getTrueWildcardString(String string) {
         String firstRound = string.replaceAll("\\*", "%");
         return firstRound.replaceAll("\\?", "_");
