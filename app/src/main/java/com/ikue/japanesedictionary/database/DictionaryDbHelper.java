@@ -157,6 +157,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         }
     }
 
+    // TODO: Order by DATETIME
     public List<DictionarySearchResultItem> getAllFavourites() {
         List<DictionarySearchResultItem> favourites = new ArrayList<>();
 
@@ -176,7 +177,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         String where = "WHERE re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + " IN ";
 
         String whereSubQuery = "(SELECT " + FavouritesTable.Cols.ENTRY_ID + " FROM "
-                + FavouritesTable.NAME + " ";
+                + FavouritesTable.NAME + ") ";
 
         String groupBy = "GROUP BY re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID;
 
