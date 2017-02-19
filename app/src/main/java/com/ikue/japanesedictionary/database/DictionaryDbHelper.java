@@ -274,6 +274,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             db = getReadableDatabase();
 
             entry.setEntryId(id);
+            entry.setIsFavourite(isFavourite(id));
             entry.setKanjiElements(getKanjiElements(id));
             entry.setReadingElements(getReadingElements(id));
             entry.setSenseElements(getSenseElements(id));
@@ -287,6 +288,37 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             return new DictionaryItem();
         } finally {
             db.close();
+        }
+    }
+
+    // Get whether an entry has been favourited or not
+    private boolean isFavourite(int id) {
+        String[] arguments = new String[]{Integer.toString(id)};
+
+        String query = "SELECT EXISTS(SELECT " + FavouritesTable.Cols.ENTRY_ID + " FROM " +
+                FavouritesTable.NAME + " WHERE " + FavouritesTable.Cols.ENTRY_ID +
+                " = ?) AS isFavourite";
+
+        Cursor cursor = null;
+
+        // Default value is not favourited
+        int isFavourite = 0;
+
+        try {
+            // Execute the query
+            cursor = db.rawQuery(query, arguments);
+
+            // Iterate over the rows returned and assign to the POJO
+            while (cursor.moveToNext()) {
+                isFavourite = cursor.getInt(cursor.getColumnIndexOrThrow("isFavourite"));
+            }
+            // Returns true if the ID has been favourited
+            return isFavourite == 1;
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 
