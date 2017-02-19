@@ -228,14 +228,10 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     }
 
     public void addFavourite(int id) throws SQLException {
-        // Create and/or open the database for writing
         db = getWritableDatabase();
-
-        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
-        // consistency of the database.
         db.beginTransaction();
-        try {
 
+        try {
             ContentValues values = new ContentValues();
             values.put(FavouritesTable.Cols.ENTRY_ID, id);
 
@@ -243,7 +239,26 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             db.setTransactionSuccessful();
         } catch (SQLException e) {
             // Log the exception, then throw it further up the stack to catch in the UI
-            Log.d(LOG_TAG, "Error while trying to add favourite with ID: " + id + " to database");
+            Log.d(LOG_TAG, "Error while trying to add favourite with ID: " + id);
+            throw e;
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    public void removeFavourite (int id) throws SQLException {
+        db = getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            String whereClause = FavouritesTable.Cols.ENTRY_ID + " = ?";
+            String[] whereArgs = {Integer.toString(id)};
+            db.delete(FavouritesTable.NAME, whereClause, whereArgs);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            // Log the exception, then throw it further up the stack to catch in the UI
+            Log.e(LOG_TAG, "Error while trying to delete favourite with ID: " + id);
             throw e;
         } finally {
             db.endTransaction();
