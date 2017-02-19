@@ -157,6 +157,17 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     }
 
     private void updateViews() {
+        updateToolbar();
+        updateFavourite();
+
+        // Set the meanings section
+        recyclerView.setAdapter(new DetailViewAdapter(dictionaryItem.getSenseElements()));
+
+        updateOtherReadings();
+        updatePriorities();
+    }
+
+    private void updateToolbar() {
         // Set the toolbar title to the main kanji element value + reading if it exists,
         // if not then just use the first reading element value
         List<KanjiElement> kanjiElementList = dictionaryItem.getKanjiElements();
@@ -169,10 +180,21 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
         // TODO: Handle case where value is too big and parts are cutoff, see entry id: 1004000
         collapsingToolbar.setTitle(toolbarTitle);
+    }
 
-        // Set the meanings section
-        recyclerView.setAdapter(new DetailViewAdapter(dictionaryItem.getSenseElements()));
+    private void updateFavourite() {
+        boolean isFavourite = dictionaryItem.getIsFavourite();
 
+        // Default state is not favourited, if the entry has been favourited we need to update the
+        // FAB icon
+        if(isFavourite) {
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
+        }
+    }
+
+    private void updateOtherReadings() {
+        List<KanjiElement> kanjiElementList = dictionaryItem.getKanjiElements();
+        List<ReadingElement> readingElementList = dictionaryItem.getReadingElements();
         // TODO: Refactor into RecyclerView
         // Set the other readings section
         String readings = "";
@@ -203,7 +225,9 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
         // Set the resulting string
         otherReadingsTextView.setText(readings);
+    }
 
+    private void updatePriorities() {
         // TODO: Refactor into RecyclerView
         // Set the priorities section
         List<Priority> priorities = dictionaryItem.getPriorities();
