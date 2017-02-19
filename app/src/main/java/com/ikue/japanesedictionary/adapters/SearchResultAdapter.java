@@ -60,6 +60,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         this.context = context;
     }
 
+    public void swapItems(List<DictionarySearchResultItem> items) {
+        this.searchResultItems = items;
+        notifyDataSetChanged();
+    }
+
     // Easy access to the context object in the recyclerview
     private Context getContext() {
         return this.context;
