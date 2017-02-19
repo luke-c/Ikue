@@ -23,4 +23,8 @@
     <string name="search_view_snackbar_english_action">Show Romaji</string>
     <string name="search_view_snackbar_romaji">Searching in Romaji</string>
     <string name="search_view_snackbar_romaji_action">Show English</string>
+    <string name="error_add_favourite">Error adding entry to Favourites</string>
+    <string name="success_add_favourite">Added entry to Favourites</string>
+    <string name="error_remove_favourite">Error removing entry from Favourites</string>
+    <string name="success_remove_favourite">Removed entry from Favourites</string>
 </resources>

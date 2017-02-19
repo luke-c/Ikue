@@ -274,7 +274,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             db = getReadableDatabase();
 
             entry.setEntryId(id);
-            //entry.setIsFavourite(isFavourite(id));
+            entry.setIsFavourite(isFavourite(id));
             entry.setKanjiElements(getKanjiElements(id));
             entry.setReadingElements(getReadingElements(id));
             entry.setSenseElements(getSenseElements(id));
