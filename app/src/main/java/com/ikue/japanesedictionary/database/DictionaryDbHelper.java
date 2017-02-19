@@ -1,5 +1,6 @@
 package com.ikue.japanesedictionary.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -15,6 +16,7 @@ import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseDiale
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseElementTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseFieldTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SensePosTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.User.FavouritesTable;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
@@ -51,7 +53,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     private static final String DATABASE_NAME = "dictionary.db";
     private static final int DATABASE_VERSION = 2;
 
-    private final String LOG_TAG = this.getClass().toString();
+    private final String LOG_TAG = this.getClass().getName();
 
     public static synchronized DictionaryDbHelper getInstance(Context context) {
         // Use the application context, which will ensure that you
@@ -173,8 +175,8 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
         String where = "WHERE re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + " IN ";
 
-        String whereSubQuery = "(SELECT " + DictionaryDbSchema.User.FavouritesTable.Cols.ENTRY_ID + " FROM "
-                + DictionaryDbSchema.User.FavouritesTable.NAME + " ";
+        String whereSubQuery = "(SELECT " + FavouritesTable.Cols.ENTRY_ID + " FROM "
+                + FavouritesTable.NAME + " ";
 
         String groupBy = "GROUP BY re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID;
 
@@ -221,6 +223,30 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             if (cursor != null) {
                 cursor.close();
             }
+            db.close();
+        }
+    }
+
+    public void addFavourite(int id) throws SQLException {
+        // Create and/or open the database for writing
+        db = getWritableDatabase();
+
+        // It's a good idea to wrap our insert in a transaction. This helps with performance and ensures
+        // consistency of the database.
+        db.beginTransaction();
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put(FavouritesTable.Cols.ENTRY_ID, id);
+
+            db.insertOrThrow(FavouritesTable.NAME, null, values);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            // Log the exception, then throw it further up the stack to catch in the UI
+            Log.d(LOG_TAG, "Error while trying to add favourite with ID: " + id + " to database");
+            throw e;
+        } finally {
+            db.endTransaction();
             db.close();
         }
     }
