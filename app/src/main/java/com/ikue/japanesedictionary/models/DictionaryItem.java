@@ -11,6 +11,8 @@ public class DictionaryItem {
     // A unique number for each entry
     private int entryId;
 
+    private boolean isFavourite;
+
     // Can be 0 or many
     private List<KanjiElement> kanjiElements;
 
@@ -30,6 +32,10 @@ public class DictionaryItem {
     public void setEntryId(int entryId) {
         this.entryId = entryId;
     }
+
+    public boolean getIsFavourite() { return isFavourite; }
+
+    public void setIsFavourite(boolean isFavourite) { this.isFavourite = isFavourite; }
 
     public List<KanjiElement> getKanjiElements() {
         return kanjiElements;
