@@ -51,7 +51,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     private static SQLiteDatabase db;
 
     private static final String DATABASE_NAME = "dictionary.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private final String LOG_TAG = this.getClass().getName();
 
@@ -67,8 +67,8 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     private DictionaryDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-        // When the version number increases, always force a complete upgrade. This will lose all
-        // data so make sure to export user data beforehand and import after
+        // When the version number increases, always force a complete upgrade.
+        // TODO: This will lose all data so make sure to export user data beforehand and import after
         setForcedUpgrade();
     }
 
@@ -274,7 +274,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             db = getReadableDatabase();
 
             entry.setEntryId(id);
-            entry.setIsFavourite(isFavourite(id));
+            //entry.setIsFavourite(isFavourite(id));
             entry.setKanjiElements(getKanjiElements(id));
             entry.setReadingElements(getReadingElements(id));
             entry.setSenseElements(getSenseElements(id));
