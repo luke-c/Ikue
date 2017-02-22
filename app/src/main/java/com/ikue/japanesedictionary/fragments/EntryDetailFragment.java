@@ -17,12 +17,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
+import com.ikue.japanesedictionary.database.AddToHistoryTask;
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.GetEntryDetailTask;
 import com.ikue.japanesedictionary.database.ToggleFavouriteTask;
+import com.ikue.japanesedictionary.interfaces.AddToHistoryAsyncCallbacks;
 import com.ikue.japanesedictionary.interfaces.DetailAsyncCallbacks;
 import com.ikue.japanesedictionary.interfaces.ToggleFavouriteAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionaryItem;
@@ -36,7 +39,7 @@ import java.util.List;
  * Created by luke_c on 05/02/2017.
  */
 
-public class EntryDetailFragment extends Fragment implements DetailAsyncCallbacks, ToggleFavouriteAsyncCallbacks {
+public class EntryDetailFragment extends Fragment implements DetailAsyncCallbacks, ToggleFavouriteAsyncCallbacks, AddToHistoryAsyncCallbacks {
 
     private static final String ARG_ENTRY_ID = "ENTRY_ID";
 
@@ -47,9 +50,11 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private static DictionaryDbHelper helper;
     private static AsyncTask detailsTask;
     private static AsyncTask favouritesTask;
+    private static AsyncTask addToHistoryTask;
     private static DictionaryItem dictionaryItem;
     private static DetailAsyncCallbacks detailAsyncCallbacks;
     private static ToggleFavouriteAsyncCallbacks toggleFavouriteAsyncCallbacks;
+    private static AddToHistoryAsyncCallbacks addToHistoryAsyncCallbacks;
 
     private static int entryId;
 
@@ -77,12 +82,17 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         // Setup callbacks
         detailAsyncCallbacks = this;
         toggleFavouriteAsyncCallbacks = this;
+        addToHistoryAsyncCallbacks = this;
 
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
         helper = DictionaryDbHelper.getInstance(this.getActivity());
 
         entryId = getArguments().getInt(ARG_ENTRY_ID, 0);
+        
+        // Add the current entry to the user's history. Might need to move to onActivityCreated
+        // to ensure getActivity doesn't return null in our results callback
+        addToHistoryTask = new AddToHistoryTask(addToHistoryAsyncCallbacks, helper, entryId).execute();
     }
 
     @Nullable
@@ -302,5 +312,13 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         // Re-enable the button after our database operations have completed and we have reset
         // the FAB state
         floatingActionButton.setEnabled(true);
+    }
+
+    @Override
+    public void onAddToHistoryResult(boolean wasSuccessful) {
+        // If there was an error then display a message informing the user
+        if(!wasSuccessful) {
+            Toast.makeText(getActivity(), R.string.error_add_to_history, Toast.LENGTH_SHORT).show();
+        }
     }
 }
