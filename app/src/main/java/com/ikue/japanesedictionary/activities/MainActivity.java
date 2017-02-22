@@ -34,6 +34,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private ViewPager viewPager;
     private SearchView searchView;
     private MenuItem searchMenuItem;
     private FloatingActionButton fabButton;
@@ -48,27 +50,20 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Set Viewpager for tabs
-        ViewPager viewpager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager();
 
         // Set Tabs inside the Toolbar
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewpager);
+        tabs.setupWithViewPager(viewPager);
 
         // Add icons to each tab
         tabs.getTabAt(0).setIcon(R.drawable.ic_history_white);
         tabs.getTabAt(1).setIcon(R.drawable.ic_home_white);
         tabs.getTabAt(2).setIcon(R.drawable.ic_star_white);
 
-        // Set default tab to 'Home' tab
-        viewpager.setCurrentItem(1);
-
-        // Set the number of pages that should be retained to either side of the current page in
-        // the view hierarchy in an idle state.
-        viewpager.setOffscreenPageLimit(2);
-
         // Create Navigation drawer and inflate
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
         // Add menu icon to Toolbar
@@ -85,7 +80,19 @@ public class MainActivity extends AppCompatActivity {
                 // Set item as checked
                 item.setChecked(true);
 
-                // TODO: handle navigation
+                switch(item.getItemId()) {
+                    case R.id.nav_history_fragment:
+                        viewPager.setCurrentItem(0, true);
+                        break;
+                    case R.id.nav_home_fragment:
+                        viewPager.setCurrentItem(1, true);
+                        break;
+                    case R.id.nav_favourites_fragment:
+                        viewPager.setCurrentItem(2, true);
+                        break;
+                    default:
+                        break;
+                }
 
                 // Closing drawer on item click
                 drawerLayout.closeDrawers();
@@ -156,12 +163,27 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager() {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new HistoryFragment(), "History");
-        adapter.addFragment(new CardContentFragment(), "Home");
-        adapter.addFragment(new FavouritesFragment(), "Favourites");
+        adapter.addFragment(new HistoryFragment(), getString(R.string.history_fragment_title));
+        adapter.addFragment(new CardContentFragment(), getString(R.string.home_fragment_title));
+        adapter.addFragment(new FavouritesFragment(), getString(R.string.favourites_fragment_title));
         viewPager.setAdapter(adapter);
+
+        // Set default tab to 'Home' tab
+        viewPager.setCurrentItem(1);
+
+        // Set the number of pages that should be retained to either side of the current page in
+        // the view hierarchy in an idle state.
+        viewPager.setOffscreenPageLimit(2);
+
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                // When we change tab, set the current tab to be selected in the NavigationDrawer
+                navigationView.getMenu().getItem(position).setChecked(true);
+            }
+        });
     }
 
     static class Adapter extends FragmentPagerAdapter {

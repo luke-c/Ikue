@@ -28,4 +28,7 @@
     <string name="error_remove_favourite">Error removing entry from Favourites</string>
     <string name="success_remove_favourite">Removed entry from Favourites</string>
     <string name="error_add_to_history">Error adding entry to History</string>
+    <string name="history_fragment_title">History</string>
+    <string name="home_fragment_title">Home</string>
+    <string name="favourites_fragment_title">Favourites</string>
 </resources>
