@@ -25,6 +25,7 @@ import android.view.View;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.fragments.CardContentFragment;
+import com.ikue.japanesedictionary.fragments.FavouritesFragment;
 import com.ikue.japanesedictionary.fragments.ListContentFragment;
 
 import java.util.ArrayList;
@@ -61,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Set default tab to 'Home' tab
         viewpager.setCurrentItem(1);
+
+        // Set the number of pages that should be retained to either side of the current page in
+        // the view hierarchy in an idle state.
+        viewpager.setOffscreenPageLimit(2);
 
         // Create Navigation drawer and inflate
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -155,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new ListContentFragment(), "History");
         adapter.addFragment(new CardContentFragment(), "Home");
-        adapter.addFragment(new ListContentFragment(), "Saved");
+        adapter.addFragment(new FavouritesFragment(), "Favourites");
         viewPager.setAdapter(adapter);
     }
 

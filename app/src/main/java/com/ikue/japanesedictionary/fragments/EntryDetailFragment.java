@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +22,9 @@ import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.GetEntryDetailTask;
+import com.ikue.japanesedictionary.database.ToggleFavouriteTask;
 import com.ikue.japanesedictionary.interfaces.DetailAsyncCallbacks;
+import com.ikue.japanesedictionary.interfaces.ToggleFavouriteAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
@@ -33,7 +36,7 @@ import java.util.List;
  * Created by luke_c on 05/02/2017.
  */
 
-public class EntryDetailFragment extends Fragment implements DetailAsyncCallbacks {
+public class EntryDetailFragment extends Fragment implements DetailAsyncCallbacks, ToggleFavouriteAsyncCallbacks {
 
     private static final String ARG_ENTRY_ID = "ENTRY_ID";
 
@@ -42,16 +45,17 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private TextView prioritiesTextView;
 
     private static DictionaryDbHelper helper;
-    private static AsyncTask task;
+    private static AsyncTask detailsTask;
+    private static AsyncTask favouritesTask;
     private static DictionaryItem dictionaryItem;
-    private static DetailAsyncCallbacks listener;
+    private static DetailAsyncCallbacks detailAsyncCallbacks;
+    private static ToggleFavouriteAsyncCallbacks toggleFavouriteAsyncCallbacks;
 
     private static int entryId;
 
     private CollapsingToolbarLayout collapsingToolbar;
     private RecyclerView recyclerView;
     private FloatingActionButton floatingActionButton;
-    private boolean isEntrySaved;
 
     public static EntryDetailFragment newInstance(int entryId) {
         Bundle args = new Bundle();
@@ -67,9 +71,12 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         super.onCreate(savedInstanceState);
 
         // Retain the fragment so rotation does not repeatedly fire off new AsyncTasks
+        // TODO: Switch to Loaders and remove this
         setRetainInstance(true);
 
-        listener = this;
+        // Setup callbacks
+        detailAsyncCallbacks = this;
+        toggleFavouriteAsyncCallbacks = this;
 
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
@@ -98,10 +105,10 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
 
         floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
+        floatingActionButton.setEnabled(false);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Add item to favourites
                 toggleFab();
             }
         });
@@ -121,8 +128,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
-        task = new GetEntryDetailTask(listener, helper, entryId).execute();
-
+        detailsTask = new GetEntryDetailTask(detailAsyncCallbacks, helper, entryId).execute();
     }
 
     @Override
@@ -141,22 +147,43 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         return super.onOptionsItemSelected(item);
     }
 
-    private void toggleFab() {
-        if (isEntrySaved) {
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_border_white));
-        } else {
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
+    @Override
+    public void onDestroy() {
+        // Cancel the AsyncTask if it is running when Activity is about to close
+        // cancel(false) is safer and doesn't force an instant cancellation
+        if (detailsTask != null) {
+            detailsTask.cancel(false);
         }
-        isEntrySaved = !isEntrySaved;
+        if (favouritesTask != null) {
+            favouritesTask.cancel(false);
+        }
+
+        // Close the SQLiteHelper instance
+        helper.close();
+        super.onDestroy();
     }
 
-    @Override
-    public void onResult(DictionaryItem result) {
-        dictionaryItem = result;
-        updateViews();
+    private void toggleFab() {
+        floatingActionButton.setEnabled(false);
+        if (dictionaryItem.getIsFavourite()) {
+            favouritesTask = new ToggleFavouriteTask(toggleFavouriteAsyncCallbacks, helper, entryId, false).execute();
+        } else {
+            favouritesTask = new ToggleFavouriteTask(toggleFavouriteAsyncCallbacks, helper, entryId, true).execute();
+        }
     }
 
     private void updateViews() {
+        setToolbar();
+        setFavourite();
+
+        // Set the meanings section
+        recyclerView.setAdapter(new DetailViewAdapter(dictionaryItem.getSenseElements()));
+
+        setOtherReadings();
+        setPriorities();
+    }
+
+    private void setToolbar() {
         // Set the toolbar title to the main kanji element value + reading if it exists,
         // if not then just use the first reading element value
         List<KanjiElement> kanjiElementList = dictionaryItem.getKanjiElements();
@@ -167,12 +194,24 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
                     + " [" + readingElementList.get(0).getValue() + "]";
         } else toolbarTitle = readingElementList.get(0).getValue();
 
-        // TODO: Handle case where value is too big and parts are cutoff, see entry id: 1004000
+        // TODO: Handle case where value is too big and parts are cutoff, e.g. see entry id: 1004000
         collapsingToolbar.setTitle(toolbarTitle);
+    }
 
-        // Set the meanings section
-        recyclerView.setAdapter(new DetailViewAdapter(dictionaryItem.getSenseElements()));
+    private void setFavourite() {
+        // Default state is not favourited, if the entry has been favourited we need to update the
+        // FAB icon
+        if(dictionaryItem.getIsFavourite()) {
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
+        }
 
+        // Once we have set the initial state of the FAB, let the user click it
+        floatingActionButton.setEnabled(true);
+    }
+
+    private void setOtherReadings() {
+        List<KanjiElement> kanjiElementList = dictionaryItem.getKanjiElements();
+        List<ReadingElement> readingElementList = dictionaryItem.getReadingElements();
         // TODO: Refactor into RecyclerView
         // Set the other readings section
         String readings = "";
@@ -203,7 +242,9 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
         // Set the resulting string
         otherReadingsTextView.setText(readings);
+    }
 
+    private void setPriorities() {
         // TODO: Refactor into RecyclerView
         // Set the priorities section
         List<Priority> priorities = dictionaryItem.getPriorities();
@@ -228,15 +269,38 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     }
 
     @Override
-    public void onDestroy() {
-        // Cancel the AsyncTask if it is running when Activity is about to close
-        // cancel(false) is safer and doesn't force an instant cancellation
-        if (task != null) {
-            task.cancel(false);
-        }
+    public void onResult(DictionaryItem result) {
+        dictionaryItem = result;
+        updateViews();
+    }
 
-        // Close the SQLiteHelper instance
-        helper.close();
-        super.onDestroy();
+    @Override
+    public void onToggleFavouriteResult(boolean toBeAdded, boolean wasSuccessful) {
+        if(toBeAdded) {
+            if(wasSuccessful) {
+                floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
+                dictionaryItem.setIsFavourite(true);
+
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.success_add_favourite, Snackbar.LENGTH_LONG).show();
+                }
+            } else if (getView() != null) {
+                Snackbar.make(getView(), R.string.error_add_favourite, Snackbar.LENGTH_LONG).show();
+            }
+        } else {
+            if(wasSuccessful) {
+                floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_border_white));
+                dictionaryItem.setIsFavourite(false);
+
+                if (getView() != null) {
+                    Snackbar.make(getView(), R.string.success_remove_favourite, Snackbar.LENGTH_LONG).show();
+                }
+            } else if (getView() != null) {
+                Snackbar.make(getView(), R.string.error_remove_favourite, Snackbar.LENGTH_LONG).show();
+            }
+        }
+        // Re-enable the button after our database operations have completed and we have reset
+        // the FAB state
+        floatingActionButton.setEnabled(true);
     }
 }

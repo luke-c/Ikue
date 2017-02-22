@@ -26,6 +26,7 @@ import com.ikue.japanesedictionary.interfaces.SearchAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 import com.ikue.japanesedictionary.utils.SearchUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ENGLISH_TYPE;
@@ -42,7 +43,7 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
     private static DictionaryDbHelper helper;
 
     private static AsyncTask task;
-    private static List<DictionarySearchResultItem> searchResults;
+    private SearchResultAdapter adapter;
     private SearchAsyncCallbacks listener;
 
     private static int searchType;
@@ -73,6 +74,8 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
 
         // Get a database on startup.
         helper = DictionaryDbHelper.getInstance(this.getActivity());
+
+        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<DictionarySearchResultItem>());
 
         // Get the string the user searched for from the received Intent, and get the type
         searchQuery = getArguments().getString(ARG_SEARCH_TERM, null);
@@ -108,6 +111,7 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setAdapter(adapter);
 
         // We need to run the AsyncTask here instead of onCreate so we know that ProgressBar has been
         // instantiated. If we run it on onCreate the AsyncTask will try to show a ProgressBar on a
@@ -145,14 +149,9 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
         super.onDestroy();
     }
 
-    private void updateViews() {
-        recyclerView.setAdapter(new SearchResultAdapter(this.getContext(), searchResults));
-    }
-
     @Override
     public void onResult(List<DictionarySearchResultItem> results) {
-        searchResults = results;
-        updateViews();
+        adapter.swapItems(results);
         showSwitchSearchSnackbar();
     }
 
