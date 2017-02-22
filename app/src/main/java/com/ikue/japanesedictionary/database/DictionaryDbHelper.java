@@ -51,7 +51,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     private static SQLiteDatabase db;
 
     private static final String DATABASE_NAME = "dictionary.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private final String LOG_TAG = this.getClass().getName();
 
@@ -161,28 +161,32 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     public List<DictionarySearchResultItem> getAllFavourites() {
         List<DictionarySearchResultItem> favourites = new ArrayList<>();
 
-        String select = "SELECT re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
-                + DictionaryDbSchema.Jmdict.KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
-                + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
-                + DictionaryDbSchema.Jmdict.GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
+        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
+                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
+                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
+                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
 
-        String from = "FROM " + DictionaryDbSchema.Jmdict.ReadingElementTable.NAME + " AS re ";
+        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
 
-        String join = "JOIN " + DictionaryDbSchema.Jmdict.GlossTable.NAME + " AS gloss ON re."
-                + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + " = gloss." + DictionaryDbSchema.Jmdict.GlossTable.Cols.ENTRY_ID
-                + " LEFT JOIN " + DictionaryDbSchema.Jmdict.KanjiElementTable.NAME + " AS ke ON re."
-                + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + " = ke." + DictionaryDbSchema.Jmdict.KanjiElementTable.Cols.ENTRY_ID
-                + " ";
+        String join = "JOIN " + GlossTable.NAME + " AS gloss ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID
+                + " LEFT JOIN " + KanjiElementTable.NAME + " AS ke ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = ke." + KanjiElementTable.Cols.ENTRY_ID
+                + " JOIN " + FavouritesTable.NAME + " AS fav ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = fav." + FavouritesTable.Cols.ENTRY_ID + " ";
 
-        String where = "WHERE re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID + " IN ";
+        String where = "WHERE re." + ReadingElementTable.Cols.ENTRY_ID + " IN ";
 
         String whereSubQuery = "(SELECT " + FavouritesTable.Cols.ENTRY_ID + " FROM "
                 + FavouritesTable.NAME + ") ";
 
-        String groupBy = "GROUP BY re." + DictionaryDbSchema.Jmdict.ReadingElementTable.Cols.ENTRY_ID;
+        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID + " ";
+
+        String orderBy = "ORDER BY DATETIME(" + FavouritesTable.Cols.SQLTIME + ") DESC";
 
         StringBuilder builder = new StringBuilder();
-        builder.append(select).append(from).append(join).append(where).append(whereSubQuery).append(groupBy);
+        builder.append(select).append(from).append(join).append(where).append(whereSubQuery)
+                .append(groupBy).append(orderBy);
 
         Cursor cursor = null;
 
