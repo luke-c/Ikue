@@ -157,7 +157,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         }
     }
 
-    // TODO: Order by DATETIME
     public List<DictionarySearchResultItem> getAllFavourites() {
         List<DictionarySearchResultItem> favourites = new ArrayList<>();
 
