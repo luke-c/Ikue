@@ -27,4 +27,5 @@
     <string name="success_add_favourite">Added entry to Favourites</string>
     <string name="error_remove_favourite">Error removing entry from Favourites</string>
     <string name="success_remove_favourite">Removed entry from Favourites</string>
+    <string name="error_add_to_history">Error adding entry to History</string>
 </resources>

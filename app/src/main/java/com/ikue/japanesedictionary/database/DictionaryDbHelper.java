@@ -17,6 +17,7 @@ import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseEleme
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseFieldTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SensePosTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.User.FavouritesTable;
+import com.ikue.japanesedictionary.database.DictionaryDbSchema.User.HistoryTable;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
@@ -72,8 +73,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         setForcedUpgrade();
     }
 
-
-
+    // Search the dictionary for a given term
     public List<DictionarySearchResultItem> searchDictionary(String searchTerm, int searchType) {
         String query;
 
@@ -157,6 +157,125 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         }
     }
 
+    // Get a list of all the entries viewed by the user
+    public List<DictionarySearchResultItem> getHistory() {
+        List<DictionarySearchResultItem> history = new ArrayList<>();
+
+        String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
+                + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
+                + ReadingElementTable.Cols.VALUE + ", '§') AS read_value, group_concat(gloss."
+                + GlossTable.Cols.VALUE + ", '§') AS gloss_value ";
+
+        String from = "FROM " + ReadingElementTable.NAME + " AS re ";
+
+        String join = "JOIN " + GlossTable.NAME + " AS gloss ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = gloss." + GlossTable.Cols.ENTRY_ID
+                + " LEFT JOIN " + KanjiElementTable.NAME + " AS ke ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = ke." + KanjiElementTable.Cols.ENTRY_ID
+                + " JOIN " + HistoryTable.NAME + " AS hist ON re."
+                + ReadingElementTable.Cols.ENTRY_ID + " = hist." + HistoryTable.Cols.ENTRY_ID + " ";
+
+        String where = "WHERE re." + ReadingElementTable.Cols.ENTRY_ID + " IN ";
+
+        String whereSubQuery = "(SELECT " + HistoryTable.Cols.ENTRY_ID + " FROM "
+                + HistoryTable.NAME + ") ";
+
+        String groupBy = "GROUP BY re." + ReadingElementTable.Cols.ENTRY_ID + " ";
+
+        String orderBy = "ORDER BY DATETIME(" + HistoryTable.Cols.SQLTIME + ") DESC";
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(select).append(from).append(join).append(where).append(whereSubQuery)
+                .append(groupBy).append(orderBy);
+
+        Cursor cursor = null;
+
+        try {
+            db = getReadableDatabase();
+            cursor = db.rawQuery(builder.toString(), new String[]{});
+
+            while (cursor.moveToNext()) {
+                DictionarySearchResultItem result = new DictionarySearchResultItem();
+                int entryId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.ENTRY_ID));
+                String kanjiValue = cursor.getString(cursor.getColumnIndexOrThrow("kanji_value"));
+                String readingValue = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
+                String glossValue = cursor.getString(cursor.getColumnIndexOrThrow("gloss_value"));
+
+                result.setEntryId(entryId);
+
+                List<String> formattedKanjiElements = formatString(kanjiValue);
+                if (!formattedKanjiElements.isEmpty()) {
+                    // If the list is empty, trying to call .get will give a IndexOutOfBounds
+                    result.setKanjiElementValue(formatString(kanjiValue).get(0));
+                } else {
+                    result.setKanjiElementValue("");
+                }
+
+                List<String> formattedReadingElements = formatString(readingValue);
+                if (!formattedReadingElements.isEmpty()) {
+                    // If the list is empty, trying to call .get will give a IndexOutOfBounds
+                    result.setReadingElementValue(formatString(readingValue).get(0));
+                } else {
+                    result.setReadingElementValue("");
+                }
+
+                result.setGlossValue(formatString(glossValue));
+
+                history.add(result);
+            }
+            return history;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+    }
+
+    // Add an entry to the user's history
+    public void addToHistory(int id) throws SQLException {
+        db = getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(HistoryTable.Cols.ENTRY_ID, id);
+
+            // If the entry already exists in our history table, then we want to replace it
+            // with the current timestamp so it appears as the latest entry viewed.
+            db.insertWithOnConflict(HistoryTable.NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            // Log the exception, then throw it further up the stack to catch in the UI
+            Log.d(LOG_TAG, "Error while trying to add to history with ID: " + id);
+            throw e;
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    // Remove an entry from the user's history
+    public void removeFromHistory(int id) throws SQLException {
+        db = getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            String whereClause = HistoryTable.Cols.ENTRY_ID + " = ?";
+            String[] whereArgs = {Integer.toString(id)};
+            db.delete(HistoryTable.NAME, whereClause, whereArgs);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            // Log the exception, then throw it further up the stack to catch in the UI
+            Log.e(LOG_TAG, "Error while trying to delete from history with ID: " + id);
+            throw e;
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    // Get a list of all the favourites the user has
     public List<DictionarySearchResultItem> getAllFavourites() {
         List<DictionarySearchResultItem> favourites = new ArrayList<>();
 
@@ -231,6 +350,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         }
     }
 
+    // Add an entry to the user's favourites
     public void addFavourite(int id) throws SQLException {
         db = getWritableDatabase();
         db.beginTransaction();
@@ -251,7 +371,8 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         }
     }
 
-    public void removeFavourite (int id) throws SQLException {
+    // Remove an entry from the user's favourites
+    public void removeFavourite(int id) throws SQLException {
         db = getWritableDatabase();
         db.beginTransaction();
 
