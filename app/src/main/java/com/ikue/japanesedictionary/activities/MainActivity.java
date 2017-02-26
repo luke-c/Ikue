@@ -3,6 +3,7 @@ package com.ikue.japanesedictionary.activities;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -89,6 +90,12 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_favourites_fragment:
                         viewPager.setCurrentItem(2, true);
+                        break;
+                    case R.id.nav_settings_activity:
+                        //startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                        break;
+                    case R.id.nav_about_activity:
+                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
                         break;
                     default:
                         break;

@@ -16,5 +16,15 @@
             android:icon="@drawable/ic_star_white"
             android:tint="@color/button_grey"
             android:title="@string/favourites_fragment_title" />
+        <item
+            android:id="@+id/nav_settings_activity"
+            android:icon="@drawable/ic_settings_white"
+            android:tint="@color/button_grey"
+            android:title="@string/settings_activity_title" />
+        <item
+            android:id="@+id/nav_about_activity"
+            android:icon="@drawable/ic_info_outline_white"
+            android:tint="@color/button_grey"
+            android:title="@string/about_activity_title" />
     </group>
 </menu>

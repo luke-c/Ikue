@@ -31,4 +31,7 @@
     <string name="history_fragment_title">History</string>
     <string name="home_fragment_title">Home</string>
     <string name="favourites_fragment_title">Favourites</string>
+    <string name="settings_activity_title">Settings</string>
+    <string name="about_activity_title">About</string>
+    <string name="about_activity_description">Ikue is an open source Japanese dictionary application.</string>
 </resources>
