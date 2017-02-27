@@ -167,6 +167,9 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         if (favouritesTask != null) {
             favouritesTask.cancel(false);
         }
+        if (addToHistoryTask != null) {
+            addToHistoryTask.cancel(false);
+        }
 
         // Close the SQLiteHelper instance
         helper.close();
