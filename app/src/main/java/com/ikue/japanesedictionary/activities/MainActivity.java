@@ -4,7 +4,9 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -41,10 +43,18 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem searchMenuItem;
     private FloatingActionButton fabButton;
 
+    private SharedPreferences sharedPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // When false, the system sets the default values only if this method has never been called in the past
+        PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
+
+        // Get the shared preferences
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Add Toolbar to Main Screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -92,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         viewPager.setCurrentItem(2, true);
                         break;
                     case R.id.nav_settings_activity:
-                        //startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         break;
                     case R.id.nav_about_activity:
                         startActivity(new Intent(MainActivity.this, AboutActivity.class));
@@ -158,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            return true;
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
         } else if (id == android.R.id.home) {
             drawerLayout.openDrawer(GravityCompat.START);
         }
@@ -177,8 +187,8 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new FavouritesFragment(), getString(R.string.favourites_fragment_title));
         viewPager.setAdapter(adapter);
 
-        // Set default tab to 'Home' tab
-        viewPager.setCurrentItem(1);
+        // Set default tab to the user's preference. Default is the 'Home' tab.
+        viewPager.setCurrentItem(Integer.parseInt(sharedPref.getString("pref_startupPage", "1")));
 
         // Set the number of pages that should be retained to either side of the current page in
         // the view hierarchy in an idle state.
