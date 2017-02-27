@@ -36,4 +36,8 @@
     <string name="about_activity_description">Ikue is an open source Japanese dictionary application.</string>
     <string name="pref_startupPage">Startup Page</string>
     <string name="pref_startupPage_default">1</string>
+    <string name="pref_caseSensitiveRomajiSearch">Case Sensitive Romaji Search</string>
+    <string name="pref_caseSensitiveRomajiSearch_summ">Convert all uppercase characters to Katakana</string>
+    <string name="pref_search_settings_title">Search</string>
+
 </resources>

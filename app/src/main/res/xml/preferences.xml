@@ -8,4 +8,14 @@
         android:entries="@array/pref_startupPage_entries"
         android:entryValues="@array/pref_startupPage_values"
         android:defaultValue="@string/pref_startupPage_default" />
+
+    <PreferenceCategory
+        android:title="@string/pref_search_settings_title"
+        android:key="pref_search_settings">
+        <CheckBoxPreference
+            android:key="pref_caseSensitiveRomajiSearch"
+            android:title="@string/pref_caseSensitiveRomajiSearch"
+            android:summary="@string/pref_caseSensitiveRomajiSearch_summ"
+            android:defaultValue="true" />
+    </PreferenceCategory>
 </PreferenceScreen>
