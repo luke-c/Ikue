@@ -10,4 +10,21 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string-array name="pref_limitResults_entries">
+        <item>10</item>
+        <item>25</item>
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+        <item>No limit</item>
+    </string-array>
+    <string-array name="pref_limitResults_values">
+        <item>10</item>
+        <item>25</item>
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+        <item>0</item>
+    </string-array>
 </resources>

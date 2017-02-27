@@ -34,10 +34,18 @@
     <string name="settings_activity_title">Settings</string>
     <string name="about_activity_title">About</string>
     <string name="about_activity_description">Ikue is an open source Japanese dictionary application.</string>
-    <string name="pref_startupPage">Startup Page</string>
+
+    <string name="pref_startupPage">Startup page</string>
     <string name="pref_startupPage_default">1</string>
-    <string name="pref_caseSensitiveRomajiSearch">Case Sensitive Romaji Search</string>
-    <string name="pref_caseSensitiveRomajiSearch_summ">Convert all uppercase characters to Katakana</string>
+    <string name="pref_caseSensitiveRomajiSearch">Case sensitive Romaji search</string>
+    <string name="pref_caseSensitiveRomajiSearch_summ">Convert all upper-case characters to Katakana</string>
     <string name="pref_search_settings_title">Search</string>
+    <string name="pref_limitSearchResults">Limit number of results</string>
+    <string name="pref_limitResults_default">0</string>
+    <string name="pref_general_settings_title">General</string>
+    <string name="pref_history_settings_title">History</string>
+    <string name="pref_favourites_settings_title">Favourites</string>
+    <string name="pref_limitHistoryResults">Amount to show</string>
+    <string name="pref_limitFavouritesResults">Amount to show</string>
 
 </resources>

@@ -118,6 +118,13 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 return Collections.emptyList();
         }
 
+        // Get the user's chosen max results. Default '0' means don't limit.
+        int maxResults = Integer.parseInt(sharedPref.getString("pref_limitSearchResults", "0"));
+        if(maxResults != 0) {
+            // If there is a max result value we add LIMIT to our SQL query
+            query += " LIMIT " + maxResults;
+        }
+
         // Make sure to convert any ? and * to _ and % respectively before searching
         String[] arguments = new String[]{SearchUtils.getTrueWildcardString(searchTerm)};
 
@@ -198,6 +205,14 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         StringBuilder builder = new StringBuilder();
         builder.append(select).append(from).append(join).append(where).append(whereSubQuery)
                 .append(groupBy).append(orderBy);
+
+        // Get the user's chosen max results. Default '0' means don't limit.
+        int maxResults = Integer.parseInt(sharedPref.getString("pref_limitHistoryResults", "0"));
+        if(maxResults != 0) {
+            // If there is a max result value we add LIMIT to our SQL query
+            String limitBy = " LIMIT " + maxResults;
+            builder.append(limitBy);
+        }
 
         Cursor cursor = null;
 
@@ -316,6 +331,14 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         StringBuilder builder = new StringBuilder();
         builder.append(select).append(from).append(join).append(where).append(whereSubQuery)
                 .append(groupBy).append(orderBy);
+
+        // Get the user's chosen max results. Default '0' means don't limit.
+        int maxResults = Integer.parseInt(sharedPref.getString("pref_limitFavouriteResults", "0"));
+        if(maxResults != 0) {
+            // If there is a max result value we add LIMIT to our SQL query
+            String limitBy = " LIMIT " + maxResults;
+            builder.append(limitBy);
+        }
 
         Cursor cursor = null;
 
