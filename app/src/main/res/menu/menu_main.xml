@@ -6,11 +6,13 @@
     <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
+        android:icon="@drawable/ic_settings_white"
         android:orderInCategory="100"
-        app:showAsAction="never" />
-    <item android:id="@+id/action_search"
-          android:title="@string/action_search"
-          app:showAsAction="collapseActionView|never"
-          app:actionViewClass="android.support.v7.widget.SearchView"
-          android:visible="true"/>
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_search"
+        android:title="@string/action_search"
+        app:showAsAction="collapseActionView|never"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:visible="false"/>
 </menu>

@@ -2,16 +2,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:icon="@drawable/ic_star_white"
+            android:id="@+id/nav_history_fragment"
+            android:icon="@drawable/ic_history_white"
             android:tint="@color/button_grey"
-            android:title="One" />
+            android:title="@string/history_fragment_title" />
         <item
-            android:icon="@drawable/ic_star_white"
+            android:id="@+id/nav_home_fragment"
+            android:icon="@drawable/ic_home_white"
             android:tint="@color/button_grey"
-            android:title="Two" />
+            android:title="@string/home_fragment_title" />
         <item
+            android:id="@+id/nav_favourites_fragment"
             android:icon="@drawable/ic_star_white"
             android:tint="@color/button_grey"
-            android:title="Three" />
+            android:title="@string/favourites_fragment_title" />
+        <item
+            android:id="@+id/nav_about_activity"
+            android:icon="@drawable/ic_info_outline_white"
+            android:tint="@color/button_grey"
+            android:title="@string/about_activity_title" />
+        <item
+            android:id="@+id/nav_settings_activity"
+            android:icon="@drawable/ic_settings_white"
+            android:tint="@color/button_grey"
+            android:title="@string/settings_activity_title" />
     </group>
 </menu>

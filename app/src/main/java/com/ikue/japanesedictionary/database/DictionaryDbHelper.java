@@ -2,9 +2,11 @@ package com.ikue.japanesedictionary.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.GlossTable;
@@ -50,6 +52,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
     private static DictionaryDbHelper instance;
     private static SQLiteDatabase db;
+    private static SharedPreferences sharedPref;
 
     private static final String DATABASE_NAME = "dictionary.db";
     private static final int DATABASE_VERSION = 4;
@@ -61,6 +64,10 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         // don't accidentally leak an Activity's context.
         if (instance == null) {
             instance = new DictionaryDbHelper(context.getApplicationContext());
+        }
+
+        if (sharedPref == null) {
+            sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         }
         return instance;
     }
@@ -93,7 +100,11 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 if(SearchUtils.isStringAllUppercase(SearchUtils.removeWildcards(searchTerm))) {
                     searchTerm = wanaKanaJava.toKatakana(searchTerm);
                 } else {
-                    searchTerm = wanaKanaJava.toHiragana(searchTerm);
+                    if(!sharedPref.getBoolean("pref_caseSensitiveRomajiSearch", true)) {
+                        searchTerm = wanaKanaJava.toHiragana(searchTerm);
+                    } else {
+                        searchTerm = wanaKanaJava.toKana(searchTerm);
+                    }
                 }
                 query = getSearchByKanaQuery(hasWildcard);
                 break;
@@ -105,6 +116,13 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 break;
             default:
                 return Collections.emptyList();
+        }
+
+        // Get the user's chosen max results. Default '0' means don't limit.
+        int maxResults = Integer.parseInt(sharedPref.getString("pref_limitSearchResults", "0"));
+        if(maxResults != 0) {
+            // If there is a max result value we add LIMIT to our SQL query
+            query += " LIMIT " + maxResults;
         }
 
         // Make sure to convert any ? and * to _ and % respectively before searching
@@ -187,6 +205,14 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         StringBuilder builder = new StringBuilder();
         builder.append(select).append(from).append(join).append(where).append(whereSubQuery)
                 .append(groupBy).append(orderBy);
+
+        // Get the user's chosen max results. Default '0' means don't limit.
+        int maxResults = Integer.parseInt(sharedPref.getString("pref_limitHistoryResults", "0"));
+        if(maxResults != 0) {
+            // If there is a max result value we add LIMIT to our SQL query
+            String limitBy = " LIMIT " + maxResults;
+            builder.append(limitBy);
+        }
 
         Cursor cursor = null;
 
@@ -305,6 +331,14 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         StringBuilder builder = new StringBuilder();
         builder.append(select).append(from).append(join).append(where).append(whereSubQuery)
                 .append(groupBy).append(orderBy);
+
+        // Get the user's chosen max results. Default '0' means don't limit.
+        int maxResults = Integer.parseInt(sharedPref.getString("pref_limitFavouriteResults", "0"));
+        if(maxResults != 0) {
+            // If there is a max result value we add LIMIT to our SQL query
+            String limitBy = " LIMIT " + maxResults;
+            builder.append(limitBy);
+        }
 
         Cursor cursor = null;
 
