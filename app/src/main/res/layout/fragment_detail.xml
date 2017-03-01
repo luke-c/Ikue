@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?attr/textAppearanceListItem"
-                android:textSize="@dimen/body_text_dense"
+                android:textSize="@dimen/article_subheading_dense"
                 tools:text="@string/detail_desc" />
 
             <View style="@style/Divider"/>
@@ -94,13 +94,14 @@
                 android:layout_marginBottom="@dimen/md_keylines"
                 android:layout_marginTop="@dimen/md_keylines"/>
 
-            <TextView
-                android:id="@+id/priorities_element"
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/flexbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textSize="@dimen/body_text"
-                tools:text="@string/detail_desc" />
+                app:flexWrap="wrap"
+                app:alignItems="flex_start"
+                app:alignContent="space_around"
+                app:showDivider="middle"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

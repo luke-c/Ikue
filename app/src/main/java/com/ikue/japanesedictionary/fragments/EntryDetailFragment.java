@@ -1,5 +1,7 @@
 package com.ikue.japanesedictionary.fragments;
 
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
 import com.ikue.japanesedictionary.database.AddToHistoryTask;
@@ -32,8 +36,16 @@ import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
+import com.ikue.japanesedictionary.utils.EntryUtils;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import fisk.chipcloud.ChipCloud;
+import fisk.chipcloud.ChipCloudConfig;
+import fisk.chipcloud.ChipListener;
 
 /**
  * Created by luke_c on 05/02/2017.
@@ -45,7 +57,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
     private TextView otherReadingsTextView;
     private TextView prioritiesHeaderTextView;
-    private TextView prioritiesTextView;
+    private FlexboxLayout flexBoxView;
 
     private static DictionaryDbHelper helper;
     private static AsyncTask detailsTask;
@@ -89,7 +101,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         helper = DictionaryDbHelper.getInstance(this.getActivity());
 
         entryId = getArguments().getInt(ARG_ENTRY_ID, 0);
-        
+
         // Add the current entry to the user's history. Might need to move to onActivityCreated
         // to ensure getActivity doesn't return null in our results callback
         addToHistoryTask = new AddToHistoryTask(addToHistoryAsyncCallbacks, helper, entryId).execute();
@@ -125,7 +137,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
         otherReadingsTextView = (TextView) view.findViewById(R.id.other_forms_element);
         prioritiesHeaderTextView = (TextView) view.findViewById(R.id.priorities_header);
-        prioritiesTextView = (TextView) view.findViewById(R.id.priorities_element);
+        flexBoxView = (FlexboxLayout) view.findViewById(R.id.flexbox);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.meanings_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -214,7 +226,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private void setFavourite() {
         // Default state is not favourited, if the entry has been favourited we need to update the
         // FAB icon
-        if(dictionaryItem.getIsFavourite()) {
+        if (dictionaryItem.getIsFavourite()) {
             floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
         }
 
@@ -232,52 +244,105 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
             if (!readingElement.getReadingRelation().isEmpty()) {
                 // The reading only applies to certain Kanji Elements
                 for (String readingRelation : readingElement.getReadingRelation()) {
-                    readings += readingRelation + " [" + readingElement.getValue() + "], ";
+                    readings += readingRelation + " [" + readingElement.getValue() + "]\n";
                 }
 
             } else {
                 // There are no Kanji Elements, so just display every Reading Element value
                 if (kanjiElementList == null || kanjiElementList.isEmpty()) {
-                    readings += readingElement.getValue() + ", ";
+                    readings += readingElement.getValue() + "\n";
                 } else {
                     // The reading is for every Kanji Element
                     for (KanjiElement kanjiElement : kanjiElementList) {
-                        readings += kanjiElement.getValue() + " [" + readingElement.getValue() + "], ";
+                        readings += kanjiElement.getValue() + " [" + readingElement.getValue() + "]\n";
                     }
                 }
             }
         }
 
-        // Remove trailing comma and space
-        if (readings.endsWith(", ")) {
-            readings = readings.substring(0, readings.length() - 2);
+        // Remove trailing new line
+        if (readings.endsWith("\n")) {
+            readings = readings.substring(0, readings.length() - 1);
         }
 
         // Set the resulting string
         otherReadingsTextView.setText(readings);
     }
 
+    // Set the priorities section
+    // TODO: Refactor into RecyclerView
+    // TODO: Separate out into Kanji and Reading priorities
     private void setPriorities() {
-        // TODO: Refactor into RecyclerView
-        // Set the priorities section
         List<Priority> priorities = dictionaryItem.getPriorities();
-        String kanjiPriorities = "";
-        String readingPriorities = "";
+
+        // Convert to a linked hash set to remove duplicates
+        Set<String> unifiedPriorities = new LinkedHashSet<>();
+        for (Priority priority : priorities) {
+            unifiedPriorities.add(priority.getValue());
+        }
 
         // If there are no priorities, remove the Priorities TextViews from view
-        if (priorities.isEmpty()) {
+        if (unifiedPriorities.isEmpty()) {
             prioritiesHeaderTextView.setVisibility(View.GONE);
-            prioritiesTextView.setVisibility(View.GONE);
+            flexBoxView.setVisibility(View.GONE);
         } else {
-            for (Priority priority : priorities) {
-                if (priority.isKanjiReadingPriority()) {
-                    kanjiPriorities += " " + priority.getValue();
-                } else if (!priority.isKanjiReadingPriority()) {
-                    readingPriorities += " " + priority.getValue();
-                }
+            // Specify the config for our chips
+            ChipCloudConfig config = new ChipCloudConfig()
+                    .selectMode(ChipCloud.SelectMode.single)
+                    .checkedChipColor(Color.parseColor("#3F51B5"))
+                    .checkedTextColor(Color.parseColor("#ffffff"))
+                    .uncheckedChipColor(Color.parseColor("#efefef"))
+                    .uncheckedTextColor(Color.parseColor("#666666"))
+                    .useInsetPadding(true);
+
+            //Create a new ChipCloud with a Context and ViewGroup:
+            final ChipCloud chipCloud = new ChipCloud(getActivity(), flexBoxView, config);
+
+            // Get whether the entry is common or not
+            if (EntryUtils.isCommonEntry(unifiedPriorities)) {
+                // If our entry is common, add a 'common' chip
+                chipCloud.addChip("common");
             }
-            String allPriorities = kanjiPriorities + "\n" + readingPriorities;
-            prioritiesTextView.setText(allPriorities);
+
+            // Add every priority as a chip
+            for (String value : unifiedPriorities) {
+                chipCloud.addChip(value);
+            }
+
+            // Get the map of detailed priority information we use for our dialogs.
+            final Map<String, String> detailedPriorityInformation = EntryUtils.getDetailedPriorityInformation();
+
+            chipCloud.setListener(new ChipListener() {
+                @Override
+                public void chipCheckedChange(final int index, boolean checked, boolean userClicked) {
+                    // If the user clicks on a chip
+                    if (checked && userClicked) {
+                        // Get the text of the chip
+                        String label = chipCloud.getLabel(index);
+                        String message;
+
+                        // Get the detailed message from the label
+                        if (label.startsWith("nf")) {
+                            message = detailedPriorityInformation.get("nf");
+                        } else {
+                            message = detailedPriorityInformation.get(label);
+                        }
+
+                        // Create an AlertDialog showing the detailed information
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(label)
+                                .setMessage(message)
+                                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialogInterface) {
+                                        // When the user dismisses the dialog, deselect the chip
+                                        chipCloud.deselectIndex(index);
+                                    }
+                                })
+                                .show();
+                    }
+                }
+            });
         }
     }
 
@@ -289,8 +354,8 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
     @Override
     public void onToggleFavouriteResult(boolean toBeAdded, boolean wasSuccessful) {
-        if(toBeAdded) {
-            if(wasSuccessful) {
+        if (toBeAdded) {
+            if (wasSuccessful) {
                 floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
                 dictionaryItem.setIsFavourite(true);
 
@@ -301,7 +366,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
                 Snackbar.make(getView(), R.string.error_add_favourite, Snackbar.LENGTH_LONG).show();
             }
         } else {
-            if(wasSuccessful) {
+            if (wasSuccessful) {
                 floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_border_white));
                 dictionaryItem.setIsFavourite(false);
 
@@ -320,7 +385,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     @Override
     public void onAddToHistoryResult(boolean wasSuccessful) {
         // If there was an error then display a message informing the user
-        if(!wasSuccessful) {
+        if (!wasSuccessful) {
             Toast.makeText(getActivity(), R.string.error_add_to_history, Toast.LENGTH_SHORT).show();
         }
     }

@@ -17,7 +17,7 @@
     <string name="detail_location">"8 Rue Scribe, 75009 Paris, France"</string>
     <string name="detail_view_meanings_header">Meanings</string>
     <string name="detail_view_other_forms_header">Other forms</string>
-    <string name="detail_view_priorities_header">Priorities</string>
+    <string name="detail_view_priorities_header">Frequency information</string>
     <string name="detail_view_meaning_number">%1$d.</string>
     <string name="search_hint">English, Japanese or Romaji</string>
     <string name="search_view_snackbar_english">Searching in English</string>
