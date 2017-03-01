@@ -12,18 +12,35 @@
         android:layout_height="wrap_content"
         tools:text="Noun, Adjective, Na-Adjective"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/article_subheading"
+        android:textSize="@dimen/body_text"
         android:textColor="@color/medium_grey"
         android:textStyle="bold"
-        android:paddingTop="16dp"/>
+        android:paddingTop="8dp"/>
 
-    <TextView
-        android:id="@+id/glosses"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Meaning1; Meaning2; Meaning3; Meaning4"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/article_subheading" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/meaningNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="1."
+            android:text="@string/detail_view_meaning_number"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="@dimen/article_subheading"
+            android:textColor="@color/medium_grey"
+            android:paddingEnd="2dp"/>
+
+        <TextView
+            android:id="@+id/glosses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Meaning1; Meaning2; Meaning3; Meaning4"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="@dimen/article_subheading"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/fieldOfApplication"
