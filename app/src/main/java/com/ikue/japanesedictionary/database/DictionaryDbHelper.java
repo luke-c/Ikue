@@ -84,12 +84,24 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     public List<DictionarySearchResultItem> searchDictionary(String searchTerm, int searchType) {
         String query;
 
-        // Check for any wildcards in the search, ? or * operators
-        boolean hasWildcard = SearchUtils.containsWildcards(searchTerm);
+        // Stores whether we will do a wildcard search or not
+        boolean isWildcardSearch;
+
+        // Get the user's chosen default search type
+        int defaultSearchType = Integer.parseInt(sharedPref.getString("pref_defaultSearchType", "0"));
+
+        // If the default search is for an exact match:
+        if(defaultSearchType == 0) {
+            // Check for any wildcards in the search, ? or * operators
+            isWildcardSearch = SearchUtils.containsWildcards(searchTerm);
+        } else {
+            // All other searches will be using a wildcard
+            isWildcardSearch = true;
+        }
 
         switch (searchType) {
             case KANA_TYPE:
-                query = getSearchByKanaQuery(hasWildcard);
+                query = getSearchByKanaQuery(isWildcardSearch);
                 break;
             case ROMAJI_TYPE:
                 // TODO: Case insensitive Kana search. Show Hiragana and Katakana results
@@ -106,13 +118,13 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                         searchTerm = wanaKanaJava.toKana(searchTerm);
                     }
                 }
-                query = getSearchByKanaQuery(hasWildcard);
+                query = getSearchByKanaQuery(isWildcardSearch);
                 break;
             case KANJI_TYPE:
-                query = getSearchByKanjiQuery(hasWildcard);
+                query = getSearchByKanjiQuery(isWildcardSearch);
                 break;
             case ENGLISH_TYPE:
-                query = getSearchByEnglishQuery(hasWildcard);
+                query = getSearchByEnglishQuery(isWildcardSearch);
                 break;
             default:
                 return Collections.emptyList();
@@ -125,8 +137,44 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             query += " LIMIT " + maxResults;
         }
 
+        String argument;
+        boolean hasWildcards = SearchUtils.containsWildcards(searchTerm);
+
+        // If the user has not typed any wildcards manually, assume they want to use their default
+        // chosen search preference
+        if(!hasWildcards) {
+            switch(defaultSearchType) {
+                // Exact match
+                case 0:
+                    argument = searchTerm;
+                    break;
+                // *token
+                case 1:
+                    // Prefix the string with % wildcard
+                    argument = "%" + SearchUtils.getTrueWildcardString(searchTerm);
+                    break;
+                // token*
+                case 2:
+                    // Add the % wildcard to the end of the string
+                    argument = SearchUtils.getTrueWildcardString(searchTerm) + "%";
+                    break;
+                // *token*
+                case 3:
+                    argument = "%" + SearchUtils.getTrueWildcardString(searchTerm) + "%";
+                    break;
+                // Assume exact match for default
+                default:
+                    argument = searchTerm;
+                    break;
+            }
+        } else {
+            // If there is already wildcards in the query, ignore the user's default search type
+            // and just use the entered wildcards
+            argument = SearchUtils.getTrueWildcardString(searchTerm);
+        }
+
         // Make sure to convert any ? and * to _ and % respectively before searching
-        String[] arguments = new String[]{SearchUtils.getTrueWildcardString(searchTerm)};
+        String[] arguments = new String[]{argument};
 
         // Create a new List of Search Results to store the results of our query
         List<DictionarySearchResultItem> searchResults = new ArrayList<>();
