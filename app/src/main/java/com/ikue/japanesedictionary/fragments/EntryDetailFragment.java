@@ -342,7 +342,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
                                 .show();
                     }
                 }
-            });
+            }, true);
         }
     }
 
