@@ -32,7 +32,6 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return items.size();
     }
 
-    // If the Sense Element has a part of speech, we want a header as well
     @Override
     public int getItemViewType(int position) {
         if (items.get(position).getPartOfSpeech() == null) {
@@ -87,6 +86,10 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else {
             holder.getPartOfSpeech().setVisibility(View.GONE);
         }
+
+        String formattedPosition = holder.getMeaningNumber().getResources()
+                .getString(R.string.detail_view_meaning_number, position + 1);
+        holder.getMeaningNumber().setText(formattedPosition);
 
         // Get all the glosses for a Sense element, and join them into a single string
         List<String> glosses = senseElement.getGlosses();

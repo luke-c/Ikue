@@ -35,6 +35,8 @@ public class AboutActivity extends AppCompatActivity {
                 .addGroup("Open source libraries")
                 .addItem(getLibraryElement("SQLiteAssetHelper", "https://github.com/jgilfelt/android-sqlite-asset-helper"))
                 .addItem(getLibraryElement("Android About Page", "https://github.com/medyo/android-about-page"))
+                .addItem(getLibraryElement("ChipCloud", "https://github.com/fiskurgit/ChipCloud"))
+                .addItem(getLibraryElement("FlexBoxLayout", "https://github.com/google/flexbox-layout"))
                 .create();
 
         setContentView(aboutPage);
