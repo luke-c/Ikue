@@ -33,7 +33,7 @@ public class EntryUtils {
         detailedPriorities.put("gai1", "A common loanword. Based on the \"wordfreq\" file compiled by Alexandre Girardi from the Mainichi Shimbun.");
         detailedPriorities.put("gai2", "A common loanword. Based on the \"wordfreq\" file compiled by Alexandre Girardi from the Mainichi Shimbun.");
         detailedPriorities.put("nf", "An indicator of frequency-of-use ranking, with the number being the set of 500 words where the entry can be found.");
-        detailedPriorities.put("common", "Entries with news1, ichi1, spec1/2 and gai1 values are marked as common.");
+        detailedPriorities.put("common", "Entries with news1, ichi1, spec1/2, or gai1 values are marked as common.");
         return detailedPriorities;
     }
 }
