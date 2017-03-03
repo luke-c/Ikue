@@ -27,9 +27,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.ikue.japanesedictionary.R;
-import com.ikue.japanesedictionary.fragments.CardContentFragment;
 import com.ikue.japanesedictionary.fragments.FavouritesFragment;
 import com.ikue.japanesedictionary.fragments.HistoryFragment;
+import com.ikue.japanesedictionary.fragments.HomeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager() {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new HistoryFragment(), getString(R.string.history_fragment_title));
-        adapter.addFragment(new CardContentFragment(), getString(R.string.home_fragment_title));
+        adapter.addFragment(new HomeFragment(), getString(R.string.home_fragment_title));
         adapter.addFragment(new FavouritesFragment(), getString(R.string.favourites_fragment_title));
         viewPager.setAdapter(adapter);
 

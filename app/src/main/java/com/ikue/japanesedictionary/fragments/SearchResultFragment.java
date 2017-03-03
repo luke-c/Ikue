@@ -132,6 +132,11 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
 
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == android.R.id.home) {
+            // We want to go back to the previous Activity
+            // or the home screen
+            getActivity().onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

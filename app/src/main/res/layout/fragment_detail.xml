@@ -1,6 +1,5 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                  xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:tools="http://schemas.android.com/tools"
                                                  android:id="@+id/detail_content"
                                                  android:layout_width="match_parent"
                                                  android:layout_height="match_parent"
@@ -77,8 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?attr/textAppearanceListItem"
-                android:textSize="@dimen/article_subheading_dense"
-                tools:text="@string/detail_desc" />
+                android:textSize="@dimen/article_subheading_dense"/>
 
             <View style="@style/Divider"/>
 
