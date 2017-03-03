@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView android:id="@+id/word_of_the_day_cardview"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:layout_marginTop="@dimen/md_keylines"
+                                        android:layout_marginBottom="@dimen/md_keylines"
+                                        android:layout_marginLeft="@dimen/md_keylines"
+                                        android:layout_marginRight="@dimen/md_keylines"
+                                        android:foreground="?attr/selectableItemBackground">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/word_of_the_day_main_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/word_of_the_day_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/md_keylines"
+                    android:text="@string/word_of_the_day_header"
+                    android:textColor="@color/medium_grey"/>
+
+                <TextView
+                    android:id="@+id/word_of_the_day_primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/md_keylines"
+                    android:layout_marginRight="@dimen/md_keylines"
+                    tools:text="羽翼"
+                    android:textColor="@color/default_text"
+                    android:textSize="24sp"/>
+
+                <TextView
+                    android:id="@+id/word_of_the_day_secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/md_keylines"
+                    android:layout_marginRight="@dimen/md_keylines"
+                    tools:text="うよく"
+                    android:textColor="@color/medium_grey"
+                    android:textSize="@dimen/body_text_dense"/>
+
+                <TextView
+                    android:id="@+id/word_of_the_day_meanings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/md_keylines"
+                    android:layout_marginRight="@dimen/md_keylines"
+                    android:layout_marginTop="@dimen/md_keylines"
+                    tools:text="@string/item_desc"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="@color/default_text"
+                    android:textSize="@dimen/body_text"/>
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/word_of_the_day_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/word_of_the_day_main_content"
+                style="?android:attr/borderlessButtonStyle"
+                android:textColor="?attr/colorPrimary"
+                android:text="@string/word_of_the_day_detail_button" />
+
+            <ImageButton
+                android:id="@+id/word_of_the_day_share_button"
+                android:layout_width="@dimen/cards_button_width"
+                android:layout_height="@dimen/cards_button_height"
+                android:layout_marginRight="@dimen/md_keylines"
+                app:srcCompat="@drawable/ic_share_black_24dp"
+                android:layout_below="@+id/word_of_the_day_main_content"
+                android:layout_alignParentRight="true"
+                style="?android:attr/borderlessButtonStyle"
+                android:tint="@color/button_grey" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
