@@ -43,5 +43,8 @@
     <string name="send_to">Share with:</string>
     <string name="word_of_the_day_header">Word of the Day</string>
     <string name="word_of_the_day_detail_button">Learn More</string>
+    <string name="feedback_card_button">Contact us</string>
+    <string name="feddback_card_content">Do you have a suggestion for a feature? Found a bug? Feel like something could be done better or improved? Let us know!</string>
+    <string name="feedback_card_title">Send Feedback</string>
 
 </resources>

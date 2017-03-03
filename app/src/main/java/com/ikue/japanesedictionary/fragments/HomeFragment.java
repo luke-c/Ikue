@@ -1,6 +1,7 @@
 package com.ikue.japanesedictionary.fragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -41,6 +42,8 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
     private Button wordOfTheDayMoreButton;
     private ImageButton wordOfTheDayShareButton;
 
+    private Button feedbackButton;
+
     private DictionaryItem wordOfTheDay;
 
     @Override
@@ -70,6 +73,23 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
         wordOfTheDayMeaning = (TextView) view.findViewById(R.id.word_of_the_day_meanings);
         wordOfTheDayMoreButton = (Button) view.findViewById(R.id.word_of_the_day_button);
         wordOfTheDayShareButton = (ImageButton) view.findViewById(R.id.word_of_the_day_share_button);
+
+        feedbackButton = (Button) view.findViewById(R.id.feedback_card_button);
+        feedbackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String uriText = "mailto:lukecasey94+ikue@gmail.com" + "?subject="
+                        + Uri.encode("Ikue Japanese Dictionary - Feedback");
+
+                Uri uri = Uri.parse(uriText);
+
+                Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+                sendIntent.setData(uri);
+                if (sendIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(Intent.createChooser(sendIntent, "Send email"));
+                }
+            }
+        });
 
         task = new GetRandomEntryTask(listener, helper).execute();
     }
@@ -124,7 +144,7 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
             }
         });
 
-        // On click, share the entry to the user's choosen app
+        // On click, share the entry to the user's chosen app
         wordOfTheDayShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
