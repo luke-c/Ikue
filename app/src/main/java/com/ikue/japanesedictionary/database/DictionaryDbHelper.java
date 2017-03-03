@@ -498,6 +498,68 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         }
     }
 
+    // Get a random Entry from the database
+    public DictionaryItem getRandomEntry() {
+        DictionaryItem entry = new DictionaryItem();
+
+        try {
+            db = getReadableDatabase();
+
+            // Get a random entry Id
+            int id = getRandomEntryId();
+
+            entry.setEntryId(id);
+            entry.setIsFavourite(isFavourite(id));
+            entry.setKanjiElements(getKanjiElements(id));
+            entry.setReadingElements(getReadingElements(id));
+            entry.setSenseElements(getSenseElements(id));
+            entry.setPriorities(getPriorities(id));
+
+            return entry;
+        }
+        // TODO: Handle errors more gracefully
+        catch (SQLException error) {
+            Log.e(LOG_TAG, error.getMessage());
+            return new DictionaryItem();
+        } finally {
+            db.close();
+        }
+    }
+
+    // TODO: Refactor to improve query time
+    public int getRandomEntryId() {
+        // The columns from the database I will use after the query
+        String[] projection = {ReadingElementTable.Cols.ENTRY_ID};
+
+        int entryId = 0;
+        Cursor cursor = null;
+
+        try {
+            // Execute the query
+            cursor = db.query(
+                    ReadingElementTable.NAME, // Table to query
+                    projection, // The columns to return
+                    null, // The columns for the WHERE clause
+                    null, // The values for the WHERE clause
+                    null, // Group by
+                    null, // Having
+                    "RANDOM()", // Order by
+                    "1"  // limit
+            );
+
+            // Iterate over the rows returned and assign to the POJO
+            while (cursor.moveToNext()) {
+                entryId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.ENTRY_ID));
+            }
+            return entryId;
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
     // Get whether an entry has been favourited or not
     private boolean isFavourite(int id) {
         String[] arguments = new String[]{Integer.toString(id)};
