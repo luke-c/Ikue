@@ -22,6 +22,8 @@ import com.ikue.japanesedictionary.interfaces.DetailAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.ReadingElement;
+import com.ikue.japanesedictionary.models.Tip;
+import com.ikue.japanesedictionary.utils.TipsUtils;
 
 import java.util.List;
 
@@ -43,6 +45,9 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
     private ImageButton wordOfTheDayShareButton;
 
     private Button feedbackButton;
+
+    private TextView tipsTitleText;
+    private TextView tipsBodyText;
 
     private DictionaryItem wordOfTheDay;
 
@@ -90,6 +95,11 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
                 }
             }
         });
+
+
+        tipsTitleText = (TextView) view.findViewById(R.id.tips_card_title);
+        tipsBodyText = (TextView) view.findViewById(R.id.tips_card_content);
+        setupTipsCard();
 
         task = new GetRandomEntryTask(listener, helper).execute();
     }
@@ -186,5 +196,12 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
         }
 
         return builder.toString();
+    }
+
+    private void setupTipsCard() {
+        Tip randomTip = TipsUtils.getRandomTip();
+
+        tipsTitleText.setText(randomTip.getTitle());
+        tipsBodyText.setText(randomTip.getBody());
     }
 }
