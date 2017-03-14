@@ -60,9 +60,12 @@
                 android:clipToPadding="false"
                 android:paddingTop="0dp"/>
 
-            <View style="@style/Divider"/>
+            <View
+                android:id="@+id/other_forms_divider"
+                style="@style/Divider"/>
 
             <TextView
+                android:id="@+id/other_forms_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="?attr/colorAccent"

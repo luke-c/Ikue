@@ -55,9 +55,11 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
     private static final String ARG_ENTRY_ID = "ENTRY_ID";
 
-    private TextView otherReadingsTextView;
-    private TextView prioritiesHeaderTextView;
-    private FlexboxLayout flexBoxView;
+    private TextView otherFormsContentTextView;
+    private TextView otherFormsHeaderTextView;
+    private View otherFormsDivider;
+    private TextView freqInfoHeaderTextView;
+    private FlexboxLayout freqInfoFlexBox;
 
     private static DictionaryDbHelper helper;
     private static AsyncTask detailsTask;
@@ -69,6 +71,8 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private static AddToHistoryAsyncCallbacks addToHistoryAsyncCallbacks;
 
     private static int entryId;
+
+    private String toolbarTitle;
 
     private CollapsingToolbarLayout collapsingToolbar;
     private RecyclerView recyclerView;
@@ -135,9 +139,12 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
             }
         });
 
-        otherReadingsTextView = (TextView) view.findViewById(R.id.other_forms_element);
-        prioritiesHeaderTextView = (TextView) view.findViewById(R.id.priorities_header);
-        flexBoxView = (FlexboxLayout) view.findViewById(R.id.flexbox);
+        otherFormsContentTextView = (TextView) view.findViewById(R.id.other_forms_element);
+        otherFormsHeaderTextView = (TextView) view.findViewById(R.id.other_forms_header);
+        otherFormsDivider = view.findViewById(R.id.other_forms_divider);
+
+        freqInfoHeaderTextView = (TextView) view.findViewById(R.id.priorities_header);
+        freqInfoFlexBox = (FlexboxLayout) view.findViewById(R.id.flexbox);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.meanings_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -213,7 +220,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         // if not then just use the first reading element value
         List<KanjiElement> kanjiElementList = dictionaryItem.getKanjiElements();
         List<ReadingElement> readingElementList = dictionaryItem.getReadingElements();
-        String toolbarTitle;
+
         if (kanjiElementList != null && !kanjiElementList.isEmpty()) {
             toolbarTitle = kanjiElementList.get(0).getValue()
                     + " [" + readingElementList.get(0).getValue() + "]";
@@ -239,34 +246,44 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         List<ReadingElement> readingElementList = dictionaryItem.getReadingElements();
         // TODO: Refactor into RecyclerView
         // Set the other readings section
-        String readings = "";
+        String otherForms = "";
         for (ReadingElement readingElement : readingElementList) {
             if (!readingElement.getReadingRelation().isEmpty()) {
                 // The reading only applies to certain Kanji Elements
                 for (String readingRelation : readingElement.getReadingRelation()) {
-                    readings += readingRelation + " [" + readingElement.getValue() + "]\n";
+                    otherForms += readingRelation + " [" + readingElement.getValue() + "]\n";
                 }
 
             } else {
                 // There are no Kanji Elements, so just display every Reading Element value
                 if (kanjiElementList == null || kanjiElementList.isEmpty()) {
-                    readings += readingElement.getValue() + "\n";
+                    otherForms += readingElement.getValue() + "\n";
                 } else {
                     // The reading is for every Kanji Element
                     for (KanjiElement kanjiElement : kanjiElementList) {
-                        readings += kanjiElement.getValue() + " [" + readingElement.getValue() + "]\n";
+                        otherForms += kanjiElement.getValue() + " [" + readingElement.getValue() + "]\n";
                     }
                 }
             }
         }
 
-        // Remove trailing new line
-        if (readings.endsWith("\n")) {
-            readings = readings.substring(0, readings.length() - 1);
-        }
+        // Remove main reading as it's already displayed in the toolbar
+        otherForms = otherForms.replace(toolbarTitle + "\n", "");
 
-        // Set the resulting string
-        otherReadingsTextView.setText(readings);
+        // If there are no other forms, we hide the related section
+        if(otherForms.isEmpty()) {
+            otherFormsDivider.setVisibility(View.GONE);
+            otherFormsHeaderTextView.setVisibility(View.GONE);
+            otherFormsContentTextView.setVisibility(View.GONE);
+        } else {
+            // Remove trailing new line
+            if (otherForms.endsWith("\n")) {
+                otherForms = otherForms.substring(0, otherForms.length() - 1);
+            }
+
+            // Set the resulting string
+            otherFormsContentTextView.setText(otherForms);
+        }
     }
 
     // Set the priorities section
@@ -283,8 +300,8 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
         // If there are no priorities, remove the Priorities TextViews from view
         if (unifiedPriorities.isEmpty()) {
-            prioritiesHeaderTextView.setVisibility(View.GONE);
-            flexBoxView.setVisibility(View.GONE);
+            freqInfoHeaderTextView.setVisibility(View.GONE);
+            freqInfoFlexBox.setVisibility(View.GONE);
         } else {
             // Specify the config for our chips
             ChipCloudConfig config = new ChipCloudConfig()
@@ -296,7 +313,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
                     .useInsetPadding(true);
 
             //Create a new ChipCloud with a Context and ViewGroup:
-            final ChipCloud chipCloud = new ChipCloud(getActivity(), flexBoxView, config);
+            final ChipCloud chipCloud = new ChipCloud(getActivity(), freqInfoFlexBox, config);
 
             // Get whether the entry is common or not
             if (EntryUtils.isCommonEntry(unifiedPriorities)) {
