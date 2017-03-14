@@ -51,7 +51,6 @@ import static com.ikue.japanesedictionary.utils.DbUtils.getSearchByKanjiQuery;
 public class DictionaryDbHelper extends SQLiteAssetHelper {
 
     private static DictionaryDbHelper instance;
-    private static SQLiteDatabase db;
     private static SharedPreferences sharedPref;
 
     private static final String DATABASE_NAME = "dictionary.db";
@@ -82,6 +81,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
     // Search the dictionary for a given term
     public List<DictionarySearchResultItem> searchDictionary(String searchTerm, int searchType) {
+        SQLiteDatabase db = getReadableDatabase();
         String query;
 
         // Stores whether we will do a wildcard search or not
@@ -182,7 +182,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         Cursor cursor = null;
 
         try {
-            db = getReadableDatabase();
             cursor = db.rawQuery(query, arguments);
 
             while (cursor.moveToNext()) {
@@ -219,12 +218,13 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             if (cursor != null) {
                 cursor.close();
             }
-            db.close();
         }
     }
 
     // Get a list of all the entries viewed by the user
     public List<DictionarySearchResultItem> getHistory() {
+        SQLiteDatabase db = getReadableDatabase();
+
         List<DictionarySearchResultItem> history = new ArrayList<>();
 
         String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
@@ -265,7 +265,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         Cursor cursor = null;
 
         try {
-            db = getReadableDatabase();
             cursor = db.rawQuery(builder.toString(), new String[]{});
 
             while (cursor.moveToNext()) {
@@ -302,13 +301,13 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             if (cursor != null) {
                 cursor.close();
             }
-            db.close();
         }
     }
 
     // Add an entry to the user's history
     public void addToHistory(int id) throws SQLException {
-        db = getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
+
         db.beginTransaction();
 
         try {
@@ -325,13 +324,12 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             throw e;
         } finally {
             db.endTransaction();
-            db.close();
         }
     }
 
     // Remove an entry from the user's history
     public void removeFromHistory(int id) throws SQLException {
-        db = getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
 
         try {
@@ -345,12 +343,13 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             throw e;
         } finally {
             db.endTransaction();
-            db.close();
         }
     }
 
     // Get a list of all the favourites the user has
     public List<DictionarySearchResultItem> getAllFavourites() {
+        SQLiteDatabase db = getReadableDatabase();
+
         List<DictionarySearchResultItem> favourites = new ArrayList<>();
 
         String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
@@ -391,7 +390,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         Cursor cursor = null;
 
         try {
-            db = getReadableDatabase();
             cursor = db.rawQuery(builder.toString(), new String[]{});
 
             while (cursor.moveToNext()) {
@@ -428,13 +426,12 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             if (cursor != null) {
                 cursor.close();
             }
-            db.close();
         }
     }
 
     // Add an entry to the user's favourites
     public void addFavourite(int id) throws SQLException {
-        db = getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
 
         try {
@@ -449,13 +446,12 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             throw e;
         } finally {
             db.endTransaction();
-            db.close();
         }
     }
 
     // Remove an entry from the user's favourites
     public void removeFavourite(int id) throws SQLException {
-        db = getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
 
         try {
@@ -469,17 +465,13 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             throw e;
         } finally {
             db.endTransaction();
-            db.close();
         }
     }
 
     public DictionaryItem getEntry(int id) {
-
         DictionaryItem entry = new DictionaryItem();
 
         try {
-            db = getReadableDatabase();
-
             entry.setEntryId(id);
             entry.setIsFavourite(isFavourite(id));
             entry.setKanjiElements(getKanjiElements(id));
@@ -493,8 +485,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         catch (SQLException error) {
             Log.e(LOG_TAG, error.getMessage());
             return new DictionaryItem();
-        } finally {
-            db.close();
         }
     }
 
@@ -503,8 +493,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         DictionaryItem entry = new DictionaryItem();
 
         try {
-            db = getReadableDatabase();
-
             // Get a random entry Id
             int id = getRandomEntryId();
 
@@ -521,13 +509,13 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         catch (SQLException error) {
             Log.e(LOG_TAG, error.getMessage());
             return new DictionaryItem();
-        } finally {
-            db.close();
         }
     }
 
     // TODO: Refactor to improve query time
-    public int getRandomEntryId() {
+    private int getRandomEntryId() {
+        SQLiteDatabase db = getReadableDatabase();
+
         // The columns from the database I will use after the query
         String[] projection = {ReadingElementTable.Cols.ENTRY_ID};
 
@@ -562,6 +550,8 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
     // Get whether an entry has been favourited or not
     private boolean isFavourite(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
         String[] arguments = new String[]{Integer.toString(id)};
 
         String query = "SELECT EXISTS(SELECT " + FavouritesTable.Cols.ENTRY_ID + " FROM " +
@@ -593,6 +583,8 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
     // Get all Kanji Elements associated with a given ID
     private List<KanjiElement> getKanjiElements(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
         // Create a new List of Kanji Elements to store the results of our query
         List<KanjiElement> kanjiElements = new ArrayList<>();
 
@@ -641,6 +633,8 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
     // Get all Reading Elements associated with a given ID
     private List<ReadingElement> getReadingElements(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
         // Create a new List of Reading Elements to store the results of our query
         List<ReadingElement> readingElements = new ArrayList<>();
 
@@ -693,6 +687,8 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
     // Get all Sense Elements associated with a given ID
     private List<SenseElement> getSenseElements(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
         // Create a new List of Sense Elements to store the results of our query
         List<SenseElement> senseElements = new ArrayList<>();
 
@@ -753,6 +749,8 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
     // Get all Priorities associated with a given ID
     private List<Priority> getPriorities(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
         // Create a new List of Priorities to store the results of our query
         List<Priority> priorities = new ArrayList<>();
 
