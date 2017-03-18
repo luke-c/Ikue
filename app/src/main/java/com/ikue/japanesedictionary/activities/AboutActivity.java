@@ -73,6 +73,7 @@ public class AboutActivity extends AppCompatActivity {
                         new ApacheSoftwareLicense20()));
 
                 new LicensesDialog.Builder(AboutActivity.this)
+                        .setTitle("Open source licenses")
                         .setNotices(notices)
                         .setIncludeOwnLicense(true)
                         .build()
