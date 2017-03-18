@@ -1,7 +1,6 @@
 package com.ikue.japanesedictionary.fragments;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -212,7 +211,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         recyclerView.setAdapter(new DetailViewAdapter(dictionaryItem.getSenseElements()));
 
         setOtherReadings();
-        setPriorities();
+        setFrequencyInformation();
     }
 
     private void setToolbar() {
@@ -289,7 +288,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     // Set the priorities section
     // TODO: Refactor into RecyclerView
     // TODO: Separate out into Kanji and Reading priorities
-    private void setPriorities() {
+    private void setFrequencyInformation() {
         List<Priority> priorities = dictionaryItem.getPriorities();
 
         // Convert to a linked hash set to remove duplicates
@@ -306,10 +305,10 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
             // Specify the config for our chips
             ChipCloudConfig config = new ChipCloudConfig()
                     .selectMode(ChipCloud.SelectMode.single)
-                    .checkedChipColor(Color.parseColor("#3F51B5"))
-                    .checkedTextColor(Color.parseColor("#ffffff"))
-                    .uncheckedChipColor(Color.parseColor("#efefef"))
-                    .uncheckedTextColor(Color.parseColor("#666666"))
+                    .checkedChipColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
+                    .checkedTextColor(ContextCompat.getColor(getContext(), R.color.white))
+                    .uncheckedChipColor(ContextCompat.getColor(getContext(), R.color.light_grey))
+                    .uncheckedTextColor(ContextCompat.getColor(getContext(), R.color.default_text))
                     .useInsetPadding(true);
 
             //Create a new ChipCloud with a Context and ViewGroup:
