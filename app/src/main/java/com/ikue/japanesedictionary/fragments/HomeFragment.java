@@ -1,9 +1,11 @@
 package com.ikue.japanesedictionary.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -17,14 +19,19 @@ import android.widget.TextView;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.activities.EntryDetailActivity;
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
+import com.ikue.japanesedictionary.database.GetEntryDetailTask;
 import com.ikue.japanesedictionary.database.GetRandomEntryTask;
 import com.ikue.japanesedictionary.interfaces.DetailAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionaryItem;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.ReadingElement;
 import com.ikue.japanesedictionary.models.Tip;
+import com.ikue.japanesedictionary.utils.DateTimeUtils;
 import com.ikue.japanesedictionary.utils.TipsUtils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,7 +41,7 @@ import java.util.List;
 public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
     // Singleton variable. DO NOT CHANGE
     private static DictionaryDbHelper helper;
-
+    private static SharedPreferences sharedPref;
     private static AsyncTask task;
     private DetailAsyncCallbacks listener;
 
@@ -60,6 +67,9 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
 
         // Set the OnTaskComplete listener
         listener = this;
+
+        // Get the shared preferences
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
 
         // Get a database on startup.
         helper = DictionaryDbHelper.getInstance(this.getActivity());
@@ -96,12 +106,45 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
             }
         });
 
-
         tipsTitleText = (TextView) view.findViewById(R.id.tips_card_title);
         tipsBodyText = (TextView) view.findViewById(R.id.tips_card_content);
         setupTipsCard();
 
-        task = new GetRandomEntryTask(listener, helper).execute();
+        // Get the stored word of the day entry Id
+        int wordOfTheDayEntryId = sharedPref.getInt("pref_wordOfTheDay_EntryId", 0);
+
+        // If there is no stored entry, we need to make a new query
+        if(wordOfTheDayEntryId == 0) {
+            task = new GetRandomEntryTask(listener, helper).execute();
+        } else {
+            DateFormat df = DateFormat.getDateInstance();
+
+            // Get the current date and time
+            String currentDate = df.format(new Date());
+
+            // Get the stored date and time to compare
+            String wordOfTheDayDate = sharedPref.getString("pref_wordOfTheDay_Date", currentDate);
+
+            long differenceInDays;
+            try {
+                differenceInDays = DateTimeUtils.getDifferenceInDays(df.parse(wordOfTheDayDate), df.parse(currentDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                differenceInDays = 1;
+            }
+
+            if(differenceInDays >= 1) {
+                task = new GetRandomEntryTask(listener, helper).execute();
+
+                // Update the stored date
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("pref_wordOfTheDay_Date", currentDate);
+                editor.apply();
+
+            } else {
+                task = new GetEntryDetailTask(listener, helper, wordOfTheDayEntryId).execute();
+            }
+        }
     }
 
     @Override
@@ -170,6 +213,18 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
     @Override
     public void onResult(DictionaryItem result) {
         wordOfTheDay = result;
+
+        // Get the stored word of the day entry Id
+        int wordOfTheDayEntryId = sharedPref.getInt("pref_wordOfTheDay_EntryId", 0);
+
+        // If the ID of the entry we retrieved is different to the ID stored, then update the
+        // stored ID
+        if(wordOfTheDayEntryId != wordOfTheDay.getEntryId()) {
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt("pref_wordOfTheDay_EntryId", wordOfTheDay.getEntryId());
+            editor.apply();
+        }
+
         updateWordOfTheDay();
     }
 
@@ -204,4 +259,6 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
         tipsTitleText.setText(randomTip.getTitle());
         tipsBodyText.setText(randomTip.getBody());
     }
+
+
 }
