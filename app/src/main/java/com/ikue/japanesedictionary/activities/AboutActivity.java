@@ -1,7 +1,5 @@
 package com.ikue.japanesedictionary.activities;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +8,11 @@ import android.view.View;
 import com.ikue.japanesedictionary.BuildConfig;
 import com.ikue.japanesedictionary.R;
 
+import de.psdev.licensesdialog.LicensesDialog;
+import de.psdev.licensesdialog.licenses.ApacheSoftwareLicense20;
+import de.psdev.licensesdialog.licenses.MITLicense;
+import de.psdev.licensesdialog.model.Notice;
+import de.psdev.licensesdialog.model.Notices;
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
 
@@ -32,21 +35,50 @@ public class AboutActivity extends AppCompatActivity {
                 .addEmail("lukecasey94+ikue@gmail.com")
                 .addTwitter("lukecasey94")
                 .addGitHub("luke-c")
-                .addGroup("Open source libraries")
-                .addItem(getLibraryElement("SQLiteAssetHelper", "https://github.com/jgilfelt/android-sqlite-asset-helper"))
-                .addItem(getLibraryElement("Android About Page", "https://github.com/medyo/android-about-page"))
-                .addItem(getLibraryElement("ChipCloud", "https://github.com/fiskurgit/ChipCloud"))
-                .addItem(getLibraryElement("FlexBoxLayout", "https://github.com/google/flexbox-layout"))
+                .addItem(getLicensesElement())
                 .create();
 
         setContentView(aboutPage);
     }
 
-    private Element getLibraryElement(String title, String url) {
+    private Element getLicensesElement() {
         Element element = new Element();
-        element.setTitle(title);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        element.setIntent(intent);
+        element.setTitle("Open source licenses");
+        element.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Notices notices = new Notices();
+                notices.addNotice(new Notice("SQLiteAssetHelper",
+                        "https://github.com/jgilfelt/android-sqlite-asset-helper",
+                        "Copyright (C) 2011 readyState Software Ltd\n" +
+                                "Copyright (C) 2007 The Android Open Source Project",
+                        new ApacheSoftwareLicense20()));
+
+                notices.addNotice(new Notice("Android About Page",
+                        "https://github.com/medyo/android-about-page",
+                        "The MIT License (MIT)\n" +
+                                "Copyright (c) 2016 Mehdi Sakout",
+                        new MITLicense()));
+
+                notices.addNotice(new Notice("ChipCloud",
+                        "https://github.com/fiskurgit/ChipCloud",
+                        "The MIT License (MIT)\n" +
+                                "\n" +
+                                "Copyright (c) 2016 Jonathan Fisher",
+                        new MITLicense()));
+
+                notices.addNotice(new Notice("FlexBoxLayout",
+                        "https://github.com/google/flexbox-layout",
+                        "",
+                        new ApacheSoftwareLicense20()));
+
+                new LicensesDialog.Builder(AboutActivity.this)
+                        .setNotices(notices)
+                        .setIncludeOwnLicense(true)
+                        .build()
+                        .show();
+            }
+        });
         return element;
     }
 }
