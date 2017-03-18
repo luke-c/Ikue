@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,8 @@ import java.util.List;
  */
 
 public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
-    // Singleton variable. DO NOT CHANGE
+    private final String LOG_TAG = this.getClass().getName();
+
     private static DictionaryDbHelper helper;
     private static SharedPreferences sharedPref;
     private static AsyncTask task;
@@ -127,12 +129,19 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
 
             long differenceInDays;
             try {
+                // Get the difference in number of days between the current date and the stored date
                 differenceInDays = DateTimeUtils.getDifferenceInDays(df.parse(wordOfTheDayDate), df.parse(currentDate));
             } catch (ParseException e) {
                 e.printStackTrace();
+
+                // Log the error message
+                Log.e(LOG_TAG, e.getMessage());
+
+                // If there was an error, set the difference to 1 so we get a new random entry
                 differenceInDays = 1;
             }
 
+            // If a day or more has passed, get a new random entry
             if(differenceInDays >= 1) {
                 task = new GetRandomEntryTask(listener, helper).execute();
 
@@ -142,6 +151,7 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
                 editor.apply();
 
             } else {
+                // Otherwise, get the stored entry
                 task = new GetEntryDetailTask(listener, helper, wordOfTheDayEntryId).execute();
             }
         }
