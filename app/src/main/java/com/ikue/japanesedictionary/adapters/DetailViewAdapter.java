@@ -34,11 +34,7 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (items.get(position).getPartOfSpeech() == null) {
-            return SENSE_ELEMENT_ITEM;
-        } else {
-            return SENSE_ELEMENT_ITEM;
-        }
+        return SENSE_ELEMENT_ITEM;
     }
 
     @Override
