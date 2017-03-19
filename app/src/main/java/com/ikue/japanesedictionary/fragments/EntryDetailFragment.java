@@ -146,7 +146,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
         freqInfoHeaderTextView = (TextView) view.findViewById(R.id.freq_info_header);
         freqInfoFlexBox = (FlexboxLayout) view.findViewById(R.id.freq_info_flexbox);
-        freqInfoDivider = (View) view.findViewById(R.id.freq_info_divider);
+        freqInfoDivider = view.findViewById(R.id.freq_info_divider);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.meanings_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -200,8 +200,10 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private void toggleFab() {
         floatingActionButton.setEnabled(false);
         if (dictionaryItem.getIsFavourite()) {
+            // Remove from favourites
             favouritesTask = new ToggleFavouriteTask(toggleFavouriteAsyncCallbacks, helper, entryId, false).execute();
         } else {
+            // Add to favourites
             favouritesTask = new ToggleFavouriteTask(toggleFavouriteAsyncCallbacks, helper, entryId, true).execute();
         }
     }
@@ -321,7 +323,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
             // Get whether the entry is common or not
             if (EntryUtils.isCommonEntry(unifiedPriorities)) {
                 // If our entry is common, add a 'common' chip
-                chipCloud.addChip("common");
+                chipCloud.addChip(getString(R.string.common_chip));
             }
 
             // Add every priority as a chip

@@ -24,6 +24,9 @@
     <string name="settings_activity_title">Settings</string>
     <string name="about_activity_title">About</string>
     <string name="about_activity_description">Ikue is an open source Japanese dictionary application.</string>
+    <string name="about_activity_connect">Connect with us</string>
+    <string name="about_activity_licenses">Open source licenses</string>
+    <string name="about_activity_terms_of_use">Terms of use</string>
 
     <string name="pref_startupPage">Startup page</string>
     <string name="pref_startupPage_default">1</string>
@@ -48,8 +51,7 @@
     <string name="feedback_card_title">Send Feedback</string>
     <string name="tips_card_header">Tips</string>
     <string name="share_button_content_description">Share button</string>
-    <string name="about_activity_connect">Connect with us</string>
-    <string name="about_activity_licenses">Open source licenses</string>
-    <string name="about_activity_terms_of_use">Terms of use</string>
+
+    <string name="common_chip">common</string>
 
 </resources>
