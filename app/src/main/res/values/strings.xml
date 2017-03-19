@@ -47,5 +47,6 @@
     <string name="feedback_card_content">Do you have a suggestion for a feature? Found a bug? Feel like something could be done better or improved? Let us know!</string>
     <string name="feedback_card_title">Send Feedback</string>
     <string name="tips_card_header">Tips</string>
+    <string name="share_button_content_description">Share button</string>
 
 </resources>
