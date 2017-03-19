@@ -17,10 +17,6 @@ import de.psdev.licensesdialog.model.Notices;
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
 
-/**
- * Created by luke_c on 26/02/2017.
- */
-
 public class AboutActivity extends AppCompatActivity {
 
     @Override

@@ -1,15 +1,11 @@
 package com.ikue.japanesedictionary.interfaces;
 
-import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
+import com.ikue.japanesedictionary.models.DictionaryListEntry;
 
 import java.util.List;
-
-/**
- * Created by luke_c on 15/02/2017.
- */
 
 public interface SearchAsyncCallbacks {
     void toggleProgressBar(boolean toShow);
 
-    void onResult(List<DictionarySearchResultItem> results);
+    void onResult(List<DictionaryListEntry> results);
 }

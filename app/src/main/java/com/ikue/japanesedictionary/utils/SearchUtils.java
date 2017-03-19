@@ -3,11 +3,7 @@ package com.ikue.japanesedictionary.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.*;
-
-/**
- * Created by luke_c on 15/02/2017.
- */
+import static com.ikue.japanesedictionary.utils.GlobalConstants.SearchTypes.*;
 
 public class SearchUtils {
 
@@ -68,10 +64,7 @@ public class SearchUtils {
         Pattern pattern = Pattern.compile("\\*+|\\?+");
         Matcher matcher = pattern.matcher(string);
         // Check if any wildcards are being used
-        if (matcher.find()) {
-            return true;
-        }
-        return false;
+        return matcher.find();
     }
 
     // Remove any pseudo wildcard characters from a given string

@@ -1,13 +1,9 @@
 package com.ikue.japanesedictionary.interfaces;
 
-import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
+import com.ikue.japanesedictionary.models.DictionaryListEntry;
 
 import java.util.List;
 
-/**
- * Created by luke_c on 19/02/2017.
- */
-
 public interface GetFavouritesAsyncCallbacks {
-    void onResult(List<DictionarySearchResultItem> results);
+    void onResult(List<DictionaryListEntry> results);
 }

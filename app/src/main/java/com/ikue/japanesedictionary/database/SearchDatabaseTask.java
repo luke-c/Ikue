@@ -3,17 +3,13 @@ package com.ikue.japanesedictionary.database;
 import android.os.AsyncTask;
 
 import com.ikue.japanesedictionary.interfaces.SearchAsyncCallbacks;
-import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
+import com.ikue.japanesedictionary.models.DictionaryListEntry;
 
 import java.util.List;
 
-/**
- * Created by luke_c on 15/02/2017.
- */
-
 // TODO: Switch to AsyncTaskLoader so the task can survive configuration changes
 // The types specified here are the input data type, the progress type, and the result type
-public class SearchDatabaseTask extends AsyncTask<Void, Void, List<DictionarySearchResultItem>> {
+public class SearchDatabaseTask extends AsyncTask<Void, Void, List<DictionaryListEntry>> {
     private SearchAsyncCallbacks listener;
     private DictionaryDbHelper helper;
     private String searchQuery;
@@ -34,13 +30,13 @@ public class SearchDatabaseTask extends AsyncTask<Void, Void, List<DictionarySea
     }
 
     @Override
-    protected List<DictionarySearchResultItem> doInBackground(Void... params) {
+    protected List<DictionaryListEntry> doInBackground(Void... params) {
         // Make sure to trim any leading or trailing whitespace in the search query
         return helper.searchDictionary(searchQuery.trim(), searchType);
     }
 
     @Override
-    protected void onPostExecute(List<DictionarySearchResultItem> result) {
+    protected void onPostExecute(List<DictionaryListEntry> result) {
         // This method is executed in the UIThread
         // with access to the result of the long running task
         listener.onResult(result);

@@ -12,10 +12,6 @@ import com.ikue.japanesedictionary.models.SenseElement;
 
 import java.util.List;
 
-/**
- * Created by luke_c on 06/02/2017.
- */
-
 public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int SENSE_ELEMENT_ITEM = 0;
 

@@ -10,10 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.fragments.SearchResultFragment;
 
-/**
- * Created by luke_c on 08/02/2017.
- */
-
 public class SearchResultActivity extends AppCompatActivity {
 
     @Override

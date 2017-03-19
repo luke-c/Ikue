@@ -20,8 +20,8 @@ import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SenseField
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.Jmdict.SensePosTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.User.FavouritesTable;
 import com.ikue.japanesedictionary.database.DictionaryDbSchema.User.HistoryTable;
-import com.ikue.japanesedictionary.models.DictionaryItem;
-import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
+import com.ikue.japanesedictionary.models.DictionaryEntry;
+import com.ikue.japanesedictionary.models.DictionaryListEntry;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
@@ -34,18 +34,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ENGLISH_TYPE;
-import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.KANA_TYPE;
-import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.KANJI_TYPE;
-import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ROMAJI_TYPE;
+import static com.ikue.japanesedictionary.utils.GlobalConstants.SearchTypes.ENGLISH_TYPE;
+import static com.ikue.japanesedictionary.utils.GlobalConstants.SearchTypes.KANA_TYPE;
+import static com.ikue.japanesedictionary.utils.GlobalConstants.SearchTypes.KANJI_TYPE;
+import static com.ikue.japanesedictionary.utils.GlobalConstants.SearchTypes.ROMAJI_TYPE;
 import static com.ikue.japanesedictionary.utils.DbUtils.formatString;
 import static com.ikue.japanesedictionary.utils.DbUtils.getSearchByEnglishQuery;
 import static com.ikue.japanesedictionary.utils.DbUtils.getSearchByKanaQuery;
 import static com.ikue.japanesedictionary.utils.DbUtils.getSearchByKanjiQuery;
-
-/**
- * Created by luke_c on 01/02/2017.
- */
 
 // TODO: Add catch blocks for queries
 public class DictionaryDbHelper extends SQLiteAssetHelper {
@@ -80,7 +76,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     }
 
     // Search the dictionary for a given term
-    public List<DictionarySearchResultItem> searchDictionary(String searchTerm, int searchType) {
+    public List<DictionaryListEntry> searchDictionary(String searchTerm, int searchType) {
         SQLiteDatabase db = getReadableDatabase();
         String query;
 
@@ -177,7 +173,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         String[] arguments = new String[]{argument};
 
         // Create a new List of Search Results to store the results of our query
-        List<DictionarySearchResultItem> searchResults = new ArrayList<>();
+        List<DictionaryListEntry> searchResults = new ArrayList<>();
 
         Cursor cursor = null;
 
@@ -185,7 +181,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             cursor = db.rawQuery(query, arguments);
 
             while (cursor.moveToNext()) {
-                DictionarySearchResultItem result = new DictionarySearchResultItem();
+                DictionaryListEntry result = new DictionaryListEntry();
                 int entryId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.ENTRY_ID));
                 String kanjiValue = cursor.getString(cursor.getColumnIndexOrThrow("kanji_value"));
                 String readingValue = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
@@ -222,10 +218,10 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     }
 
     // Get a list of all the entries viewed by the user
-    public List<DictionarySearchResultItem> getHistory() {
+    public List<DictionaryListEntry> getHistory() {
         SQLiteDatabase db = getReadableDatabase();
 
-        List<DictionarySearchResultItem> history = new ArrayList<>();
+        List<DictionaryListEntry> history = new ArrayList<>();
 
         String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
                 + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
@@ -268,7 +264,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             cursor = db.rawQuery(builder.toString(), new String[]{});
 
             while (cursor.moveToNext()) {
-                DictionarySearchResultItem result = new DictionarySearchResultItem();
+                DictionaryListEntry result = new DictionaryListEntry();
                 int entryId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.ENTRY_ID));
                 String kanjiValue = cursor.getString(cursor.getColumnIndexOrThrow("kanji_value"));
                 String readingValue = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
@@ -347,10 +343,10 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     }
 
     // Get a list of all the favourites the user has
-    public List<DictionarySearchResultItem> getAllFavourites() {
+    public List<DictionaryListEntry> getAllFavourites() {
         SQLiteDatabase db = getReadableDatabase();
 
-        List<DictionarySearchResultItem> favourites = new ArrayList<>();
+        List<DictionaryListEntry> favourites = new ArrayList<>();
 
         String select = "SELECT re." + ReadingElementTable.Cols.ENTRY_ID + ", group_concat(ke."
                 + KanjiElementTable.Cols.VALUE + ", '§') AS kanji_value, group_concat(re."
@@ -393,7 +389,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             cursor = db.rawQuery(builder.toString(), new String[]{});
 
             while (cursor.moveToNext()) {
-                DictionarySearchResultItem result = new DictionarySearchResultItem();
+                DictionaryListEntry result = new DictionaryListEntry();
                 int entryId = cursor.getInt(cursor.getColumnIndexOrThrow(ReadingElementTable.Cols.ENTRY_ID));
                 String kanjiValue = cursor.getString(cursor.getColumnIndexOrThrow("kanji_value"));
                 String readingValue = cursor.getString(cursor.getColumnIndexOrThrow("read_value"));
@@ -468,8 +464,8 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         }
     }
 
-    public DictionaryItem getEntry(int id) {
-        DictionaryItem entry = new DictionaryItem();
+    public DictionaryEntry getEntry(int id) {
+        DictionaryEntry entry = new DictionaryEntry();
 
         try {
             entry.setEntryId(id);
@@ -484,13 +480,13 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         // TODO: Handle errors more gracefully
         catch (SQLException error) {
             Log.e(LOG_TAG, error.getMessage());
-            return new DictionaryItem();
+            return new DictionaryEntry();
         }
     }
 
     // Get a random Entry from the database
-    public DictionaryItem getRandomEntry() {
-        DictionaryItem entry = new DictionaryItem();
+    public DictionaryEntry getRandomEntry() {
+        DictionaryEntry entry = new DictionaryEntry();
 
         try {
             // Get a random entry Id
@@ -508,7 +504,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         // TODO: Handle errors more gracefully
         catch (SQLException error) {
             Log.e(LOG_TAG, error.getMessage());
-            return new DictionaryItem();
+            return new DictionaryEntry();
         }
     }
 

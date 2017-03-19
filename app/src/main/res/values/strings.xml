@@ -53,5 +53,6 @@
     <string name="share_button_content_description">Share button</string>
 
     <string name="common_chip">common</string>
+    <string name="feedback_button_intent_chooser">Send email</string>
 
 </resources>

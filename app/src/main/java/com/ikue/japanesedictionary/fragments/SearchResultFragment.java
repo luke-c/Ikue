@@ -23,18 +23,14 @@ import com.ikue.japanesedictionary.adapters.SearchResultAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.SearchDatabaseTask;
 import com.ikue.japanesedictionary.interfaces.SearchAsyncCallbacks;
-import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
+import com.ikue.japanesedictionary.models.DictionaryListEntry;
 import com.ikue.japanesedictionary.utils.SearchUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ENGLISH_TYPE;
-import static com.ikue.japanesedictionary.utils.Constants.SearchTypes.ROMAJI_TYPE;
-
-/**
- * Created by luke_c on 08/02/2017.
- */
+import static com.ikue.japanesedictionary.utils.GlobalConstants.SearchTypes.ENGLISH_TYPE;
+import static com.ikue.japanesedictionary.utils.GlobalConstants.SearchTypes.ROMAJI_TYPE;
 
 public class SearchResultFragment extends Fragment implements SearchAsyncCallbacks {
     private static final String ARG_SEARCH_TERM = "SEARCH_TERM";
@@ -75,7 +71,7 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
         // Get a database on startup.
         helper = DictionaryDbHelper.getInstance(this.getActivity());
 
-        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<DictionarySearchResultItem>());
+        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<DictionaryListEntry>());
 
         // Get the string the user searched for from the received Intent, and get the type
         searchQuery = getArguments().getString(ARG_SEARCH_TERM, null);
@@ -155,7 +151,7 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
     }
 
     @Override
-    public void onResult(List<DictionarySearchResultItem> results) {
+    public void onResult(List<DictionaryListEntry> results) {
         adapter.swapItems(results);
         showSwitchSearchSnackbar();
     }
@@ -163,6 +159,7 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
     @Override
     public void toggleProgressBar(boolean toShow) {
         // TODO: Fix ProgressBar not showing on executing new AsyncTask
+        // This is a bug, see: https://code.google.com/p/android/issues/detail?id=233207
         if (toShow) {
             progressBar.show();
         } else {

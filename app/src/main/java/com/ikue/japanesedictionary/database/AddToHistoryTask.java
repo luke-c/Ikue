@@ -5,10 +5,6 @@ import android.os.AsyncTask;
 
 import com.ikue.japanesedictionary.interfaces.AddToHistoryAsyncCallbacks;
 
-/**
- * Created by luke_c on 22/02/2017.
- */
-
 public class AddToHistoryTask extends AsyncTask<Void, Void, Boolean> {
     private AddToHistoryAsyncCallbacks listener;
     private DictionaryDbHelper helper;

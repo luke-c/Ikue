@@ -16,14 +16,10 @@ import com.ikue.japanesedictionary.adapters.SearchResultAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.GetFavouritesTask;
 import com.ikue.japanesedictionary.interfaces.GetFavouritesAsyncCallbacks;
-import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
+import com.ikue.japanesedictionary.models.DictionaryListEntry;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Created by luke_c on 29/11/2016.
- */
 
 public class FavouritesFragment extends Fragment implements GetFavouritesAsyncCallbacks {
     // Singleton variable. DO NOT CHANGE
@@ -47,7 +43,7 @@ public class FavouritesFragment extends Fragment implements GetFavouritesAsyncCa
         // Get a database on startup.
         helper = DictionaryDbHelper.getInstance(this.getActivity());
 
-        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<DictionarySearchResultItem>());
+        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<DictionaryListEntry>());
     }
 
     @Nullable
@@ -94,7 +90,7 @@ public class FavouritesFragment extends Fragment implements GetFavouritesAsyncCa
     }
 
     @Override
-    public void onResult(List<DictionarySearchResultItem> results) {
+    public void onResult(List<DictionaryListEntry> results) {
         // TODO: Detect more granular changes instead of reloading the whole list
         adapter.swapItems(results);
     }

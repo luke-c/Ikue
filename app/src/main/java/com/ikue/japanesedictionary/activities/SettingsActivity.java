@@ -7,10 +7,6 @@ import android.support.v7.widget.Toolbar;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.fragments.SettingsFragment;
 
-/**
- * Created by luke_c on 27/02/2017.
- */
-
 public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -7,10 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by luke_c on 01/03/2017.
- */
-
 public class EntryUtils {
     // These are priorities defined as "common" by JMdict
     // "Entries with news1, ichi1, spec1/2 and gai1 values are marked with a "(P)" in the EDICT and EDICT2 files."
@@ -22,6 +18,7 @@ public class EntryUtils {
         return !Collections.disjoint(priorities, COMMON_PRIORITIES);
     }
 
+    // TODO: Extract to string resources
     public static Map<String, String> getDetailedPriorityInformation() {
         Map<String, String> detailedPriorities = new HashMap<>();
         detailedPriorities.put("news1", "Appears in the first 12,000 words of the \"wordfreq\" file compiled by Alexandre Girardi from the Mainichi Shimbun.");

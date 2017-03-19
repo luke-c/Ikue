@@ -2,10 +2,6 @@ package com.ikue.japanesedictionary.models;
 
 import java.util.List;
 
-/**
- * Created by luke_c on 02/02/2017.
- */
-
 public class ReadingElement {
 
     // Unique ID for the Reading Element

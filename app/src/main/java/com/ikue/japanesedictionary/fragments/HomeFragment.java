@@ -23,7 +23,7 @@ import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.GetEntryDetailTask;
 import com.ikue.japanesedictionary.database.GetRandomEntryTask;
 import com.ikue.japanesedictionary.interfaces.DetailAsyncCallbacks;
-import com.ikue.japanesedictionary.models.DictionaryItem;
+import com.ikue.japanesedictionary.models.DictionaryEntry;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.ReadingElement;
 import com.ikue.japanesedictionary.models.Tip;
@@ -34,10 +34,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-
-/**
- * Created by luke_c on 02/03/2017.
- */
 
 public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
     private final String LOG_TAG = this.getClass().getName();
@@ -58,7 +54,7 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
     private TextView tipsTitleText;
     private TextView tipsBodyText;
 
-    private DictionaryItem wordOfTheDay;
+    private DictionaryEntry wordOfTheDay;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,7 +99,7 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
                 Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
                 sendIntent.setData(uri);
                 if (sendIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivity(Intent.createChooser(sendIntent, "Send email"));
+                    startActivity(Intent.createChooser(sendIntent, getString(R.string.feedback_button_intent_chooser)));
                 }
             }
         });
@@ -221,7 +217,7 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
     }
 
     @Override
-    public void onResult(DictionaryItem result) {
+    public void onResult(DictionaryEntry result) {
         wordOfTheDay = result;
 
         // Get the stored word of the day entry Id

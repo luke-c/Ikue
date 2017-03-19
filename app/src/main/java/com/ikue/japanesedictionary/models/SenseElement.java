@@ -2,10 +2,6 @@ package com.ikue.japanesedictionary.models;
 
 import java.util.List;
 
-/**
- * Created by luke_c on 02/02/2017.
- */
-
 public class SenseElement {
 
     // Unique ID for the Sense Element

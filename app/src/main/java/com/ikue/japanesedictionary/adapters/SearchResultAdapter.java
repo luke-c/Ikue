@@ -11,13 +11,9 @@ import android.widget.TextView;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.activities.EntryDetailActivity;
-import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
+import com.ikue.japanesedictionary.models.DictionaryListEntry;
 
 import java.util.List;
-
-/**
- * Created by luke_c on 09/02/2017.
- */
 
 // Create the basic adapter extending from RecyclerView.Adapter
 // Note that we specify the custom ViewHolder which gives us access to our views
@@ -46,17 +42,17 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     }
 
     // Store a member variable for the contacts
-    private List<DictionarySearchResultItem> searchResultItems;
+    private List<DictionaryListEntry> searchResultItems;
     // Store the context for easy access
     private Context context;
 
     // Pass in the contact array into the constructor
-    public SearchResultAdapter(Context context, List<DictionarySearchResultItem> searchResultItems) {
+    public SearchResultAdapter(Context context, List<DictionaryListEntry> searchResultItems) {
         this.searchResultItems = searchResultItems;
         this.context = context;
     }
 
-    public void swapItems(List<DictionarySearchResultItem> items) {
+    public void swapItems(List<DictionaryListEntry> items) {
         this.searchResultItems = items;
         notifyDataSetChanged();
     }
@@ -83,7 +79,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     @Override
     public void onBindViewHolder(SearchResultAdapter.ViewHolder viewHolder, int position) {
         // Get the data model based on position
-        DictionarySearchResultItem item = searchResultItems.get(position);
+        DictionaryListEntry item = searchResultItems.get(position);
         final int entryId = item.getEntryId();
 
         // Set item views based on your views and data model

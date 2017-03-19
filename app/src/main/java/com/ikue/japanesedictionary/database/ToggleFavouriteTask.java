@@ -5,10 +5,6 @@ import android.os.AsyncTask;
 
 import com.ikue.japanesedictionary.interfaces.ToggleFavouriteAsyncCallbacks;
 
-/**
- * Created by luke_c on 19/02/2017.
- */
-
 public class ToggleFavouriteTask extends AsyncTask<Void, Void, Boolean> {
     private ToggleFavouriteAsyncCallbacks listener;
     private DictionaryDbHelper helper;

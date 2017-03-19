@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Created by luke_c on 03/03/2017.
- */
-
+// TODO: Extract to string resources
 public class TipsUtils {
     private static final List<Tip> TIPS = initTips();
 
@@ -34,6 +31,7 @@ public class TipsUtils {
         return tips;
     }
 
+    // Get a random tip
     public static Tip getRandomTip() {
         return TIPS.get(new Random().nextInt(TIPS.size()));
     }

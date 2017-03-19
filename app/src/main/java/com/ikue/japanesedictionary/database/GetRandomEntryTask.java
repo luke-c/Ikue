@@ -3,13 +3,9 @@ package com.ikue.japanesedictionary.database;
 import android.os.AsyncTask;
 
 import com.ikue.japanesedictionary.interfaces.DetailAsyncCallbacks;
-import com.ikue.japanesedictionary.models.DictionaryItem;
+import com.ikue.japanesedictionary.models.DictionaryEntry;
 
-/**
- * Created by luke_c on 02/03/2017.
- */
-
-public class GetRandomEntryTask extends AsyncTask<Void, Void, DictionaryItem> {
+public class GetRandomEntryTask extends AsyncTask<Void, Void, DictionaryEntry> {
     private DetailAsyncCallbacks listener;
     private DictionaryDbHelper helper;
 
@@ -19,12 +15,12 @@ public class GetRandomEntryTask extends AsyncTask<Void, Void, DictionaryItem> {
     }
 
     @Override
-    protected DictionaryItem doInBackground(Void... params) {
+    protected DictionaryEntry doInBackground(Void... params) {
         return helper.getRandomEntry();
     }
 
     @Override
-    protected void onPostExecute(DictionaryItem result) {
+    protected void onPostExecute(DictionaryEntry result) {
         // This method is executed in the UIThread
         // with access to the result of the long running task
         listener.onResult(result);

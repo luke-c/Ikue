@@ -1,9 +1,5 @@
 package com.ikue.japanesedictionary.models;
 
-/**
- * Created by luke_c on 03/03/2017.
- */
-
 public class Tip {
     private String title;
     private String body;

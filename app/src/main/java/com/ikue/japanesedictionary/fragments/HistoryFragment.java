@@ -16,16 +16,11 @@ import com.ikue.japanesedictionary.adapters.SearchResultAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.GetHistoryTask;
 import com.ikue.japanesedictionary.interfaces.GetHistoryAsyncCallbacks;
-import com.ikue.japanesedictionary.models.DictionarySearchResultItem;
+import com.ikue.japanesedictionary.models.DictionaryListEntry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by luke_c on 22/02/2017.
- */
-
-// TODO: Put a limit on how far back history goes, perhaps let the user choose
 public class HistoryFragment extends Fragment implements GetHistoryAsyncCallbacks {
     // Singleton variable. DO NOT CHANGE
     private static DictionaryDbHelper helper;
@@ -48,7 +43,7 @@ public class HistoryFragment extends Fragment implements GetHistoryAsyncCallback
         // Get a database on startup.
         helper = DictionaryDbHelper.getInstance(this.getActivity());
 
-        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<DictionarySearchResultItem>());
+        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<DictionaryListEntry>());
     }
 
     @Nullable
@@ -95,7 +90,7 @@ public class HistoryFragment extends Fragment implements GetHistoryAsyncCallback
     }
 
     @Override
-    public void onResult(List<DictionarySearchResultItem> results) {
+    public void onResult(List<DictionaryListEntry> results) {
         // TODO: Detect more granular changes instead of reloading the whole list
         adapter.swapItems(results);
     }

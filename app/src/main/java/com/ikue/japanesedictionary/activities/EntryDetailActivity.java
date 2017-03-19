@@ -10,10 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.ikue.japanesedictionary.fragments.EntryDetailFragment;
 import com.ikue.japanesedictionary.R;
 
-/**
- * Created by luke_c on 03/02/2017.
- */
-
 public class EntryDetailActivity extends AppCompatActivity {
 
     private static final String EXTRA_ENTRY_ID = "DETAIL_ACTIVITY_ENTRY_ID";

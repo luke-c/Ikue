@@ -6,10 +6,6 @@ import android.widget.TextView;
 
 import com.ikue.japanesedictionary.R;
 
-/**
- * Created by luke_c on 06/02/2017.
- */
-
 public class SenseElementViewHolder extends RecyclerView.ViewHolder {
 
     private TextView partOfSpeech, meaningNumber, glosses, fieldOfApplication, dialect;

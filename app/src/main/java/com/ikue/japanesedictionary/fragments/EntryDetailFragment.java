@@ -31,7 +31,7 @@ import com.ikue.japanesedictionary.database.ToggleFavouriteTask;
 import com.ikue.japanesedictionary.interfaces.AddToHistoryAsyncCallbacks;
 import com.ikue.japanesedictionary.interfaces.DetailAsyncCallbacks;
 import com.ikue.japanesedictionary.interfaces.ToggleFavouriteAsyncCallbacks;
-import com.ikue.japanesedictionary.models.DictionaryItem;
+import com.ikue.japanesedictionary.models.DictionaryEntry;
 import com.ikue.japanesedictionary.models.KanjiElement;
 import com.ikue.japanesedictionary.models.Priority;
 import com.ikue.japanesedictionary.models.ReadingElement;
@@ -45,10 +45,6 @@ import java.util.Set;
 import fisk.chipcloud.ChipCloud;
 import fisk.chipcloud.ChipCloudConfig;
 import fisk.chipcloud.ChipListener;
-
-/**
- * Created by luke_c on 05/02/2017.
- */
 
 public class EntryDetailFragment extends Fragment implements DetailAsyncCallbacks, ToggleFavouriteAsyncCallbacks, AddToHistoryAsyncCallbacks {
 
@@ -66,7 +62,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private static AsyncTask detailsTask;
     private static AsyncTask favouritesTask;
     private static AsyncTask addToHistoryTask;
-    private static DictionaryItem dictionaryItem;
+    private static DictionaryEntry dictionaryEntry;
     private static DetailAsyncCallbacks detailAsyncCallbacks;
     private static ToggleFavouriteAsyncCallbacks toggleFavouriteAsyncCallbacks;
     private static AddToHistoryAsyncCallbacks addToHistoryAsyncCallbacks;
@@ -199,7 +195,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
     private void toggleFab() {
         floatingActionButton.setEnabled(false);
-        if (dictionaryItem.getIsFavourite()) {
+        if (dictionaryEntry.getIsFavourite()) {
             // Remove from favourites
             favouritesTask = new ToggleFavouriteTask(toggleFavouriteAsyncCallbacks, helper, entryId, false).execute();
         } else {
@@ -213,7 +209,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         setFavourite();
 
         // Set the meanings section
-        recyclerView.setAdapter(new DetailViewAdapter(dictionaryItem.getSenseElements()));
+        recyclerView.setAdapter(new DetailViewAdapter(dictionaryEntry.getSenseElements()));
 
         setOtherReadings();
         setFrequencyInformation();
@@ -222,8 +218,8 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private void setToolbar() {
         // Set the toolbar title to the main kanji element value + reading if it exists,
         // if not then just use the first reading element value
-        List<KanjiElement> kanjiElementList = dictionaryItem.getKanjiElements();
-        List<ReadingElement> readingElementList = dictionaryItem.getReadingElements();
+        List<KanjiElement> kanjiElementList = dictionaryEntry.getKanjiElements();
+        List<ReadingElement> readingElementList = dictionaryEntry.getReadingElements();
 
         if (kanjiElementList != null && !kanjiElementList.isEmpty()) {
             toolbarTitle = kanjiElementList.get(0).getValue()
@@ -237,7 +233,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private void setFavourite() {
         // Default state is not favourited, if the entry has been favourited we need to update the
         // FAB icon
-        if (dictionaryItem.getIsFavourite()) {
+        if (dictionaryEntry.getIsFavourite()) {
             floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
         }
 
@@ -246,8 +242,8 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     }
 
     private void setOtherReadings() {
-        List<KanjiElement> kanjiElementList = dictionaryItem.getKanjiElements();
-        List<ReadingElement> readingElementList = dictionaryItem.getReadingElements();
+        List<KanjiElement> kanjiElementList = dictionaryEntry.getKanjiElements();
+        List<ReadingElement> readingElementList = dictionaryEntry.getReadingElements();
         // TODO: Refactor into RecyclerView
         // Set the other readings section
         String otherForms = "";
@@ -294,7 +290,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     // TODO: Refactor into RecyclerView
     // TODO: Separate out into Kanji and Reading priorities
     private void setFrequencyInformation() {
-        List<Priority> priorities = dictionaryItem.getPriorities();
+        List<Priority> priorities = dictionaryEntry.getPriorities();
 
         // Convert to a linked hash set to remove duplicates
         Set<String> unifiedPriorities = new LinkedHashSet<>();
@@ -369,8 +365,8 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     }
 
     @Override
-    public void onResult(DictionaryItem result) {
-        dictionaryItem = result;
+    public void onResult(DictionaryEntry result) {
+        dictionaryEntry = result;
         updateViews();
     }
 
@@ -379,7 +375,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         if (toBeAdded) {
             if (wasSuccessful) {
                 floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
-                dictionaryItem.setIsFavourite(true);
+                dictionaryEntry.setIsFavourite(true);
 
                 if (getView() != null) {
                     Snackbar.make(getView(), R.string.success_add_favourite, Snackbar.LENGTH_LONG).show();
@@ -390,7 +386,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         } else {
             if (wasSuccessful) {
                 floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_border_white));
-                dictionaryItem.setIsFavourite(false);
+                dictionaryEntry.setIsFavourite(false);
 
                 if (getView() != null) {
                     Snackbar.make(getView(), R.string.success_remove_favourite, Snackbar.LENGTH_LONG).show();

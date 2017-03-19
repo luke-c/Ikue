@@ -2,11 +2,7 @@ package com.ikue.japanesedictionary.models;
 
 import java.util.List;
 
-/**
- * Created by luke_c on 01/02/2017.
- */
-
-public class DictionaryItem {
+public class DictionaryEntry {
 
     // A unique number for each entry
     private int entryId;
