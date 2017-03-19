@@ -9,4 +9,5 @@
     <color name="light_grey">#EFEFEF</color>
     <color name="button_grey">#757575</color>
     <color name="md_grey_background">#FAFAFA</color>
+    <color name="md_grey_cards_background">#F5F5F5</color>
 </resources>
