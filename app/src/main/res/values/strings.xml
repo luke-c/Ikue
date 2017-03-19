@@ -48,5 +48,7 @@
     <string name="feedback_card_title">Send Feedback</string>
     <string name="tips_card_header">Tips</string>
     <string name="share_button_content_description">Share button</string>
+    <string name="about_activity_connect">Connect with us</string>
+    <string name="about_activity_licenses">Open source licenses</string>
 
 </resources>

@@ -31,7 +31,7 @@ public class AboutActivity extends AppCompatActivity {
                 .setImage(R.mipmap.ic_launcher)
                 .setDescription(getResources().getString(R.string.about_activity_description))
                 .addItem(new Element().setTitle(BuildConfig.VERSION_NAME))
-                .addGroup("Connect with us")
+                .addGroup(getResources().getString(R.string.about_activity_connect))
                 .addEmail("lukecasey94+ikue@gmail.com")
                 .addTwitter("lukecasey94")
                 .addGitHub("luke-c")
@@ -43,7 +43,7 @@ public class AboutActivity extends AppCompatActivity {
 
     private Element getLicensesElement() {
         Element element = new Element();
-        element.setTitle("Open source licenses");
+        element.setTitle(getResources().getString(R.string.about_activity_licenses));
         element.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,7 +73,7 @@ public class AboutActivity extends AppCompatActivity {
                         new ApacheSoftwareLicense20()));
 
                 new LicensesDialog.Builder(AboutActivity.this)
-                        .setTitle("Open source licenses")
+                        .setTitle(getResources().getString(R.string.about_activity_licenses))
                         .setNotices(notices)
                         .setIncludeOwnLicense(true)
                         .build()
