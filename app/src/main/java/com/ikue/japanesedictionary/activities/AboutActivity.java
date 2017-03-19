@@ -29,7 +29,7 @@ public class AboutActivity extends AppCompatActivity {
                 .setDescription(getResources().getString(R.string.about_activity_description))
                 .addItem(new Element().setTitle("Version: " + BuildConfig.VERSION_NAME))
                 .addGroup(getResources().getString(R.string.about_activity_connect))
-                .addEmail("lukecasey94+ikue@gmail.com")
+                .addEmail("lc94dev+ikue@gmail.com")
                 .addTwitter("lukecasey94")
                 .addGitHub("luke-c/Ikue")
                 .addItem(getLicensesElement())

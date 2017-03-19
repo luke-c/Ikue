@@ -91,7 +91,7 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
         feedbackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String uriText = "mailto:lukecasey94+ikue@gmail.com" + "?subject="
+                String uriText = "mailto:lc94dev+ikue@gmail.com" + "?subject="
                         + Uri.encode("Ikue Japanese Dictionary - Feedback");
 
                 Uri uri = Uri.parse(uriText);
