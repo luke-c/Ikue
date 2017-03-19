@@ -81,10 +81,12 @@
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textSize="@dimen/article_subheading_dense"/>
 
-            <View style="@style/Divider"/>
+            <View
+                android:id="@+id/freq_info_divider"
+                style="@style/Divider"/>
 
             <TextView
-                android:id="@+id/priorities_header"
+                android:id="@+id/freq_info_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="?attr/colorAccent"
@@ -94,7 +96,7 @@
                 android:layout_marginTop="@dimen/md_keylines"/>
 
             <com.google.android.flexbox.FlexboxLayout
-                android:id="@+id/flexbox"
+                android:id="@+id/freq_info_flexbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:flexWrap="wrap"

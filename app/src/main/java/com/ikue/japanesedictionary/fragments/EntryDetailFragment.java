@@ -57,8 +57,10 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private TextView otherFormsContentTextView;
     private TextView otherFormsHeaderTextView;
     private View otherFormsDivider;
+
     private TextView freqInfoHeaderTextView;
     private FlexboxLayout freqInfoFlexBox;
+    private View freqInfoDivider;
 
     private static DictionaryDbHelper helper;
     private static AsyncTask detailsTask;
@@ -142,8 +144,9 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         otherFormsHeaderTextView = (TextView) view.findViewById(R.id.other_forms_header);
         otherFormsDivider = view.findViewById(R.id.other_forms_divider);
 
-        freqInfoHeaderTextView = (TextView) view.findViewById(R.id.priorities_header);
-        freqInfoFlexBox = (FlexboxLayout) view.findViewById(R.id.flexbox);
+        freqInfoHeaderTextView = (TextView) view.findViewById(R.id.freq_info_header);
+        freqInfoFlexBox = (FlexboxLayout) view.findViewById(R.id.freq_info_flexbox);
+        freqInfoDivider = (View) view.findViewById(R.id.freq_info_divider);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.meanings_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -299,6 +302,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
         // If there are no priorities, remove the Priorities TextViews from view
         if (unifiedPriorities.isEmpty()) {
+            freqInfoDivider.setVisibility(View.GONE);
             freqInfoHeaderTextView.setVisibility(View.GONE);
             freqInfoFlexBox.setVisibility(View.GONE);
         } else {
