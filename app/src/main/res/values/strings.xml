@@ -54,5 +54,6 @@
 
     <string name="common_chip">common</string>
     <string name="feedback_button_intent_chooser">Send email</string>
+    <string name="about_activity_erdrg_thanks">A huge thank you to the EDRDG group, and especially Jim Breen. Without the data provided by them this application would not be possible.</string>
 
 </resources>

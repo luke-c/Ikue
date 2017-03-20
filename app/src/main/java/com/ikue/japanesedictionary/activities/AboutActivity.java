@@ -10,6 +10,7 @@ import com.ikue.japanesedictionary.R;
 
 import de.psdev.licensesdialog.LicensesDialog;
 import de.psdev.licensesdialog.licenses.ApacheSoftwareLicense20;
+import de.psdev.licensesdialog.licenses.CreativeCommonsAttributionShareAlike30Unported;
 import de.psdev.licensesdialog.licenses.GnuGeneralPublicLicense30;
 import de.psdev.licensesdialog.licenses.MITLicense;
 import de.psdev.licensesdialog.model.Notice;
@@ -98,6 +99,11 @@ public class AboutActivity extends AppCompatActivity {
                                 "\n" +
                                 "Copyright (c) 2013 Matthew Miller\n",
                         new MITLicense()));
+
+                notices.addNotice(new Notice("ERDRG",
+                        "http://www.edrdg.org/",
+                        getResources().getString(R.string.about_activity_erdrg_thanks),
+                        new CreativeCommonsAttributionShareAlike30Unported()));
 
                 new LicensesDialog.Builder(AboutActivity.this)
                         .setTitle(getResources().getString(R.string.about_activity_licenses))
