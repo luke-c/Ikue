@@ -1,32 +1,28 @@
 package com.ikue.japanesedictionary.models;
 
-/**
- * Created by luke_c on 02/02/2017.
- */
-
 public class KanjiElement {
 
     // Unique ID for the Kanji Element
-    private int mKanjiElementId;
+    private int kanjiElementId;
 
     // Contains a word or short phrase in Japanese which is written using at least one
     // non-kana character (usually kanji, but can be other characters).
-    private String mValue;
+    private String value;
 
     public int getKanjiElementId() {
-        return mKanjiElementId;
+        return kanjiElementId;
     }
 
     public void setKanjiElementId(int kanjiElementId) {
-        mKanjiElementId = kanjiElementId;
+        this.kanjiElementId = kanjiElementId;
     }
 
     public String getValue() {
-        return mValue;
+        return value;
     }
 
     public void setValue(String value) {
-        mValue = value;
+        this.value = value;
     }
 
 

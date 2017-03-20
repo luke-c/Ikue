@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/pref_search_settings_title"
+        android:key="pref_search_settings">
+        <CheckBoxPreference
+            android:key="pref_caseSensitiveRomajiSearch"
+            android:title="@string/pref_caseSensitiveRomajiSearch"
+            android:summary="@string/pref_caseSensitiveRomajiSearch_summ"
+            android:defaultValue="true" />
+        <ListPreference
+            android:key="pref_defaultSearchType"
+            android:title="@string/pref_defaultSearchType"
+            android:summary="%s"
+            android:dialogTitle="@string/pref_defaultSearchType"
+            android:entries="@array/pref_defaultSearchType_entries"
+            android:entryValues="@array/pref_defaultSearchType_values"
+            android:defaultValue="@string/pref_defaultSearchType_default" />
+        <ListPreference
+            android:key="pref_limitSearchResults"
+            android:title="@string/pref_limitSearchResults"
+            android:summary="%s"
+            android:dialogTitle="@string/pref_limitSearchResults"
+            android:entries="@array/pref_limitResults_entries"
+            android:entryValues="@array/pref_limitResults_values"
+            android:defaultValue="@string/pref_limitResults_default" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_history_settings_title"
+        android:key="pref_history_settings">
+        <ListPreference
+            android:key="pref_limitHistoryResults"
+            android:title="@string/pref_limitHistoryResults"
+            android:summary="%s"
+            android:dialogTitle="@string/pref_limitHistoryResults"
+            android:entries="@array/pref_limitResults_entries"
+            android:entryValues="@array/pref_limitResults_values"
+            android:defaultValue="@string/pref_limitResults_default" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_favourites_settings_title"
+        android:key="pref_favourites_settings">
+        <ListPreference
+            android:key="pref_limitFavouriteResults"
+            android:title="@string/pref_limitFavouritesResults"
+            android:summary="%s"
+            android:dialogTitle="@string/pref_limitFavouritesResults"
+            android:entries="@array/pref_limitResults_entries"
+            android:entryValues="@array/pref_limitResults_values"
+            android:defaultValue="@string/pref_limitResults_default" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_general_settings_title"
+        android:key="pref_general_settings">
+        <ListPreference
+            android:key="pref_startupPage"
+            android:title="@string/pref_startupPage"
+            android:summary="%s"
+            android:dialogTitle="@string/pref_startupPage"
+            android:entries="@array/pref_startupPage_entries"
+            android:entryValues="@array/pref_startupPage_values"
+            android:defaultValue="@string/pref_startupPage_default" />
+    </PreferenceCategory>
+</PreferenceScreen>

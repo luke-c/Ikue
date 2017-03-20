@@ -58,3 +58,7 @@ google-services.json
 gen-external-apklibs
 
 # End of https://www.gitignore.io/api/an,android
+.idea/dictionaries/
+app/libs/
+app/src/main/assets/
+keystore.properties

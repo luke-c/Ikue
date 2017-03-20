@@ -2,66 +2,62 @@ package com.ikue.japanesedictionary.models;
 
 import java.util.List;
 
-/**
- * Created by luke_c on 02/02/2017.
- */
-
 public class SenseElement {
 
     // Unique ID for the Sense Element
-    private int mSenseElementId;
+    private int senseElementId;
 
     // Part of speech information about the Sense Element, e.g. Noun, Verb, Adverb.
-    private List<String> mPartOfSpeech;
+    private List<String> partOfSpeech;
 
     // Field of application information about the Sense Element, e.g. Medical, Computing.
     // Absence implies general application.
-    private List<String> mFieldOfApplication;
+    private List<String> fieldOfApplication;
 
     // Dialect information about the Sense Element, e.g. Kansai-ben, Nagoya-ben, Osaka-ben.
-    private List<String> mDialect;
+    private List<String> dialect;
 
     // Target-language words or phrases which are equivalents to the Japanese word.
     // May be omitted in entries which are purely for cross-referencing.
-    private List<String> mGlosses;
+    private List<String> glosses;
 
     public List<String> getDialect() {
-        return mDialect;
+        return dialect;
     }
 
     public void setDialect(List<String> dialect) {
-        mDialect = dialect;
+        this.dialect = dialect;
     }
 
     public List<String> getFieldOfApplication() {
-        return mFieldOfApplication;
+        return fieldOfApplication;
     }
 
     public void setFieldOfApplication(List<String> fieldOfApplication) {
-        mFieldOfApplication = fieldOfApplication;
+        this.fieldOfApplication = fieldOfApplication;
     }
 
     public List<String> getGlosses() {
-        return mGlosses;
+        return glosses;
     }
 
     public void setGlosses(List<String> glosses) {
-        mGlosses = glosses;
+        this.glosses = glosses;
     }
 
     public List<String> getPartOfSpeech() {
-        return mPartOfSpeech;
+        return partOfSpeech;
     }
 
     public void setPartOfSpeech(List<String> partOfSpeech) {
-        mPartOfSpeech = partOfSpeech;
+        this.partOfSpeech = partOfSpeech;
     }
 
     public int getSenseElementId() {
-        return mSenseElementId;
+        return senseElementId;
     }
 
     public void setSenseElementId(int senseElementId) {
-        mSenseElementId = senseElementId;
+        this.senseElementId = senseElementId;
     }
 }

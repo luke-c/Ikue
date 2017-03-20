@@ -1,30 +1,37 @@
 package com.ikue.japanesedictionary.models;
 
-/**
- * Created by luke_c on 02/02/2017.
- */
-
 public class Priority {
 
+    // Unique ID for the Priority
+    private int priorityId;
+
     // Records information about the relative priority of the entry, e.g. news1/2, ichi1/2, spec1/2.
-    private String mValue;
+    private String value;
 
     // If false, then a priority associated with the Reading Element.
-    private boolean mIsKanjiPriority;
+    private boolean isKanjiReadingPriority;
+
+    public int getPriorityId() {
+        return priorityId;
+    }
+
+    public void setPriorityId(int priorityId) {
+        this.priorityId = priorityId;
+    }
 
     public String getValue() {
-        return mValue;
+        return value;
     }
 
     public void setValue(String value) {
-        mValue = value;
+        this.value = value;
     }
 
-    public boolean isKanjiPriority() {
-        return mIsKanjiPriority;
+    public boolean isKanjiReadingPriority() {
+        return isKanjiReadingPriority;
     }
 
-    public void setKanjiPriority(boolean kanjiPriority) {
-        mIsKanjiPriority = kanjiPriority;
+    public void setKanjiReadingPriority(boolean kanjiReadingPriority) {
+        isKanjiReadingPriority = kanjiReadingPriority;
     }
 }
