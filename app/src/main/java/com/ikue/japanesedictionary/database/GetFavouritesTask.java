@@ -20,7 +20,7 @@ public class GetFavouritesTask extends AsyncTask<Void, Void, List<DictionaryList
 
     @Override
     protected List<DictionaryListEntry> doInBackground(Void... params) {
-        return helper.getAllFavourites();
+        return helper.getFavourites();
     }
 
     @Override

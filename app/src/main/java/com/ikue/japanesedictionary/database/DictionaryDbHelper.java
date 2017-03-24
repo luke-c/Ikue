@@ -343,7 +343,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     }
 
     // Get a list of all the favourites the user has
-    public List<DictionaryListEntry> getAllFavourites() {
+    public List<DictionaryListEntry> getFavourites() {
         SQLiteDatabase db = getReadableDatabase();
 
         List<DictionaryListEntry> favourites = new ArrayList<>();
@@ -426,7 +426,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     }
 
     // Add an entry to the user's favourites
-    public void addFavourite(int id) throws SQLException {
+    public void addToFavourites(int id) throws SQLException {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
 
@@ -446,7 +446,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
     }
 
     // Remove an entry from the user's favourites
-    public void removeFavourite(int id) throws SQLException {
+    public void removeFromFavourites(int id) throws SQLException {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
 
