@@ -121,7 +121,16 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
             String currentDate = df.format(new Date());
 
             // Get the stored date and time to compare
-            String wordOfTheDayDate = sharedPref.getString("pref_wordOfTheDay_Date", currentDate);
+            String wordOfTheDayDate = sharedPref.getString("pref_wordOfTheDay_Date", null);
+
+            // If there is no value stored, set the initial value
+            if (wordOfTheDayDate == null) {
+                // Initial value should be the current date
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("pref_wordOfTheDay_Date", currentDate);
+                editor.apply();
+                wordOfTheDayDate = currentDate;
+            }
 
             long differenceInDays;
             try {
