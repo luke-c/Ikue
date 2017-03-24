@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -37,6 +38,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
+    private AppBarLayout appBarLayout;
     private NavigationView navigationView;
     private ViewPager viewPager;
     private SearchView searchView;
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the shared preferences
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
 
         // Add Toolbar to Main Screen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -134,6 +138,9 @@ public class MainActivity extends AppCompatActivity {
         fabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Expand the AppBarLayout on click, so SearchView is visible
+                appBarLayout.setExpanded(true);
+
                 // Expand the SearchView
                 MenuItemCompat.expandActionView(searchMenuItem);
             }
