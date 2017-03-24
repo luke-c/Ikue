@@ -134,6 +134,16 @@ public class MainActivity extends AppCompatActivity {
         searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchMenuItem.getActionView();
 
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean queryTextFocused) {
+                if(!queryTextFocused) {
+                    // Close the SearchView when the user closes the keyboard
+                    MenuItemCompat.collapseActionView(searchMenuItem);
+                }
+            }
+        });
+
         // Set the onClick here so we can guarantee we have a searchMenuItem
         fabButton.setOnClickListener(new View.OnClickListener() {
             @Override
