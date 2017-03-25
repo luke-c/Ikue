@@ -124,10 +124,6 @@ public class DatabaseTest {
 
         List<DictionaryListEntry> results = helper.getFavourites();
 
-        if (results.get(0) != null) {
-            assertNotEquals(results.get(0).getEntryId(), entryIdToRemove);
-        }
-
         for (DictionaryListEntry entry : results) {
             assertNotEquals(entry.getEntryId(), entryIdToRemove);
         }
