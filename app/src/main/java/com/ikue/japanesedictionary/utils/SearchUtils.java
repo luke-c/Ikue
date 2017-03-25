@@ -52,7 +52,7 @@ public class SearchUtils {
     // Check if a given string is all uppercase
     public static boolean isStringAllUppercase(String string) {
         for (char c : string.toCharArray()) {
-            if(!Character.isUpperCase(c)) {
+            if(!Character.isUpperCase(c) && !Character.isWhitespace(c)) {
                 return false;
             }
         }

@@ -27,9 +27,9 @@ public class ToggleFavouriteTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         try {
             if (toBeAdded) {
-                helper.addFavourite(entryId);
+                helper.addToFavourites(entryId);
             } else {
-                helper.removeFavourite(entryId);
+                helper.removeFromFavourites(entryId);
             }
         } catch (SQLException e) {
             e.printStackTrace();
