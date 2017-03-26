@@ -30,9 +30,9 @@
 
     <string-array name="pref_defaultSearchType_entries">
         <item>Exact match</item>
-        <item>Match results ending with search term</item>
-        <item>Match results starting with search term</item>
-        <item>Match results containing search term</item>
+        <item>All results ending with search term</item>
+        <item>All results starting with search term</item>
+        <item>All results containing search term</item>
     </string-array>
     <string-array name="pref_defaultSearchType_values">
         <item>0</item>

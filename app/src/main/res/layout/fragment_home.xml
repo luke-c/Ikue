@@ -151,6 +151,14 @@
                     android:textColor="@color/default_text"
                     android:textSize="@dimen/body_text"
                     tools:text="@string/feedback_card_content"/>
+
+                <Button
+                    android:id="@+id/tips_card_button"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_card_button"
+                    android:textColor="?attr/colorPrimary"/>
             </LinearLayout>
 
         </android.support.v7.widget.CardView>

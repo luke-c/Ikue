@@ -37,4 +37,8 @@ public class TipsUtils {
     public static Tip getRandomTip() {
         return TIPS.get(new Random().nextInt(TIPS.size()));
     }
+
+    public static List<Tip> getTips() {
+        return TIPS;
+    }
 }
