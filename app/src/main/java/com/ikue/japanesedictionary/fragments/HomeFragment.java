@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.activities.EntryDetailActivity;
+import com.ikue.japanesedictionary.activities.TipsActivity;
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.GetEntryDetailTask;
 import com.ikue.japanesedictionary.database.GetRandomEntryTask;
@@ -49,10 +50,11 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
     private Button wordOfTheDayMoreButton;
     private ImageButton wordOfTheDayShareButton;
 
-    private Button feedbackButton;
+    private Button sendFeedbackButton;
 
     private TextView tipsTitleText;
     private TextView tipsBodyText;
+    private Button tipsSeeAllButton;
 
     private DictionaryEntry wordOfTheDay;
 
@@ -87,79 +89,16 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
         wordOfTheDayMoreButton = (Button) view.findViewById(R.id.word_of_the_day_button);
         wordOfTheDayShareButton = (ImageButton) view.findViewById(R.id.word_of_the_day_share_button);
 
-        feedbackButton = (Button) view.findViewById(R.id.feedback_card_button);
-        feedbackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String uriText = "mailto:lc94dev+ikue@gmail.com" + "?subject="
-                        + Uri.encode("Ikue Japanese Dictionary - Feedback");
-
-                Uri uri = Uri.parse(uriText);
-
-                Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
-                sendIntent.setData(uri);
-                if (sendIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivity(Intent.createChooser(sendIntent, getString(R.string.feedback_button_intent_chooser)));
-                }
-            }
-        });
+        sendFeedbackButton = (Button) view.findViewById(R.id.feedback_card_button);
 
         tipsTitleText = (TextView) view.findViewById(R.id.tips_card_title);
         tipsBodyText = (TextView) view.findViewById(R.id.tips_card_content);
+        tipsSeeAllButton = (Button) view.findViewById(R.id.tips_card_button);
+
+        // Setup each card
+        setupWordOfTheDayCard();
         setupTipsCard();
-
-        // Get the stored word of the day entry Id
-        int wordOfTheDayEntryId = sharedPref.getInt("pref_wordOfTheDay_EntryId", 0);
-
-        // If there is no stored entry, we need to make a new query
-        if(wordOfTheDayEntryId == 0) {
-            task = new GetRandomEntryTask(listener, helper).execute();
-        } else {
-            DateFormat df = DateFormat.getDateInstance();
-
-            // Get the current date and time
-            String currentDate = df.format(new Date());
-
-            // Get the stored date and time to compare
-            String wordOfTheDayDate = sharedPref.getString("pref_wordOfTheDay_Date", null);
-
-            // If there is no value stored, set the initial value
-            if (wordOfTheDayDate == null) {
-                // Initial value should be the current date
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("pref_wordOfTheDay_Date", currentDate);
-                editor.apply();
-                wordOfTheDayDate = currentDate;
-            }
-
-            long differenceInDays;
-            try {
-                // Get the difference in number of days between the current date and the stored date
-                differenceInDays = DateTimeUtils.getDifferenceInDays(df.parse(wordOfTheDayDate), df.parse(currentDate));
-            } catch (ParseException e) {
-                e.printStackTrace();
-
-                // Log the error message
-                Log.e(LOG_TAG, e.getMessage());
-
-                // If there was an error, set the difference to 1 so we get a new random entry
-                differenceInDays = 1;
-            }
-
-            // If a day or more has passed, get a new random entry
-            if(differenceInDays >= 1) {
-                task = new GetRandomEntryTask(listener, helper).execute();
-
-                // Update the stored date
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("pref_wordOfTheDay_Date", currentDate);
-                editor.apply();
-
-            } else {
-                // Otherwise, get the stored entry
-                task = new GetEntryDetailTask(listener, helper, wordOfTheDayEntryId).execute();
-            }
-        }
+        setupFeedbackCard();
     }
 
     @Override
@@ -268,12 +207,91 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
         return builder.toString();
     }
 
+    private void setupWordOfTheDayCard() {
+        // Get the stored word of the day entry Id
+        int wordOfTheDayEntryId = sharedPref.getInt("pref_wordOfTheDay_EntryId", 0);
+
+        // If there is no stored entry, we need to make a new query
+        if(wordOfTheDayEntryId == 0) {
+            task = new GetRandomEntryTask(listener, helper).execute();
+        } else {
+            DateFormat df = DateFormat.getDateInstance();
+
+            // Get the current date and time
+            String currentDate = df.format(new Date());
+
+            // Get the stored date and time to compare
+            String wordOfTheDayDate = sharedPref.getString("pref_wordOfTheDay_Date", null);
+
+            // If there is no value stored, set the initial value
+            if (wordOfTheDayDate == null) {
+                // Initial value should be the current date
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("pref_wordOfTheDay_Date", currentDate);
+                editor.apply();
+                wordOfTheDayDate = currentDate;
+            }
+
+            long differenceInDays;
+            try {
+                // Get the difference in number of days between the current date and the stored date
+                differenceInDays = DateTimeUtils.getDifferenceInDays(df.parse(wordOfTheDayDate), df.parse(currentDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+
+                // Log the error message
+                Log.e(LOG_TAG, e.getMessage());
+
+                // If there was an error, set the difference to 1 so we get a new random entry
+                differenceInDays = 1;
+            }
+
+            // If a day or more has passed, get a new random entry
+            if(differenceInDays >= 1) {
+                task = new GetRandomEntryTask(listener, helper).execute();
+
+                // Update the stored date
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("pref_wordOfTheDay_Date", currentDate);
+                editor.apply();
+
+            } else {
+                // Otherwise, get the stored entry
+                task = new GetEntryDetailTask(listener, helper, wordOfTheDayEntryId).execute();
+            }
+        }
+    }
+
     private void setupTipsCard() {
         Tip randomTip = TipsUtils.getRandomTip();
 
         tipsTitleText.setText(randomTip.getTitle());
         tipsBodyText.setText(randomTip.getBody());
+
+        // On click, take the user to the detail view
+        tipsSeeAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), TipsActivity.class));
+            }
+        });
     }
 
+    private void setupFeedbackCard() {
+        sendFeedbackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String uriText = "mailto:lc94dev+ikue@gmail.com" + "?subject="
+                        + Uri.encode("Ikue Japanese Dictionary - Feedback");
 
+                Uri uri = Uri.parse(uriText);
+
+                Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+                sendIntent.setData(uri);
+                if (sendIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(Intent.createChooser(sendIntent, getString(R.string.feedback_button_intent_chooser)));
+                }
+            }
+        });
+    }
 }
