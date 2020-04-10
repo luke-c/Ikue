@@ -2,15 +2,6 @@ package com.ikue.japanesedictionary.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.ContentLoadingProgressBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +9,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.SearchResultAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
@@ -30,7 +31,8 @@ import com.ikue.japanesedictionary.utils.SearchUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ikue.japanesedictionary.utils.SearchTypes.*;
+import static com.ikue.japanesedictionary.utils.SearchTypes.ENGLISH;
+import static com.ikue.japanesedictionary.utils.SearchTypes.ROMAJI;
 
 public class SearchResultFragment extends Fragment implements SearchAsyncCallbacks {
     private static final String ARG_SEARCH_TERM = "SEARCH_TERM";

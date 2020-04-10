@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.v7.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/word_of_the_day_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,7 +49,6 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="@dimen/md_keylines"
                         android:paddingRight="@dimen/md_keylines"
-                        android:textColor="@color/default_text"
                         android:textSize="24sp"
                         tools:text="羽翼"/>
 
@@ -74,7 +73,6 @@
                         android:paddingLeft="@dimen/md_keylines"
                         android:paddingRight="@dimen/md_keylines"
                         android:paddingTop="@dimen/md_keylines"
-                        android:textColor="@color/default_text"
                         android:textSize="@dimen/body_text"
                         tools:text="right-wing, right-fielder"/>
                 </LinearLayout>
@@ -94,17 +92,17 @@
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="@dimen/cards_button_width"
                     android:layout_height="@dimen/cards_button_height"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_below="@+id/word_of_the_day_main_content"
-                    android:layout_marginRight="@dimen/md_keylines"
+                    android:layout_marginEnd="@dimen/md_keylines"
                     android:tint="@color/button_grey"
                     app:srcCompat="@drawable/ic_share_black_24dp"
                     android:contentDescription="@string/share_button_content_description"/>
 
             </RelativeLayout>
-        </android.support.v7.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <android.support.v7.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/tips_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -126,7 +124,6 @@
                     android:paddingRight="@dimen/md_keylines"
                     android:paddingTop="24dp"
                     android:text="@string/tips_card_header"
-                    android:textColor="@color/default_text"
                     android:textSize="24sp"/>
 
                 <TextView
@@ -148,7 +145,6 @@
                     android:paddingBottom="@dimen/md_keylines"
                     android:paddingLeft="@dimen/md_keylines"
                     android:paddingRight="@dimen/md_keylines"
-                    android:textColor="@color/default_text"
                     android:textSize="@dimen/body_text"
                     tools:text="@string/feedback_card_content"/>
 
@@ -161,9 +157,9 @@
                     android:textColor="?attr/colorPrimary"/>
             </LinearLayout>
 
-        </android.support.v7.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <android.support.v7.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/feedback_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -186,7 +182,6 @@
                     android:paddingRight="@dimen/md_keylines"
                     android:paddingTop="24dp"
                     android:text="@string/feedback_card_title"
-                    android:textColor="@color/default_text"
                     android:textSize="24sp"/>
 
                 <TextView
@@ -197,7 +192,6 @@
                     android:paddingLeft="@dimen/md_keylines"
                     android:paddingRight="@dimen/md_keylines"
                     android:text="@string/feedback_card_content"
-                    android:textColor="@color/default_text"
                     android:textSize="@dimen/body_text"/>
 
                 <Button
@@ -211,7 +205,7 @@
 
             </LinearLayout>
 
-        </android.support.v7.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+</androidx.core.widget.NestedScrollView>

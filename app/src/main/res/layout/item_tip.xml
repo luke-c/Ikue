@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tips_cardview"
@@ -23,7 +23,6 @@
             android:paddingLeft="@dimen/md_keylines"
             android:paddingRight="@dimen/md_keylines"
             android:paddingTop="24dp"
-            android:textColor="@color/default_text"
             android:textSize="24sp"/>
 
         <TextView
@@ -32,8 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/md_keylines"
-            android:textColor="@color/default_text"
             android:textSize="@dimen/body_text"/>
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

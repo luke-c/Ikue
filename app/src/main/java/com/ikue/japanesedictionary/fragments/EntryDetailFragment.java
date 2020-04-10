@@ -3,17 +3,6 @@ package com.ikue.japanesedictionary.fragments;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +10,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.flexbox.FlexboxLayout;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
 import com.ikue.japanesedictionary.database.AddToHistoryTask;
@@ -42,10 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import fisk.chipcloud.ChipCloud;
-import fisk.chipcloud.ChipCloudConfig;
-import fisk.chipcloud.ChipListener;
-
 public class EntryDetailFragment extends Fragment implements DetailAsyncCallbacks, ToggleFavouriteAsyncCallbacks, AddToHistoryAsyncCallbacks {
 
     private static final String ARG_ENTRY_ID = "ENTRY_ID";
@@ -55,7 +53,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private View otherFormsDivider;
 
     private TextView freqInfoHeaderTextView;
-    private FlexboxLayout freqInfoFlexBox;
+    private ChipGroup freqInfoChips;
     private View freqInfoDivider;
 
     private static DictionaryDbHelper helper;
@@ -141,7 +139,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         otherFormsDivider = view.findViewById(R.id.other_forms_divider);
 
         freqInfoHeaderTextView = (TextView) view.findViewById(R.id.freq_info_header);
-        freqInfoFlexBox = (FlexboxLayout) view.findViewById(R.id.freq_info_flexbox);
+        freqInfoChips = (ChipGroup) view.findViewById(R.id.freq_info_chips);
         freqInfoDivider = view.findViewById(R.id.freq_info_divider);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.meanings_recyclerview);
@@ -271,7 +269,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         otherForms = otherForms.replace(toolbarTitle + "\n", "");
 
         // If there are no other forms, we hide the related section
-        if(otherForms.isEmpty()) {
+        if (otherForms.isEmpty()) {
             otherFormsDivider.setVisibility(View.GONE);
             otherFormsHeaderTextView.setVisibility(View.GONE);
             otherFormsContentTextView.setVisibility(View.GONE);
@@ -302,65 +300,54 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         if (unifiedPriorities.isEmpty()) {
             freqInfoDivider.setVisibility(View.GONE);
             freqInfoHeaderTextView.setVisibility(View.GONE);
-            freqInfoFlexBox.setVisibility(View.GONE);
+            freqInfoChips.setVisibility(View.GONE);
         } else {
-            // Specify the config for our chips
-            ChipCloudConfig config = new ChipCloudConfig()
-                    .selectMode(ChipCloud.SelectMode.single)
-                    .checkedChipColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
-                    .checkedTextColor(ContextCompat.getColor(getContext(), R.color.white))
-                    .uncheckedChipColor(ContextCompat.getColor(getContext(), R.color.light_grey))
-                    .uncheckedTextColor(ContextCompat.getColor(getContext(), R.color.default_text))
-                    .useInsetPadding(true);
-
-            //Create a new ChipCloud with a Context and ViewGroup:
-            final ChipCloud chipCloud = new ChipCloud(getActivity(), freqInfoFlexBox, config);
-
             // Get whether the entry is common or not
             if (EntryUtils.isCommonEntry(unifiedPriorities)) {
                 // If our entry is common, add a 'common' chip
-                chipCloud.addChip(getString(R.string.common_chip));
+                Chip chip = new Chip(requireContext());
+                chip.setText(getString(R.string.common_chip));
+                freqInfoChips.addView(chip);
             }
 
             // Add every priority as a chip
             for (String value : unifiedPriorities) {
-                chipCloud.addChip(value);
+                Chip chip = new Chip(requireContext());
+                chip.setText(value);
+                freqInfoChips.addView(chip);
             }
 
             // Get the map of detailed priority information we use for our dialogs.
             final Map<String, String> detailedPriorityInformation = EntryUtils.getDetailedPriorityInformation();
 
-            chipCloud.setListener(new ChipListener() {
+            freqInfoChips.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
                 @Override
-                public void chipCheckedChange(final int index, boolean checked, boolean userClicked) {
-                    // If the user clicks on a chip
-                    if (checked && userClicked) {
-                        // Get the text of the chip
-                        String label = chipCloud.getLabel(index);
-                        String message;
+                public void onCheckedChanged(ChipGroup group, int checkedId) {
+                    // Get the text of the chip
+                    Chip chip = group.findViewById(checkedId);
+                    String label = chip.getText().toString();
+                    String message;
 
-                        // Get the detailed message from the label
-                        if (label.startsWith("nf")) {
-                            message = detailedPriorityInformation.get("nf");
-                        } else {
-                            message = detailedPriorityInformation.get(label);
-                        }
-
-                        // Create an AlertDialog showing the detailed information
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle(label)
-                                .setMessage(message)
-                                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialogInterface) {
-                                        // When the user dismisses the dialog, deselect the chip
-                                        chipCloud.deselectIndex(index);
-                                    }
-                                })
-                                .show();
+                    // Get the detailed message from the label
+                    if (label.startsWith("nf")) {
+                        message = detailedPriorityInformation.get("nf");
+                    } else {
+                        message = detailedPriorityInformation.get(label);
                     }
+
+                    // Create an AlertDialog showing the detailed information
+                    new AlertDialog.Builder(requireActivity())
+                            .setTitle(label)
+                            .setMessage(message)
+                            .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialogInterface) {
+                                    // When the user dismisses the dialog, deselect the chip
+                                    group.clearCheck();
+                                }
+                            }).show();
                 }
-            }, true);
+            });
         }
     }
 

@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:background="?android:attr/selectableItemBackground"
-                android:padding="@dimen/md_keylines"
-                android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/md_keylines">
 
     <TextView
         android:id="@+id/list_primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/md_keylines"
+        android:layout_marginStart="@dimen/md_keylines"
         android:ellipsize="end"
         android:maxLines="1"
-        tools:text="Kanji Element"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/article_subheading"/>
+        android:textSize="@dimen/article_subheading"
+        tools:text="Kanji Element" />
 
     <TextView
         android:id="@+id/list_primary2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/md_keylines"
+        android:layout_marginStart="@dimen/md_keylines"
         android:ellipsize="end"
         android:maxLines="1"
-        tools:text="Reading Element"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/article_subheading" />
+        android:textSize="@dimen/article_subheading"
+        tools:text="Reading Element" />
 
     <TextView
         android:id="@+id/list_secondary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/md_keylines"
-        android:textColor="@color/medium_grey"
+        android:layout_marginStart="@dimen/md_keylines"
         android:ellipsize="end"
         android:maxLines="1"
-        tools:text="Meaning1, Meaning2, Meaning3"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:textSize="@dimen/body_text" />
+        android:textColor="@color/medium_grey"
+        android:textSize="@dimen/body_text"
+        tools:text="Meaning1, Meaning2, Meaning3" />
 
 </LinearLayout>

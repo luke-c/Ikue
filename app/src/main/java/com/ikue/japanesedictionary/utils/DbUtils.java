@@ -1,6 +1,6 @@
 package com.ikue.japanesedictionary.utils;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.ikue.japanesedictionary.database.DictionaryDbSchema;
 

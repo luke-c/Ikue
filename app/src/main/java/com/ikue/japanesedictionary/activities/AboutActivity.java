@@ -1,11 +1,11 @@
 package com.ikue.japanesedictionary.activities;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.ikue.japanesedictionary.BuildConfig;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.ikue.japanesedictionary.R;
 
 import de.psdev.licensesdialog.LicensesDialog;
@@ -28,7 +28,7 @@ public class AboutActivity extends AppCompatActivity {
                 .isRTL(false)
                 .setImage(R.mipmap.ic_launcher)
                 .setDescription(getResources().getString(R.string.about_activity_description))
-                .addItem(new Element().setTitle("Version: " + BuildConfig.VERSION_NAME))
+                .addItem(new Element().setTitle("Version: " + "debug"))
                 .addGroup(getResources().getString(R.string.about_activity_connect))
                 .addEmail("lc94dev+ikue@gmail.com")
                 .addTwitter("lukecasey94")
