@@ -32,6 +32,7 @@ import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.fragments.FavouritesFragment;
 import com.ikue.japanesedictionary.fragments.HistoryFragment;
 import com.ikue.japanesedictionary.fragments.HomeFragment;
+import com.ikue.japanesedictionary.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;

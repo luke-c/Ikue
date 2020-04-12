@@ -1,4 +1,4 @@
-package com.ikue.japanesedictionary.fragments
+package com.ikue.japanesedictionary.settings
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
