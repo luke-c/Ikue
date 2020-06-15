@@ -37,7 +37,7 @@ import com.ikue.japanesedictionary.settings.SettingsActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class OldMainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private AppBarLayout appBarLayout;
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_old);
 
         // When false, the system sets the default values only if this method has never been called in the past
         PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.preferences, false);
@@ -108,10 +108,10 @@ public class MainActivity extends AppCompatActivity {
                         viewPager.setCurrentItem(2, true);
                         break;
                     case R.id.nav_settings_activity:
-                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                        startActivity(new Intent(OldMainActivity.this, SettingsActivity.class));
                         break;
                     case R.id.nav_about_activity:
-                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                        startActivity(new Intent(OldMainActivity.this, AboutActivity.class));
                         break;
                     default:
                         break;
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            startActivity(new Intent(OldMainActivity.this, SettingsActivity.class));
         } else if (id == android.R.id.home) {
             drawerLayout.openDrawer(GravityCompat.START);
         }

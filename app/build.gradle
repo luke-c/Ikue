@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 
@@ -19,23 +20,23 @@ android {
         }
     }
 
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.ikue.japanesedictionary"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 4
         versionName "1.0.3"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'com.ikue.japanesedictionary.CustomTestRunner'
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ["room.incremental":"true"]
+                arguments["room.incremental"] = "true"
             }
         }
     }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -48,13 +49,16 @@ android {
             resValue "string", "app_name", "Ikue DEBUG"
         }
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     viewBinding {
         enabled = true
     }
@@ -68,27 +72,30 @@ repositories {
 
 dependencies {
     def room_version = "2.2.5"
-    def coroutines_version = "1.3.5"
+    def coroutines_version = "1.3.6"
     def lifecycle_version = "2.2.0"
+    def fragment_version = "1.2.5"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     // Android X
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
-    implementation 'androidx.fragment:fragment-ktx:1.2.4'
+    implementation 'androidx.appcompat:appcompat:1.2.0-rc01'
+    implementation 'androidx.core:core-ktx:1.3.0'
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
+    debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
     implementation 'androidx.activity:activity-ktx:1.1.0'
 
     // UI
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.preference:preference-ktx:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta7'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha03'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'com.google.android.material:material:1.2.0-beta01'
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
+    testImplementation 'androidx.arch.core:core-testing:2.1.0'
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
@@ -106,15 +113,22 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
+    // Dagger Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    // Unit Testing
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'io.mockk:mockk:1.10.0'
+
+    // UI Testing
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2-rc01'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-rc01'
+
     // Remove
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     implementation 'com.github.medyo:android-about-page:1.2.5'
     implementation 'de.psdev.licensesdialog:licensesdialog:1.9.0'
-
-    // Testing
-    testImplementation 'junit:junit:4.13'
-    testImplementation 'io.mockk:mockk:1.9.3'
-
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
