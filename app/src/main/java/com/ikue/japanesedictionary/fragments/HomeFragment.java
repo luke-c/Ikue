@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.activities.EntryDetailActivity;
 import com.ikue.japanesedictionary.activities.TipsActivity;
@@ -95,6 +97,11 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
         tipsTitleText = (TextView) view.findViewById(R.id.tips_card_title);
         tipsBodyText = (TextView) view.findViewById(R.id.tips_card_content);
         tipsSeeAllButton = (Button) view.findViewById(R.id.tips_card_button);
+
+        MaterialToolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(view1 -> {
+            NavHostFragment.findNavController(this).navigateUp();
+        });
 
         // Setup each card
         setupWordOfTheDayCard();

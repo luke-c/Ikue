@@ -1,211 +1,225 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_grey_cards_background"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="@color/colorPrimary"
+        app:navigationIcon="@drawable/ic_back_button"
+        app:title="Test" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/word_of_the_day_cardview"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/md_grey_cards_background">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp">
+            android:orientation="vertical">
 
-            <RelativeLayout
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/word_of_the_day_cardview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/word_of_the_day_main_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/word_of_the_day_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/md_keylines"
+                            android:paddingTop="24dp"
+                            android:paddingRight="@dimen/md_keylines"
+                            android:paddingBottom="@dimen/md_keylines"
+                            android:text="@string/word_of_the_day_header"
+                            android:textColor="@color/medium_grey" />
+
+                        <TextView
+                            android:id="@+id/word_of_the_day_primary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/md_keylines"
+                            android:paddingRight="@dimen/md_keylines"
+                            android:textSize="24sp"
+                            tools:text="羽翼" />
+
+                        <TextView
+                            android:id="@+id/word_of_the_day_secondary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/md_keylines"
+                            android:paddingTop="12dp"
+                            android:paddingRight="@dimen/md_keylines"
+                            android:textColor="@color/medium_grey"
+                            android:textSize="@dimen/body_text_dense"
+                            tools:text="うよく" />
+
+                        <TextView
+                            android:id="@+id/word_of_the_day_meanings"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:paddingLeft="@dimen/md_keylines"
+                            android:paddingTop="@dimen/md_keylines"
+                            android:paddingRight="@dimen/md_keylines"
+                            android:paddingBottom="@dimen/md_keylines"
+                            android:textSize="@dimen/body_text"
+                            tools:text="right-wing, right-fielder" />
+                    </LinearLayout>
+
+
+                    <Button
+                        android:id="@+id/word_of_the_day_button"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/word_of_the_day_main_content"
+                        android:text="@string/word_of_the_day_detail_button"
+                        android:textColor="?attr/colorPrimary" />
+
+                    <ImageButton
+                        android:id="@+id/word_of_the_day_share_button"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="@dimen/cards_button_width"
+                        android:layout_height="@dimen/cards_button_height"
+                        android:layout_below="@+id/word_of_the_day_main_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/md_keylines"
+                        android:contentDescription="@string/share_button_content_description"
+                        android:tint="@color/button_grey"
+                        app:srcCompat="@drawable/ic_share_black_24dp" />
+
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tips_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="4dp">
 
                 <LinearLayout
-                    android:id="@+id/word_of_the_day_main_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/word_of_the_day_header"
+                        android:id="@+id/tips_card_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/md_keylines"
                         android:paddingLeft="@dimen/md_keylines"
-                        android:paddingRight="@dimen/md_keylines"
                         android:paddingTop="24dp"
-                        android:text="@string/word_of_the_day_header"
-                        android:textColor="@color/medium_grey"/>
+                        android:paddingRight="@dimen/md_keylines"
+                        android:text="@string/tips_card_header"
+                        android:textSize="24sp" />
 
                     <TextView
-                        android:id="@+id/word_of_the_day_primary"
+                        android:id="@+id/tips_card_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="@dimen/md_keylines"
-                        android:paddingRight="@dimen/md_keylines"
-                        android:textSize="24sp"
-                        tools:text="羽翼"/>
-
-                    <TextView
-                        android:id="@+id/word_of_the_day_secondary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/md_keylines"
-                        android:paddingRight="@dimen/md_keylines"
                         android:paddingTop="12dp"
+                        android:paddingRight="@dimen/md_keylines"
+                        android:paddingBottom="@dimen/md_keylines"
                         android:textColor="@color/medium_grey"
-                        android:textSize="@dimen/body_text_dense"
-                        tools:text="うよく"/>
+                        android:textSize="@dimen/body_text"
+                        tools:text="Wildcards" />
 
                     <TextView
-                        android:id="@+id/word_of_the_day_meanings"
+                        android:id="@+id/tips_card_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:paddingBottom="@dimen/md_keylines"
                         android:paddingLeft="@dimen/md_keylines"
                         android:paddingRight="@dimen/md_keylines"
-                        android:paddingTop="@dimen/md_keylines"
+                        android:paddingBottom="@dimen/md_keylines"
                         android:textSize="@dimen/body_text"
-                        tools:text="right-wing, right-fielder"/>
+                        tools:text="@string/feedback_card_content" />
+
+                    <Button
+                        android:id="@+id/tips_card_button"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tips_card_button"
+                        android:textColor="?attr/colorPrimary" />
                 </LinearLayout>
 
+            </com.google.android.material.card.MaterialCardView>
 
-                <Button
-                    android:id="@+id/word_of_the_day_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/word_of_the_day_main_content"
-                    android:text="@string/word_of_the_day_detail_button"
-                    android:textColor="?attr/colorPrimary"/>
-
-                <ImageButton
-                    android:id="@+id/word_of_the_day_share_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="@dimen/cards_button_width"
-                    android:layout_height="@dimen/cards_button_height"
-                    android:layout_alignParentEnd="true"
-                    android:layout_below="@+id/word_of_the_day_main_content"
-                    android:layout_marginEnd="@dimen/md_keylines"
-                    android:tint="@color/button_grey"
-                    app:srcCompat="@drawable/ic_share_black_24dp"
-                    android:contentDescription="@string/share_button_content_description"/>
-
-            </RelativeLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/tips_cardview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="4dp">
-
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/feedback_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp">
 
-                <TextView
-                    android:id="@+id/tips_card_header"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/md_keylines"
-                    android:paddingRight="@dimen/md_keylines"
-                    android:paddingTop="24dp"
-                    android:text="@string/tips_card_header"
-                    android:textSize="24sp"/>
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tips_card_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/md_keylines"
-                    android:paddingLeft="@dimen/md_keylines"
-                    android:paddingRight="@dimen/md_keylines"
-                    android:paddingTop="12dp"
-                    android:textColor="@color/medium_grey"
-                    android:textSize="@dimen/body_text"
-                    tools:text="Wildcards"/>
+                    <TextView
+                        android:id="@+id/feedback_card_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/md_keylines"
+                        android:paddingTop="24dp"
+                        android:paddingRight="@dimen/md_keylines"
+                        android:paddingBottom="@dimen/md_keylines"
+                        android:text="@string/feedback_card_title"
+                        android:textSize="24sp" />
 
-                <TextView
-                    android:id="@+id/tips_card_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/md_keylines"
-                    android:paddingLeft="@dimen/md_keylines"
-                    android:paddingRight="@dimen/md_keylines"
-                    android:textSize="@dimen/body_text"
-                    tools:text="@string/feedback_card_content"/>
+                    <TextView
+                        android:id="@+id/feedback_card_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/md_keylines"
+                        android:paddingRight="@dimen/md_keylines"
+                        android:paddingBottom="16dp"
+                        android:text="@string/feedback_card_content"
+                        android:textSize="@dimen/body_text" />
 
-                <Button
-                    android:id="@+id/tips_card_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tips_card_button"
-                    android:textColor="?attr/colorPrimary"/>
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/feedback_cardview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="4dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/feedback_card_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/md_keylines"
-                    android:paddingLeft="@dimen/md_keylines"
-                    android:paddingRight="@dimen/md_keylines"
-                    android:paddingTop="24dp"
-                    android:text="@string/feedback_card_title"
-                    android:textSize="24sp"/>
-
-                <TextView
-                    android:id="@+id/feedback_card_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
-                    android:paddingLeft="@dimen/md_keylines"
-                    android:paddingRight="@dimen/md_keylines"
-                    android:text="@string/feedback_card_content"
-                    android:textSize="@dimen/body_text"/>
-
-                <Button
-                    android:id="@+id/feedback_card_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/feedback_card_button"
-                    android:textColor="?attr/colorPrimary"/>
+                    <Button
+                        android:id="@+id/feedback_card_button"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/feedback_card_button"
+                        android:textColor="?attr/colorPrimary" />
 
 
-            </LinearLayout>
+                </LinearLayout>
 
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
+
+
