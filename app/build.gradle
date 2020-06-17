@@ -28,6 +28,7 @@ android {
         targetSdkVersion 30
         versionCode 4
         versionName "1.0.3"
+
         testInstrumentationRunner 'com.ikue.japanesedictionary.CustomTestRunner'
 
         javaCompileOptions {

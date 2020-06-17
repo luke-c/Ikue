@@ -4,35 +4,24 @@
     package="com.ikue.japanesedictionary">
 
     <application
+        android:name=".IkueApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.Base"
+        android:theme="@style/IkueTheme"
         tools:ignore="AllowBackup">
-        <activity
-            android:name=".MainActivity"
-            android:theme="@style/AppTheme">
-
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:value=".activities.SearchResultActivity" />
         </activity>
 
         <activity
-            android:name=".activities.OldMainActivity"
-            android:theme="@style/AppTheme"></activity>
-
-        <activity
             android:name=".activities.SearchResultActivity"
-            android:parentActivityName=".activities.OldMainActivity">
+            android:parentActivityName=".MainActivity">
 
             <!-- This intent-filter identifies this activity as "searchable" -->
             <intent-filter>
@@ -49,39 +38,39 @@
 
         <activity
             android:name=".activities.EntryDetailActivity"
-            android:parentActivityName=".activities.OldMainActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.OldMainActivity" />
+                android:value=".MainActivity" />
         </activity>
 
         <activity
             android:name=".activities.AboutActivity"
             android:label="@string/about_activity_title"
-            android:parentActivityName=".activities.OldMainActivity"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.ActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.OldMainActivity" />
+                android:value=".MainActivity" />
         </activity>
 
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/settings_activity_title"
-            android:parentActivityName=".activities.OldMainActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.OldMainActivity" />
+                android:value=".MainActivity" />
         </activity>
 
         <activity
             android:name=".activities.TipsActivity"
             android:label="@string/tips_activity_title"
-            android:parentActivityName=".activities.OldMainActivity"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.ActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.OldMainActivity" />
+                android:value=".MainActivity" />
         </activity>
     </application>
 

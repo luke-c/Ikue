@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home_white"
+        android:title="Home" />
+    <item
+        android:id="@+id/favouritesFragment"
+        android:icon="@drawable/ic_star_white"
+        android:title="Favourites" />
+    <item
+        android:id="@+id/historyFragment"
+        android:icon="@drawable/ic_history_white"
+        android:title="History" />
+</menu>

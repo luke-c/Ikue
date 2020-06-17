@@ -1,3 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/nav_graph" />
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.ikue.japanesedictionary.fragments.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/favouritesFragment"
+        android:name="com.ikue.japanesedictionary.fragments.FavouritesFragment"
+        android:label="FavouritesFragment" />
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.ikue.japanesedictionary.fragments.HistoryFragment"
+        android:label="HistoryFragment" />
+</navigation>
