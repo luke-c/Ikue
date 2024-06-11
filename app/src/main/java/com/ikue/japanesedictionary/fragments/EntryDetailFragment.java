@@ -1,19 +1,7 @@
 package com.ikue.japanesedictionary.fragments;
 
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +9,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.flexbox.FlexboxLayout;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.DetailViewAdapter;
 import com.ikue.japanesedictionary.database.AddToHistoryTask;
@@ -42,10 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import fisk.chipcloud.ChipCloud;
-import fisk.chipcloud.ChipCloudConfig;
-import fisk.chipcloud.ChipListener;
-
 public class EntryDetailFragment extends Fragment implements DetailAsyncCallbacks, ToggleFavouriteAsyncCallbacks, AddToHistoryAsyncCallbacks {
 
     private static final String ARG_ENTRY_ID = "ENTRY_ID";
@@ -55,7 +52,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private View otherFormsDivider;
 
     private TextView freqInfoHeaderTextView;
-    private FlexboxLayout freqInfoFlexBox;
+    private ChipGroup chipGroup;
     private View freqInfoDivider;
 
     private static DictionaryDbHelper helper;
@@ -65,7 +62,6 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     private static DictionaryEntry dictionaryEntry;
     private static DetailAsyncCallbacks detailAsyncCallbacks;
     private static ToggleFavouriteAsyncCallbacks toggleFavouriteAsyncCallbacks;
-    private static AddToHistoryAsyncCallbacks addToHistoryAsyncCallbacks;
 
     private static int entryId;
 
@@ -95,7 +91,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         // Setup callbacks
         detailAsyncCallbacks = this;
         toggleFavouriteAsyncCallbacks = this;
-        addToHistoryAsyncCallbacks = this;
+        AddToHistoryAsyncCallbacks addToHistoryAsyncCallbacks = this;
 
         // Get a database on startup. Copying from assets folder is all handled
         // by SQLiteAssetHelper
@@ -117,7 +113,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // Toolbar
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         if (activity.getSupportActionBar() != null) {
@@ -125,33 +121,27 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         }
         setHasOptionsMenu(true);
 
-        collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar = view.findViewById(R.id.collapsing_toolbar);
 
-        floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
+        floatingActionButton = view.findViewById(R.id.fab);
         floatingActionButton.setEnabled(false);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleFab();
-            }
-        });
+        floatingActionButton.setOnClickListener(view1 -> toggleFab());
 
-        otherFormsContentTextView = (TextView) view.findViewById(R.id.other_forms_element);
-        otherFormsHeaderTextView = (TextView) view.findViewById(R.id.other_forms_header);
+        otherFormsContentTextView = view.findViewById(R.id.other_forms_element);
+        otherFormsHeaderTextView = view.findViewById(R.id.other_forms_header);
         otherFormsDivider = view.findViewById(R.id.other_forms_divider);
 
-        freqInfoHeaderTextView = (TextView) view.findViewById(R.id.freq_info_header);
-        freqInfoFlexBox = (FlexboxLayout) view.findViewById(R.id.freq_info_flexbox);
+        freqInfoHeaderTextView = view.findViewById(R.id.freq_info_header);
+        chipGroup = view.findViewById(R.id.chip_group);
         freqInfoDivider = view.findViewById(R.id.freq_info_divider);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.meanings_recyclerview);
+        recyclerView = view.findViewById(R.id.meanings_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
         // Disables scrolling for RecyclerView,
         recyclerView.setNestedScrollingEnabled(false);
 
         // Makes RecyclerView wrap its content
-        layoutManager.setAutoMeasureEnabled(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
@@ -168,7 +158,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         } else if (id == android.R.id.home) {
             // We want to go back to the previous Activity, either the list of search results
             // or the home screen
-            getActivity().onBackPressed();
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -234,7 +224,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         // Default state is not favourited, if the entry has been favourited we need to update the
         // FAB icon
         if (dictionaryEntry.getIsFavourite()) {
-            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
+            floatingActionButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_star_white));
         }
 
         // Once we have set the initial state of the FAB, let the user click it
@@ -246,43 +236,43 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         List<ReadingElement> readingElementList = dictionaryEntry.getReadingElements();
         // TODO: Refactor into RecyclerView
         // Set the other readings section
-        String otherForms = "";
+        StringBuilder otherForms = new StringBuilder();
         for (ReadingElement readingElement : readingElementList) {
             if (!readingElement.getReadingRelation().isEmpty()) {
                 // The reading only applies to certain Kanji Elements
                 for (String readingRelation : readingElement.getReadingRelation()) {
-                    otherForms += readingRelation + " [" + readingElement.getValue() + "]\n";
+                    otherForms.append(readingRelation).append(" [").append(readingElement.getValue()).append("]\n");
                 }
 
             } else {
                 // There are no Kanji Elements, so just display every Reading Element value
                 if (kanjiElementList == null || kanjiElementList.isEmpty()) {
-                    otherForms += readingElement.getValue() + "\n";
+                    otherForms.append(readingElement.getValue()).append("\n");
                 } else {
                     // The reading is for every Kanji Element
                     for (KanjiElement kanjiElement : kanjiElementList) {
-                        otherForms += kanjiElement.getValue() + " [" + readingElement.getValue() + "]\n";
+                        otherForms.append(kanjiElement.getValue()).append(" [").append(readingElement.getValue()).append("]\n");
                     }
                 }
             }
         }
 
         // Remove main reading as it's already displayed in the toolbar
-        otherForms = otherForms.replace(toolbarTitle + "\n", "");
+        otherForms = new StringBuilder(otherForms.toString().replace(toolbarTitle + "\n", ""));
 
         // If there are no other forms, we hide the related section
-        if(otherForms.isEmpty()) {
+        if(otherForms.length() == 0) {
             otherFormsDivider.setVisibility(View.GONE);
             otherFormsHeaderTextView.setVisibility(View.GONE);
             otherFormsContentTextView.setVisibility(View.GONE);
         } else {
             // Remove trailing new line
-            if (otherForms.endsWith("\n")) {
-                otherForms = otherForms.substring(0, otherForms.length() - 1);
+            if (otherForms.toString().endsWith("\n")) {
+                otherForms = new StringBuilder(otherForms.substring(0, otherForms.length() - 1));
             }
 
             // Set the resulting string
-            otherFormsContentTextView.setText(otherForms);
+            otherFormsContentTextView.setText(otherForms.toString());
         }
     }
 
@@ -302,65 +292,61 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
         if (unifiedPriorities.isEmpty()) {
             freqInfoDivider.setVisibility(View.GONE);
             freqInfoHeaderTextView.setVisibility(View.GONE);
-            freqInfoFlexBox.setVisibility(View.GONE);
+            chipGroup.setVisibility(View.GONE);
         } else {
-            // Specify the config for our chips
-            ChipCloudConfig config = new ChipCloudConfig()
-                    .selectMode(ChipCloud.SelectMode.single)
-                    .checkedChipColor(ContextCompat.getColor(getContext(), R.color.colorPrimary))
-                    .checkedTextColor(ContextCompat.getColor(getContext(), R.color.white))
-                    .uncheckedChipColor(ContextCompat.getColor(getContext(), R.color.light_grey))
-                    .uncheckedTextColor(ContextCompat.getColor(getContext(), R.color.default_text))
-                    .useInsetPadding(true);
-
-            //Create a new ChipCloud with a Context and ViewGroup:
-            final ChipCloud chipCloud = new ChipCloud(getActivity(), freqInfoFlexBox, config);
-
             // Get whether the entry is common or not
             if (EntryUtils.isCommonEntry(unifiedPriorities)) {
                 // If our entry is common, add a 'common' chip
-                chipCloud.addChip(getString(R.string.common_chip));
+                Chip chip = new Chip(requireContext());
+                chip.setText(getString(R.string.common_chip));
+                chip.setId(View.generateViewId());
+                chip.setCheckable(true);
+                chip.setCheckedIconVisible(false);
+                chipGroup.addView(chip);
             }
 
             // Add every priority as a chip
             for (String value : unifiedPriorities) {
-                chipCloud.addChip(value);
+                Chip chip = new Chip(requireContext());
+                chip.setText(value);
+                chip.setId(View.generateViewId());
+                chip.setCheckable(true);
+                chip.setCheckedIconVisible(false);
+                chipGroup.addView(chip);
             }
 
             // Get the map of detailed priority information we use for our dialogs.
             final Map<String, String> detailedPriorityInformation = EntryUtils.getDetailedPriorityInformation();
 
-            chipCloud.setListener(new ChipListener() {
-                @Override
-                public void chipCheckedChange(final int index, boolean checked, boolean userClicked) {
-                    // If the user clicks on a chip
-                    if (checked && userClicked) {
-                        // Get the text of the chip
-                        String label = chipCloud.getLabel(index);
-                        String message;
-
-                        // Get the detailed message from the label
-                        if (label.startsWith("nf")) {
-                            message = detailedPriorityInformation.get("nf");
-                        } else {
-                            message = detailedPriorityInformation.get(label);
-                        }
-
-                        // Create an AlertDialog showing the detailed information
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle(label)
-                                .setMessage(message)
-                                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialogInterface) {
-                                        // When the user dismisses the dialog, deselect the chip
-                                        chipCloud.deselectIndex(index);
-                                    }
-                                })
-                                .show();
-                    }
+            chipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+                if (checkedIds.isEmpty()) {
+                    return;
                 }
-            }, true);
+
+                int id = chipGroup.getCheckedChipId();
+                Chip chip = chipGroup.findViewById(id);
+
+                // Get the text of the chip
+                String label = chip.getText().toString();
+                String message;
+
+                // Get the detailed message from the label
+                if (label.startsWith("nf")) {
+                    message = detailedPriorityInformation.get("nf");
+                } else {
+                    message = detailedPriorityInformation.get(label);
+                }
+
+                // Create an AlertDialog showing the detailed information
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(label)
+                        .setMessage(message)
+                        .setOnCancelListener(dialogInterface -> {
+                            // When the user dismisses the dialog, deselect the chip
+                            chipGroup.clearCheck();
+                        })
+                        .show();
+            });
         }
     }
 
@@ -374,7 +360,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
     public void onToggleFavouriteResult(boolean toBeAdded, boolean wasSuccessful) {
         if (toBeAdded) {
             if (wasSuccessful) {
-                floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_white));
+                floatingActionButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_star_white));
                 dictionaryEntry.setIsFavourite(true);
 
                 if (getView() != null) {
@@ -385,7 +371,7 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
             }
         } else {
             if (wasSuccessful) {
-                floatingActionButton.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_star_border_white));
+                floatingActionButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_star_border_white));
                 dictionaryEntry.setIsFavourite(false);
 
                 if (getView() != null) {

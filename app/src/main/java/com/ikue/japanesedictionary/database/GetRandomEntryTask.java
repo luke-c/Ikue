@@ -6,8 +6,8 @@ import com.ikue.japanesedictionary.interfaces.DetailAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionaryEntry;
 
 public class GetRandomEntryTask extends AsyncTask<Void, Void, DictionaryEntry> {
-    private DetailAsyncCallbacks listener;
-    private DictionaryDbHelper helper;
+    private final DetailAsyncCallbacks listener;
+    private final DictionaryDbHelper helper;
 
     public GetRandomEntryTask(DetailAsyncCallbacks listener, DictionaryDbHelper helper) {
         this.listener = listener;

@@ -1,11 +1,13 @@
 package com.ikue.japanesedictionary.adapters;
 
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.models.SenseElement;
@@ -17,7 +19,7 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private final String LOG_TAG = this.getClass().toString();
 
-    private List<SenseElement> items;
+    private final List<SenseElement> items;
 
     public DetailViewAdapter(List<SenseElement> items) {
         this.items = items;
@@ -33,37 +35,31 @@ public class DetailViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return SENSE_ELEMENT_ITEM;
     }
 
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         RecyclerView.ViewHolder viewHolder;
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
-        switch (viewType) {
-            case SENSE_ELEMENT_ITEM:
-                View v1 = inflater.inflate(R.layout.sense_element_item, viewGroup, false);
-                viewHolder = new SenseElementViewHolder(v1);
-                break;
-            default:
-                // TODO: Handle unknown view type error more gracefully
-                Log.e(LOG_TAG, "Unknown view type");
-                viewHolder = null;
-                break;
+        if (viewType == SENSE_ELEMENT_ITEM) {
+            View v1 = inflater.inflate(R.layout.sense_element_item, viewGroup, false);
+            viewHolder = new SenseElementViewHolder(v1);
+        } else {// TODO: Handle unknown view type error more gracefully
+            Log.e(LOG_TAG, "Unknown view type");
+            viewHolder = null;
         }
+        assert viewHolder != null;
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        switch (holder.getItemViewType()) {
-            case SENSE_ELEMENT_ITEM:
-                SenseElementViewHolder vh1 = (SenseElementViewHolder) holder;
-                configureMeaningWithHeaderViewHolder(vh1, position);
-                break;
-            default:
-                // TODO: Handle unknown view type error more gracefully
-                Log.e(LOG_TAG, "Unknown view type");
-                break;
+        if (holder.getItemViewType() == SENSE_ELEMENT_ITEM) {
+            SenseElementViewHolder vh1 = (SenseElementViewHolder) holder;
+            configureMeaningWithHeaderViewHolder(vh1, position);
+        } else {// TODO: Handle unknown view type error more gracefully
+            Log.e(LOG_TAG, "Unknown view type");
         }
     }
 

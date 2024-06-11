@@ -2,14 +2,15 @@ package com.ikue.japanesedictionary.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.SearchResultAdapter;
@@ -43,7 +44,7 @@ public class FavouritesFragment extends Fragment implements GetFavouritesAsyncCa
         // Get a database on startup.
         helper = DictionaryDbHelper.getInstance(this.getActivity());
 
-        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<DictionaryListEntry>());
+        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<>());
     }
 
     @Nullable
@@ -55,7 +56,7 @@ public class FavouritesFragment extends Fragment implements GetFavouritesAsyncCa
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // Setup RecyclerView
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),

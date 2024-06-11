@@ -2,15 +2,6 @@ package com.ikue.japanesedictionary.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.ContentLoadingProgressBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.SearchResultAdapter;
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
@@ -32,6 +24,16 @@ import java.util.List;
 import static com.ikue.japanesedictionary.utils.GlobalConstants.SearchTypes.ENGLISH_TYPE;
 import static com.ikue.japanesedictionary.utils.GlobalConstants.SearchTypes.ROMAJI_TYPE;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 public class SearchResultFragment extends Fragment implements SearchAsyncCallbacks {
     private static final String ARG_SEARCH_TERM = "SEARCH_TERM";
 
@@ -45,7 +47,6 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
     private static int searchType;
     private static String searchQuery;
 
-    private RecyclerView recyclerView;
     private ContentLoadingProgressBar progressBar;
 
     public static SearchResultFragment newInstance(String query) {
@@ -71,10 +72,10 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
         // Get a database on startup.
         helper = DictionaryDbHelper.getInstance(this.getActivity());
 
-        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<DictionaryListEntry>());
+        adapter = new SearchResultAdapter(this.getContext(), new ArrayList<>());
 
         // Get the string the user searched for from the received Intent, and get the type
-        searchQuery = getArguments().getString(ARG_SEARCH_TERM, null);
+        searchQuery = requireArguments().getString(ARG_SEARCH_TERM, null);
         searchType = SearchUtils.getSearchType(SearchUtils.removeWildcards(searchQuery));
     }
 
@@ -87,8 +88,8 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // Toolbar
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        AppCompatActivity activity = (AppCompatActivity) requireActivity();
         activity.setSupportActionBar(toolbar);
         if (activity.getSupportActionBar() != null) {
             activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -98,10 +99,10 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
         setHasOptionsMenu(true);
 
         // Progressbar
-        progressBar = (ContentLoadingProgressBar) view.findViewById(R.id.search_progress_bar);
+        progressBar = view.findViewById(R.id.search_progress_bar);
 
         // Recycler view
-        recyclerView = (RecyclerView) view.findViewById(R.id.search_recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.search_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -116,7 +117,7 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_search, menu);
     }
@@ -131,7 +132,7 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
         } else if (id == android.R.id.home) {
             // We want to go back to the previous Activity
             // or the home screen
-            getActivity().onBackPressed();
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -173,12 +174,9 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
             // Give the user the option to show Romaji results instead
             if (searchType == ENGLISH_TYPE) {
                 Snackbar.make(getView(), R.string.search_view_snackbar_english, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(R.string.search_view_snackbar_english_action, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                searchType = ROMAJI_TYPE;
-                                new SearchDatabaseTask(listener, helper, searchQuery, searchType).execute();
-                            }
+                        .setAction(R.string.search_view_snackbar_english_action, view -> {
+                            searchType = ROMAJI_TYPE;
+                            new SearchDatabaseTask(listener, helper, searchQuery, searchType).execute();
                         }).show();
 
                 // Give the user the option to show English results instead, due to our naive
@@ -186,12 +184,9 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
             } else if (searchType == ROMAJI_TYPE) {
                 // TODO: Show the actual term the user searched for (Hiragana or Katakana)
                 Snackbar.make(getView(), R.string.search_view_snackbar_romaji, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(R.string.search_view_snackbar_romaji_action, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                searchType = ENGLISH_TYPE;
-                                new SearchDatabaseTask(listener, helper, searchQuery, searchType).execute();
-                            }
+                        .setAction(R.string.search_view_snackbar_romaji_action, view -> {
+                            searchType = ENGLISH_TYPE;
+                            new SearchDatabaseTask(listener, helper, searchQuery, searchType).execute();
                         }).show();
             }
         }

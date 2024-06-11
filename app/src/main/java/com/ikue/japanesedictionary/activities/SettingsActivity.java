@@ -1,8 +1,9 @@
 package com.ikue.japanesedictionary.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.fragments.SettingsFragment;
@@ -15,7 +16,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         // Setup the toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.settings_activity_title);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);

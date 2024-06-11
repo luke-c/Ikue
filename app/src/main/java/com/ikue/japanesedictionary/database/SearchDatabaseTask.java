@@ -10,10 +10,10 @@ import java.util.List;
 // TODO: Switch to AsyncTaskLoader so the task can survive configuration changes
 // The types specified here are the input data type, the progress type, and the result type
 public class SearchDatabaseTask extends AsyncTask<Void, Void, List<DictionaryListEntry>> {
-    private SearchAsyncCallbacks listener;
-    private DictionaryDbHelper helper;
-    private String searchQuery;
-    private int searchType;
+    private final SearchAsyncCallbacks listener;
+    private final DictionaryDbHelper helper;
+    private final String searchQuery;
+    private final int searchType;
 
     public SearchDatabaseTask(SearchAsyncCallbacks listener, DictionaryDbHelper helper,
                               String searchQuery, int searchType) {

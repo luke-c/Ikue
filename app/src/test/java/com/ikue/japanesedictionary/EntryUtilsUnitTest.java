@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
@@ -30,7 +31,7 @@ public class EntryUtilsUnitTest {
     public void testGetDetailedPriorityInformation() {
         Map<String, String> information = EntryUtils.getDetailedPriorityInformation();
 
-        assertTrue(information.size() == 10);
+        assertEquals(10, information.size());
 
         assertTrue(information.containsKey("news1"));
         assertTrue(information.containsKey("news2"));

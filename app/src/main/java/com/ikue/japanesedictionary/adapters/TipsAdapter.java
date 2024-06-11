@@ -1,11 +1,13 @@
 package com.ikue.japanesedictionary.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.models.Tip;
@@ -28,27 +30,21 @@ public class TipsAdapter extends RecyclerView.Adapter<TipsAdapter.ViewHolder> {
             // to access the context from any ViewHolder instance.
             super(itemView);
 
-            tipTitle = (TextView) itemView.findViewById(R.id.tips_card_title);
-            tipContent = (TextView) itemView.findViewById(R.id.tips_card_content);
+            tipTitle = itemView.findViewById(R.id.tips_card_title);
+            tipContent = itemView.findViewById(R.id.tips_card_content);
         }
     }
 
     // Store a member variable for the contacts
-    private List<Tip> tips;
+    private final List<Tip> tips;
     // Store the context for easy access
-    private Context context;
 
     // Pass in the contact array into the constructor
-    public TipsAdapter(Context context, List<Tip> tips) {
+    public TipsAdapter(List<Tip> tips) {
         this.tips = tips;
-        this.context = context;
     }
 
-    // Easy access to the context object in the recyclerview
-    private Context getContext() {
-        return this.context;
-    }
-
+    @NonNull
     @Override
     public TipsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -58,8 +54,7 @@ public class TipsAdapter extends RecyclerView.Adapter<TipsAdapter.ViewHolder> {
         View tipView = inflater.inflate(R.layout.item_tip, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(tipView);
-        return viewHolder;
+        return new ViewHolder(tipView);
     }
 
     // Involves populating data into the item through holder

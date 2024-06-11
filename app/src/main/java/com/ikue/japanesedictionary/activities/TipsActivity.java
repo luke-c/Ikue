@@ -1,9 +1,10 @@
 package com.ikue.japanesedictionary.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.adapters.TipsAdapter;
@@ -17,9 +18,9 @@ public class TipsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tips);
 
         // Lookup the recyclerview in activity layout
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.tips_recyclerview);
+        RecyclerView recyclerView = findViewById(R.id.tips_recyclerview);
 
-        TipsAdapter adapter = new TipsAdapter(this, TipsUtils.getTips());
+        TipsAdapter adapter = new TipsAdapter(TipsUtils.getTips());
 
         // Attach the adapter to the recyclerview to populate items
         recyclerView.setAdapter(adapter);

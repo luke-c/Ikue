@@ -139,30 +139,22 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         // If the user has not typed any wildcards manually, assume they want to use their default
         // chosen search preference
         if(!hasWildcards) {
-            switch(defaultSearchType) {
+            argument = switch (defaultSearchType) {
                 // Exact match
-                case 0:
-                    argument = searchTerm;
-                    break;
+                case 0 -> searchTerm;
                 // *token
-                case 1:
+                case 1 ->
                     // Prefix the string with % wildcard
-                    argument = "%" + SearchUtils.getTrueWildcardString(searchTerm);
-                    break;
+                        "%" + SearchUtils.getTrueWildcardString(searchTerm);
                 // token*
-                case 2:
+                case 2 ->
                     // Add the % wildcard to the end of the string
-                    argument = SearchUtils.getTrueWildcardString(searchTerm) + "%";
-                    break;
+                        SearchUtils.getTrueWildcardString(searchTerm) + "%";
                 // *token*
-                case 3:
-                    argument = "%" + SearchUtils.getTrueWildcardString(searchTerm) + "%";
-                    break;
+                case 3 -> "%" + SearchUtils.getTrueWildcardString(searchTerm) + "%";
                 // Assume exact match for default
-                default:
-                    argument = searchTerm;
-                    break;
-            }
+                default -> searchTerm;
+            };
         } else {
             // If there is already wildcards in the query, ignore the user's default search type
             // and just use the entered wildcards
@@ -175,10 +167,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         // Create a new List of Search Results to store the results of our query
         List<DictionaryListEntry> searchResults = new ArrayList<>();
 
-        Cursor cursor = null;
-
-        try {
-            cursor = db.rawQuery(query, arguments);
+        try (Cursor cursor = db.rawQuery(query, arguments)) {
 
             while (cursor.moveToNext()) {
                 DictionaryListEntry result = new DictionaryListEntry();
@@ -210,10 +199,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 searchResults.add(result);
             }
             return searchResults;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -258,10 +243,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             builder.append(limitBy);
         }
 
-        Cursor cursor = null;
-
-        try {
-            cursor = db.rawQuery(builder.toString(), new String[]{});
+        try (Cursor cursor = db.rawQuery(builder.toString(), new String[]{})) {
 
             while (cursor.moveToNext()) {
                 DictionaryListEntry result = new DictionaryListEntry();
@@ -293,10 +275,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 history.add(result);
             }
             return history;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -383,10 +361,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             builder.append(limitBy);
         }
 
-        Cursor cursor = null;
-
-        try {
-            cursor = db.rawQuery(builder.toString(), new String[]{});
+        try (Cursor cursor = db.rawQuery(builder.toString(), new String[]{})) {
 
             while (cursor.moveToNext()) {
                 DictionaryListEntry result = new DictionaryListEntry();
@@ -418,10 +393,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 favourites.add(result);
             }
             return favourites;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -516,20 +487,26 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         String[] projection = {ReadingElementTable.Cols.ENTRY_ID};
 
         int entryId = 0;
-        Cursor cursor = null;
 
-        try {
+        try (Cursor cursor = db.query(
+                ReadingElementTable.NAME, // Table to query
+                projection, // The columns to return
+                null, // The columns for the WHERE clause
+                null, // The values for the WHERE clause
+                null, // Group by
+                null, // Having
+                "RANDOM()", // Order by
+                "1"  // limit
+        )) {
             // Execute the query
-            cursor = db.query(
-                    ReadingElementTable.NAME, // Table to query
-                    projection, // The columns to return
-                    null, // The columns for the WHERE clause
-                    null, // The values for the WHERE clause
-                    null, // Group by
-                    null, // Having
-                    "RANDOM()", // Order by
-                    "1"  // limit
-            );
+            // Table to query
+            // The columns to return
+            // The columns for the WHERE clause
+            // The values for the WHERE clause
+            // Group by
+            // Having
+            // Order by
+            // limit
 
             // Iterate over the rows returned and assign to the POJO
             while (cursor.moveToNext()) {
@@ -537,10 +514,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             }
             return entryId;
 
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -554,14 +527,11 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 FavouritesTable.NAME + " WHERE " + FavouritesTable.Cols.ENTRY_ID +
                 " = ?) AS isFavourite";
 
-        Cursor cursor = null;
-
         // Default value is not favourited
-        int isFavourite = 0;
 
-        try {
+        int isFavourite = 0;
+        try (Cursor cursor = db.rawQuery(query, arguments)) {
             // Execute the query
-            cursor = db.rawQuery(query, arguments);
 
             // Iterate over the rows returned and assign to the POJO
             while (cursor.moveToNext()) {
@@ -570,10 +540,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             // Returns true if the ID has been favourited
             return isFavourite == 1;
 
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -593,19 +559,24 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         // Filter results by WHERE ENTRY_ID = id
         String selection = KanjiElementTable.Cols.ENTRY_ID + " = ?";
         String[] selectionArgs = {Integer.toString(id)};
-        Cursor cursor = null;
 
-        try {
+        try (Cursor cursor = db.query(
+                KanjiElementTable.NAME, // Table to query
+                projection, // The columns to return
+                selection, // The columns for the WHERE clause
+                selectionArgs, // The values for the WHERE clause
+                null, // Group by
+                null, // Filter by
+                null  // Sort order
+        )) {
             // Execute the query
-            cursor = db.query(
-                    KanjiElementTable.NAME, // Table to query
-                    projection, // The columns to return
-                    selection, // The columns for the WHERE clause
-                    selectionArgs, // The values for the WHERE clause
-                    null, // Group by
-                    null, // Filter by
-                    null  // Sort order
-            );
+            // Table to query
+            // The columns to return
+            // The columns for the WHERE clause
+            // The values for the WHERE clause
+            // Group by
+            // Filter by
+            // Sort order
 
             // Iterate over the rows returned and assign to the POJO
             while (cursor.moveToNext()) {
@@ -620,10 +591,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
             }
             return kanjiElements;
 
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -651,13 +618,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY r." + ReadingElementTable.Cols._ID;
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(select).append(from).append(join).append(where).append(groupBy);
-
-        Cursor cursor = null;
-
-        try {
-            cursor = db.rawQuery(builder.toString(), arguments);
+        try (Cursor cursor = db.rawQuery(select + from + join + where + groupBy, arguments)) {
 
             while (cursor.moveToNext()) {
                 ReadingElement readingElement = new ReadingElement();
@@ -674,10 +635,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 readingElements.add(readingElement);
             }
             return readingElements;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -711,13 +668,7 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
 
         String groupBy = "GROUP BY se." + SenseElementTable.Cols._ID;
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(select).append(from).append(join).append(where).append(groupBy);
-
-        Cursor cursor = null;
-
-        try {
-            cursor = db.rawQuery(builder.toString(), arguments);
+        try (Cursor cursor = db.rawQuery(select + from + join + where + groupBy, arguments)) {
 
             while (cursor.moveToNext()) {
                 SenseElement senseElement = new SenseElement();
@@ -736,10 +687,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 senseElements.add(senseElement);
             }
             return senseElements;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -761,19 +708,23 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
         String selection = PriorityTable.Cols.ENTRY_ID + " = ?";
         String[] selectionArgs = {Integer.toString(id)};
 
-        Cursor cursor = null;
-
-        try {
+        try (Cursor cursor = db.query(
+                PriorityTable.NAME, // Table to query
+                projection, // The columns to return
+                selection, // The columns for the WHERE clause
+                selectionArgs, // The values for the WHERE clause
+                null, // Group by
+                null, // Filter by
+                null  // Sort order
+        )) {
             // Execute the query
-            cursor = db.query(
-                    PriorityTable.NAME, // Table to query
-                    projection, // The columns to return
-                    selection, // The columns for the WHERE clause
-                    selectionArgs, // The values for the WHERE clause
-                    null, // Group by
-                    null, // Filter by
-                    null  // Sort order
-            );
+            // Table to query
+            // The columns to return
+            // The columns for the WHERE clause
+            // The values for the WHERE clause
+            // Group by
+            // Filter by
+            // Sort order
 
             // Iterate over the rows returned and assign to the POJO
             while (cursor.moveToNext()) {
@@ -793,10 +744,6 @@ public class DictionaryDbHelper extends SQLiteAssetHelper {
                 priorities.add(priority);
             }
             return priorities;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 }

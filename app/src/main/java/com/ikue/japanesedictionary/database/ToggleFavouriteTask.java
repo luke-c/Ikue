@@ -6,10 +6,10 @@ import android.os.AsyncTask;
 import com.ikue.japanesedictionary.interfaces.ToggleFavouriteAsyncCallbacks;
 
 public class ToggleFavouriteTask extends AsyncTask<Void, Void, Boolean> {
-    private ToggleFavouriteAsyncCallbacks listener;
-    private DictionaryDbHelper helper;
-    private int entryId;
-    private boolean toBeAdded;
+    private final ToggleFavouriteAsyncCallbacks listener;
+    private final DictionaryDbHelper helper;
+    private final int entryId;
+    private final boolean toBeAdded;
 
     public ToggleFavouriteTask(ToggleFavouriteAsyncCallbacks listener, DictionaryDbHelper helper,
                                int entryId, boolean toBeAdded) {

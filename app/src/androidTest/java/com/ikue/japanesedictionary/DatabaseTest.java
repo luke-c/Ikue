@@ -1,8 +1,6 @@
 package com.ikue.japanesedictionary;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
 
 import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.models.DictionaryEntry;
@@ -22,6 +20,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import androidx.test.InstrumentationRegistry;
+import androidx.test.runner.AndroidJUnit4;
+
 /**
  * Instrumentation test, which will execute on an Android device.
  *
@@ -32,7 +33,7 @@ public class DatabaseTest {
     private static DictionaryDbHelper helper;
 
     @Test
-    public void useAppContext() throws Exception {
+    public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
@@ -58,8 +59,9 @@ public class DatabaseTest {
 
         boolean containsEntryToAdd = false;
         for (DictionaryListEntry entry : results) {
-            if(entry.getEntryId() == entryIdToAdd) {
-               containsEntryToAdd = true;
+            if (entry.getEntryId() == entryIdToAdd) {
+                containsEntryToAdd = true;
+                break;
             }
         }
         assertTrue(containsEntryToAdd);
@@ -107,8 +109,9 @@ public class DatabaseTest {
 
         boolean containsAddedEntry = false;
         for (DictionaryListEntry entry : results) {
-            if(entry.getEntryId() == entryIdToAdd) {
+            if (entry.getEntryId() == entryIdToAdd) {
                 containsAddedEntry = true;
+                break;
             }
         }
         assertTrue(containsAddedEntry);
@@ -145,7 +148,7 @@ public class DatabaseTest {
         DictionaryEntry entry = helper.getEntry(entryId);
 
         assertNotNull(entry);
-        assertTrue(entry.getEntryId() == entryId);
+        assertEquals(entry.getEntryId(), entryId);
     }
 
     @Test
@@ -156,7 +159,7 @@ public class DatabaseTest {
 
         // 0 is returned when a random entry couldn't be retrieved
         // as well as the default int value
-        assertFalse(entry.getEntryId() == 0);
+        assertNotEquals(0, entry.getEntryId());
 
         assertFalse(entry.getReadingElements().isEmpty());
         assertFalse(entry.getSenseElements().isEmpty());
