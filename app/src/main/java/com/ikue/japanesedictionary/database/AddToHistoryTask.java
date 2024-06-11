@@ -6,9 +6,9 @@ import android.os.AsyncTask;
 import com.ikue.japanesedictionary.interfaces.AddToHistoryAsyncCallbacks;
 
 public class AddToHistoryTask extends AsyncTask<Void, Void, Boolean> {
-    private AddToHistoryAsyncCallbacks listener;
-    private DictionaryDbHelper helper;
-    private int entryId;
+    private final AddToHistoryAsyncCallbacks listener;
+    private final DictionaryDbHelper helper;
+    private final int entryId;
 
     public AddToHistoryTask(AddToHistoryAsyncCallbacks listener, DictionaryDbHelper helper,
                             int entryId) {

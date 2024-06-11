@@ -26,5 +26,5 @@ Ikue is an open-source, offline, material design Japanese dictonary application 
 If you want to generate the APK yourself, make sure to use the <a href="https://github.com/luke-c/Japanese-Dictionary-Parser">Japanese Dictionary Parser</a> to create your dictionary.db file, and place it in the assets/databases/ folder. Currently the app only uses the JMdict_e.xml information. 
 
 ## License
-Copyright (c) 2017 Luke Casey </br>
+Copyright (c) 2024 Luke Casey </br>
 See <a href="/LICENSE">LICENSE</a> for more information.

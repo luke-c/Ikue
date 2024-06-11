@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
@@ -22,7 +23,7 @@ public class DbUtilsUnitTest {
     @Test
     public void testFormatString_withSeparator() {
         List<String> strings = DbUtils.formatString("this§is§a§test");
-        assertTrue(strings.size() == 4);
+        assertEquals(4, strings.size());
 
         assertTrue(strings.contains("this"));
         assertTrue(strings.contains("is"));

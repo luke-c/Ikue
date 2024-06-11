@@ -10,8 +10,8 @@ import java.util.List;
 // TODO: Switch to AsyncTaskLoader so the task can survive configuration changes
 // The types specified here are the input data type, the progress type, and the result type
 public class GetHistoryTask extends AsyncTask<Void, Void, List<DictionaryListEntry>> {
-    private GetHistoryAsyncCallbacks listener;
-    private DictionaryDbHelper helper;
+    private final GetHistoryAsyncCallbacks listener;
+    private final DictionaryDbHelper helper;
 
     public GetHistoryTask(GetHistoryAsyncCallbacks listener, DictionaryDbHelper helper) {
         this.listener = listener;

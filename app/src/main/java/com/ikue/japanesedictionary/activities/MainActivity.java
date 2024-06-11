@@ -7,26 +7,25 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.fragments.FavouritesFragment;
 import com.ikue.japanesedictionary.fragments.HistoryFragment;
@@ -41,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
     private NavigationView navigationView;
     private ViewPager viewPager;
-    private SearchView searchView;
     private MenuItem searchMenuItem;
     private FloatingActionButton fabButton;
 
@@ -58,18 +56,18 @@ public class MainActivity extends AppCompatActivity {
         // Get the shared preferences
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+        appBarLayout = findViewById(R.id.appbar);
 
         // Add Toolbar to Main Screen
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Set Viewpager for tabs
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = findViewById(R.id.viewpager);
         setupViewPager();
 
         // Set Tabs inside the Toolbar
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
         // Add icons to each tab
@@ -78,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
         tabs.getTabAt(2).setIcon(R.drawable.ic_star_white);
 
         // Create Navigation drawer and inflate
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        navigationView = findViewById(R.id.nav_view);
+        drawerLayout = findViewById(R.id.drawer);
 
         // Add menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
@@ -89,39 +87,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Set behaviour of Navigation drawer
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                // Set item as checked
-                item.setChecked(true);
+        navigationView.setNavigationItemSelectedListener(item -> {
+            // Set item as checked
+            item.setChecked(true);
 
-                switch(item.getItemId()) {
-                    case R.id.nav_history_fragment:
-                        viewPager.setCurrentItem(0, true);
-                        break;
-                    case R.id.nav_home_fragment:
-                        viewPager.setCurrentItem(1, true);
-                        break;
-                    case R.id.nav_favourites_fragment:
-                        viewPager.setCurrentItem(2, true);
-                        break;
-                    case R.id.nav_settings_activity:
-                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                        break;
-                    case R.id.nav_about_activity:
-                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                        break;
-                    default:
-                        break;
-                }
-
-                // Closing drawer on item click
-                drawerLayout.closeDrawers();
-                return true;
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_history_fragment) {
+                viewPager.setCurrentItem(0, true);
+            } else if (itemId == R.id.nav_home_fragment) {
+                viewPager.setCurrentItem(1, true);
+            } else if (itemId == R.id.nav_favourites_fragment) {
+                viewPager.setCurrentItem(2, true);
+            } else if (itemId == R.id.nav_settings_activity) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            } else if (itemId == R.id.nav_about_activity) {
+                startActivity(new Intent(MainActivity.this, AboutActivity.class));
             }
+
+            // Closing drawer on item click
+            drawerLayout.closeDrawers();
+            return true;
         });
 
-        fabButton = (FloatingActionButton) findViewById(R.id.fab);
+        fabButton = findViewById(R.id.fab);
     }
 
     @Override
@@ -132,36 +120,30 @@ public class MainActivity extends AppCompatActivity {
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchMenuItem.getActionView();
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
 
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean queryTextFocused) {
-                if(!queryTextFocused) {
-                    // Close the SearchView when the user closes the keyboard
-                    MenuItemCompat.collapseActionView(searchMenuItem);
-                }
+        searchView.setOnFocusChangeListener((view, queryTextFocused) -> {
+            if(!queryTextFocused) {
+                // Close the SearchView when the user closes the keyboard
+                searchMenuItem.collapseActionView();
             }
         });
 
         // Set the onClick here so we can guarantee we have a searchMenuItem
-        fabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Expand the AppBarLayout on click, so SearchView is visible
-                appBarLayout.setExpanded(true);
+        fabButton.setOnClickListener(view -> {
+            // Expand the AppBarLayout on click, so SearchView is visible
+            appBarLayout.setExpanded(true);
 
-                // Expand the SearchView
-                MenuItemCompat.expandActionView(searchMenuItem);
-            }
+            // Expand the SearchView
+            searchMenuItem.expandActionView();
         });
 
         ComponentName cn = new ComponentName(this, SearchResultActivity.class);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
 
         // Set a listener on the SearchView
-        MenuItemCompat.setOnActionExpandListener(searchMenuItem,
-                new MenuItemCompat.OnActionExpandListener() {
+        searchMenuItem.setOnActionExpandListener(
+                new MenuItem.OnActionExpandListener() {
                     @Override
                     public boolean onMenuItemActionExpand(MenuItem item) {
                         // When the SearchView is expanded, hide the FAB
@@ -228,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
             super(manager);
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int position) {
             return fragmentList.get(position);

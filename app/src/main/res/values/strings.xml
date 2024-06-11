@@ -12,6 +12,7 @@
     <string name="search_view_snackbar_english_action">Show Romaji</string>
     <string name="search_view_snackbar_romaji">Searching in Romaji</string>
     <string name="search_view_snackbar_romaji_action">Show English</string>
+    <string name="add_favourite">Add to Favourites</string>
     <string name="error_add_favourite">Error adding entry to Favourites</string>
     <string name="success_add_favourite">Added entry to Favourites</string>
     <string name="error_remove_favourite">Error removing entry from Favourites</string>
@@ -26,6 +27,10 @@
     <string name="about_activity_connect">Connect with us</string>
     <string name="about_activity_licenses">Open source licenses</string>
     <string name="about_activity_terms_of_use">Terms of use</string>
+    <string name="about_activity_thanks">Special thanks</string>
+    <string name="about_activity_erdrg_thanks">A huge thank you to the EDRDG group, and especially Jim Breen. Without the data provided by them this application would not be possible.</string>
+    <string name="about_activity_close">Close</string>
+
 
     <string name="pref_startupPage">Startup page</string>
     <string name="pref_startupPage_default">1</string>
@@ -54,7 +59,6 @@
 
     <string name="common_chip">common</string>
     <string name="feedback_button_intent_chooser">Send email</string>
-    <string name="about_activity_erdrg_thanks">A huge thank you to the EDRDG group, and especially Jim Breen. Without the data provided by them this application would not be possible.</string>
 
     <string name="tips_activity_title">Tips</string>
 </resources>

@@ -6,8 +6,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +14,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.activities.EntryDetailActivity;
@@ -83,17 +84,17 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        wordOfTheDayPrimaryText = (TextView) view.findViewById(R.id.word_of_the_day_primary);
-        wordOfTheDaySecondaryText = (TextView) view.findViewById(R.id.word_of_the_day_secondary);
-        wordOfTheDayMeaning = (TextView) view.findViewById(R.id.word_of_the_day_meanings);
-        wordOfTheDayMoreButton = (Button) view.findViewById(R.id.word_of_the_day_button);
-        wordOfTheDayShareButton = (ImageButton) view.findViewById(R.id.word_of_the_day_share_button);
+        wordOfTheDayPrimaryText = view.findViewById(R.id.word_of_the_day_primary);
+        wordOfTheDaySecondaryText = view.findViewById(R.id.word_of_the_day_secondary);
+        wordOfTheDayMeaning = view.findViewById(R.id.word_of_the_day_meanings);
+        wordOfTheDayMoreButton = view.findViewById(R.id.word_of_the_day_button);
+        wordOfTheDayShareButton = view.findViewById(R.id.word_of_the_day_share_button);
 
-        sendFeedbackButton = (Button) view.findViewById(R.id.feedback_card_button);
+        sendFeedbackButton = view.findViewById(R.id.feedback_card_button);
 
-        tipsTitleText = (TextView) view.findViewById(R.id.tips_card_title);
-        tipsBodyText = (TextView) view.findViewById(R.id.tips_card_content);
-        tipsSeeAllButton = (Button) view.findViewById(R.id.tips_card_button);
+        tipsTitleText = view.findViewById(R.id.tips_card_title);
+        tipsBodyText = view.findViewById(R.id.tips_card_content);
+        tipsSeeAllButton = view.findViewById(R.id.tips_card_button);
 
         // Setup each card
         setupWordOfTheDayCard();
@@ -143,24 +144,18 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
         }
 
         // On click, take the user to the detail view
-        wordOfTheDayMoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = EntryDetailActivity.newIntent(view.getContext(), wordOfTheDay.getEntryId());
-                getActivity().startActivity(i);
-            }
+        wordOfTheDayMoreButton.setOnClickListener(view -> {
+            Intent i = EntryDetailActivity.newIntent(view.getContext(), wordOfTheDay.getEntryId());
+            getActivity().startActivity(i);
         });
 
         // On click, share the entry to the user's chosen app
-        wordOfTheDayShareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, getSharableWordOfTheDay());
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
-            }
+        wordOfTheDayShareButton.setOnClickListener(view -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getSharableWordOfTheDay());
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
         });
     }
 
@@ -269,28 +264,20 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
         tipsBodyText.setText(randomTip.getBody());
 
         // On click, take the user to the detail view
-        tipsSeeAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getActivity(), TipsActivity.class));
-            }
-        });
+        tipsSeeAllButton.setOnClickListener(view -> startActivity(new Intent(getActivity(), TipsActivity.class)));
     }
 
     private void setupFeedbackCard() {
-        sendFeedbackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String uriText = "mailto:lc94dev+ikue@gmail.com" + "?subject="
-                        + Uri.encode("Ikue Japanese Dictionary - Feedback");
+        sendFeedbackButton.setOnClickListener(view -> {
+            String uriText = "mailto:lc94dev+ikue@gmail.com" + "?subject="
+                    + Uri.encode("Ikue Japanese Dictionary - Feedback");
 
-                Uri uri = Uri.parse(uriText);
+            Uri uri = Uri.parse(uriText);
 
-                Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
-                sendIntent.setData(uri);
-                if (sendIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivity(Intent.createChooser(sendIntent, getString(R.string.feedback_button_intent_chooser)));
-                }
+            Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+            sendIntent.setData(uri);
+            if (sendIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+                startActivity(Intent.createChooser(sendIntent, getString(R.string.feedback_button_intent_chooser)));
             }
         });
     }

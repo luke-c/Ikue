@@ -19,16 +19,16 @@ public class WanaKanaJava
     static final int KATAKANA_START = 0x30A1;
     static final int KATAKANA_END = 0x30FA;
 
-    HashMap<String, Boolean> mOptions = new HashMap<String, Boolean>();
+    HashMap<String, Boolean> mOptions = new HashMap<>();
     static final String OPTION_USE_OBSOLETE_KANA = "useObsoleteKana";
     static final String OPTION_IME_MODE = "IMEMode";
 
-    HashMap<String, String> mRtoJ = new HashMap<String, String>();
-    HashMap<String, String> mJtoR = new HashMap<String, String>();
+    HashMap<String, String> mRtoJ = new HashMap<>();
+    HashMap<String, String> mJtoR = new HashMap<>();
 
     private interface Command
     {
-        public boolean run(String str);
+        boolean run(String str);
     }
 
     public WanaKanaJava(Boolean useObsoleteKana)
@@ -57,7 +57,7 @@ public class WanaKanaJava
     // Check if a character is within a Unicode range
     private boolean _isCharInRange(char chr, int start, int end)
     {
-        int code = (int) chr;
+        int code = chr;
         return (start <= code && code <= end);
     }
 
@@ -95,7 +95,7 @@ public class WanaKanaJava
     private String _katakanaToHiragana(String kata)
     {
         int code;
-        String hira = "";
+        StringBuilder hira = new StringBuilder();
 
         for (int _i = 0; _i < kata.length(); _i++)
         {
@@ -103,23 +103,23 @@ public class WanaKanaJava
 
             if (_isCharKatakana(kataChar))
             {
-                code = (int) kataChar;
+                code = kataChar;
                 code += HIRAGANA_START - KATAKANA_START;
-                hira += String.valueOf(Character.toChars(code));
+                hira.append(String.valueOf(Character.toChars(code)));
             }
             else
             {
-                hira += kataChar;
+                hira.append(kataChar);
             }
         }
 
-        return hira;
+        return hira.toString();
     }
 
     private String _hiraganaToKatakana(String hira)
     {
         int code;
-        String kata = "";
+        StringBuilder kata = new StringBuilder();
 
         for (int _i = 0; _i < hira.length(); _i++)
         {
@@ -127,17 +127,17 @@ public class WanaKanaJava
 
             if (_isCharHiragana(hiraChar))
             {
-                code = (int) hiraChar;
+                code = hiraChar;
                 code += KATAKANA_START - HIRAGANA_START;
-                kata += String.valueOf(Character.toChars(code));
+                kata.append(String.valueOf(Character.toChars(code)));
             }
             else
             {
-                kata += hiraChar;
+                kata.append(hiraChar);
             }
         }
 
-        return kata;
+        return kata.toString();
     }
 
     public String _hiraganaToRomaji(String hira)
@@ -153,7 +153,7 @@ public class WanaKanaJava
         int len = hira.length();
         int maxChunk = 2;
         boolean nextCharIsDoubleConsonant = false;
-        String roma = "";
+        StringBuilder roma = new StringBuilder();
         String romaChar = null;
 
         while (cursor < len)
@@ -195,10 +195,10 @@ public class WanaKanaJava
                 romaChar = chunk;
             }
 
-            roma += romaChar;
+            roma.append(romaChar);
             cursor += chunkSize > 0 ? chunkSize : 1;
         }
-        return roma;
+        return roma.toString();
     }
 
     private String _romajiToHiragana(String roma)

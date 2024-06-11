@@ -1,6 +1,7 @@
 package com.ikue.japanesedictionary.utils;
 
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
 
 import com.ikue.japanesedictionary.database.DictionaryDbSchema;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class DbUtils {
     // Split the string on the separator character into a list, then
     // convert to a LinkedHashSet to remove duplicate values.
-    @Nullable
+    @NonNull
     public static List<String> formatString(String stringToFormat) {
         if (stringToFormat != null && !stringToFormat.isEmpty()) {
             return new ArrayList<>(new LinkedHashSet<>(Arrays.asList(stringToFormat.split("§"))));

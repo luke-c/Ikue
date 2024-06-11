@@ -1,20 +1,21 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Base" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
         <item name="android:windowBackground">@color/md_grey_background</item>
     </style>
     <style name="AppTheme" parent="AppTheme.Base">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
-    <style name="AppTheme.ActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.ActionBar" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
     </style>
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
@@ -22,5 +23,10 @@
         <item name="android:layout_marginTop">16dp</item>
         <item name="android:layout_marginBottom">2dp</item>
         <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="TabTextAppearance" parent="@style/Widget.AppCompat.TextView">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 </resources>

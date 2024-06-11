@@ -2,12 +2,14 @@ package com.ikue.japanesedictionary.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.activities.EntryDetailActivity;
@@ -35,16 +37,16 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             // to access the context from any ViewHolder instance.
             super(itemView);
 
-            primaryTextView = (TextView) itemView.findViewById(R.id.list_primary);
-            primaryTextView2 = (TextView) itemView.findViewById(R.id.list_primary2);
-            secondaryTextView = (TextView) itemView.findViewById(R.id.list_secondary);
+            primaryTextView = itemView.findViewById(R.id.list_primary);
+            primaryTextView2 = itemView.findViewById(R.id.list_primary2);
+            secondaryTextView = itemView.findViewById(R.id.list_secondary);
         }
     }
 
     // Store a member variable for the contacts
     private List<DictionaryListEntry> searchResultItems;
     // Store the context for easy access
-    private Context context;
+    private final Context context;
 
     // Pass in the contact array into the constructor
     public SearchResultAdapter(Context context, List<DictionaryListEntry> searchResultItems) {
@@ -57,12 +59,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         notifyDataSetChanged();
     }
 
-    // Easy access to the context object in the recyclerview
-    private Context getContext() {
-        return this.context;
-    }
-
     // Usually involves inflating a layout from XML and returning the holder
+    @NonNull
     @Override
     public SearchResultAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -87,12 +85,9 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         TextView primaryText2 = viewHolder.primaryTextView2;
         TextView secondaryText = viewHolder.secondaryTextView;
 
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = EntryDetailActivity.newIntent(view.getContext(), entryId);
-                context.startActivity(i);
-            }
+        viewHolder.itemView.setOnClickListener(view -> {
+            Intent i = EntryDetailActivity.newIntent(view.getContext(), entryId);
+            context.startActivity(i);
         });
 
         String kanjiValue = item.getKanjiElementValue();

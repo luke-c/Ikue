@@ -7,9 +7,9 @@ import com.ikue.japanesedictionary.models.DictionaryEntry;
 
 // The types specified here are the input data type, the progress type, and the result type
 public class GetEntryDetailTask extends AsyncTask<Void, Void, DictionaryEntry> {
-    private DetailAsyncCallbacks listener;
-    private DictionaryDbHelper helper;
-    private int entryId;
+    private final DetailAsyncCallbacks listener;
+    private final DictionaryDbHelper helper;
+    private final int entryId;
 
     public GetEntryDetailTask(DetailAsyncCallbacks listener, DictionaryDbHelper helper, int entryId) {
         this.listener = listener;

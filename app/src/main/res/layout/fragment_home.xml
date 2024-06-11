@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/word_of_the_day_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,17 +94,17 @@
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="@dimen/cards_button_width"
                     android:layout_height="@dimen/cards_button_height"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_below="@+id/word_of_the_day_main_content"
-                    android:layout_marginRight="@dimen/md_keylines"
-                    android:tint="@color/button_grey"
+                    android:layout_marginEnd="@dimen/md_keylines"
+                    app:tint="@color/button_grey"
                     app:srcCompat="@drawable/ic_share_black_24dp"
                     android:contentDescription="@string/share_button_content_description"/>
 
             </RelativeLayout>
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/tips_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -161,9 +161,9 @@
                     android:textColor="?attr/colorPrimary"/>
             </LinearLayout>
 
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/feedback_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -211,7 +211,7 @@
 
             </LinearLayout>
 
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+</androidx.core.widget.NestedScrollView>
