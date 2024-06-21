@@ -59,3 +59,4 @@ gen-external-apklibs
 app/libs/
 app/src/main/assets/
 keystore.properties
+.kotlin/
