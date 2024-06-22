@@ -5,21 +5,18 @@ plugins {
 }
 
 android {
+    compileSdk = libs.versions.compileSdk.get().toInt()
     namespace = "com.ikue.japanesedictionary"
-    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.ikue.japanesedictionary"
-        minSdk = 21
-        targetSdk = 34
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 6
         versionName = "1.0.5"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        vectorDrawables.useSupportLibrary = true
         resourceConfigurations.addAll(listOf("en"))
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
