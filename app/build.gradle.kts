@@ -15,8 +15,8 @@ android {
         applicationId = "com.ikue.japanesedictionary"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 6
-        versionName = "1.0.5"
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations.addAll(listOf("en"))
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
