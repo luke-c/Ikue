@@ -27,7 +27,6 @@ fun IkueNavGraph(
         composable<Favourites> {
             FavouritesScreen()
         }
-
         composable<History> {
             HistoryScreen()
         }
