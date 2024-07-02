@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,12 +21,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.ikue.japanesedictionary.application.theme.IkueTheme
 
+@Composable
+fun rememberSearchBarUiModel(
+    showTopAndBottomBars: Boolean,
+    searchViewModel: SearchViewModel,
+): SearchBarUiModel? {
+    return remember(showTopAndBottomBars) {
+        if (!showTopAndBottomBars) {
+            null
+        } else {
+            SearchBarUiModel(query = "", onQueryChange = {})
+        }
+    }
+}
+
+@Immutable
+data class SearchBarUiModel(
+    val query: String,
+    val onQueryChange: (String) -> Unit,
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IkueSearchBar(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    uiModel: SearchBarUiModel,
 ) {
-    var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
 
     Row(
@@ -33,8 +54,8 @@ fun IkueSearchBar(
         horizontalArrangement = Arrangement.Center
     ) {
         SearchBar(
-            query = query,
-            onQueryChange = { value -> query = value },
+            query = uiModel.query,
+            onQueryChange = uiModel.onQueryChange,
             onSearch = { },
             active = active,
             onActiveChange = { value -> active = value },
@@ -59,6 +80,8 @@ fun IkueSearchBar(
 @Composable
 private fun IkueSearchBarPreview() {
     IkueTheme {
-        IkueSearchBar()
+        IkueSearchBar(
+            uiModel = SearchBarUiModel(query = "", onQueryChange = {})
+        )
     }
 }
