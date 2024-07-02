@@ -1,5 +1,6 @@
 package com.ikue.japanesedictionary.application
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import com.ikue.japanesedictionary.application.navigation.Home
 import com.ikue.japanesedictionary.application.navigation.IkueBottomNavigation
 import com.ikue.japanesedictionary.application.navigation.IkueNavGraph
 import com.ikue.japanesedictionary.application.theme.IkueTheme
+import com.ikue.japanesedictionary.search.IkueSearchBar
 
 @Composable
 fun IkueApp() {
@@ -29,7 +31,13 @@ fun IkueApp() {
         }
 
         Scaffold(
-            topBar = {},
+            topBar = {
+                if (showTopAndBottomBars) {
+                    IkueSearchBar(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
             bottomBar = {
                 if (showTopAndBottomBars) {
                     IkueBottomNavigation(
