@@ -18,12 +18,12 @@ import com.ikue.japanesedictionary.application.navigation.History
 import com.ikue.japanesedictionary.application.navigation.Home
 import com.ikue.japanesedictionary.application.navigation.IkueBottomNavigation
 import com.ikue.japanesedictionary.application.navigation.IkueNavGraph
-import com.ikue.japanesedictionary.application.navigation.rememberBottomNavigationUiModel
+import com.ikue.japanesedictionary.application.navigation.createBottomNavigationUiModel
 import com.ikue.japanesedictionary.application.theme.IkueTheme
 import com.ikue.japanesedictionary.search.IkueSearchBar
 import com.ikue.japanesedictionary.search.SearchBarUiModel
 import com.ikue.japanesedictionary.search.SearchViewModel
-import com.ikue.japanesedictionary.search.rememberSearchBarUiModel
+import com.ikue.japanesedictionary.search.createSearchBarUiModel
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -38,7 +38,7 @@ fun IkueApp() {
             navigationBarItems.any { currentDestination?.hasRoute(it::class) ?: false }
         }
 
-        val bottomNavigationUiModel = rememberBottomNavigationUiModel(
+        val bottomNavigationUiModel = createBottomNavigationUiModel(
             showTopAndBottomBars = showTopAndBottomBars,
             navigationBarItems = navigationBarItems,
             navController = navController,
@@ -46,11 +46,10 @@ fun IkueApp() {
         )
 
         val searchViewModel = hiltViewModel<SearchViewModel>()
-        val searchBarUiModel = rememberSearchBarUiModel(
+        val searchBarUiModel = createSearchBarUiModel(
             showTopAndBottomBars = showTopAndBottomBars,
             searchViewModel = searchViewModel,
         )
-
 
         IkueApp(
             navController = navController,
@@ -101,7 +100,9 @@ private fun IkueAppPreview() {
 
     val searchBarUiModel = SearchBarUiModel(
         query = "",
-        onQueryChange = {}
+        onQueryChange = {},
+        active = false,
+        onActiveChange = {},
     )
 
     IkueTheme {
