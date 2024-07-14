@@ -1,5 +1,6 @@
 package com.ikue.japanesedictionary.application.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -22,7 +23,9 @@ fun IkueNavGraph(
         startDestination = startDestination
     ) {
         composable<Home> {
-            HomeScreen()
+            HomeScreen(
+                modifier = Modifier.fillMaxSize()
+            )
         }
         composable<Favourites> {
             FavouritesScreen()

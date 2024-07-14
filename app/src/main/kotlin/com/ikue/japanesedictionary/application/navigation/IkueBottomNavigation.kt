@@ -12,12 +12,11 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun createBottomNavigationUiModel(
     showTopAndBottomBars: Boolean,
-    navigationBarItems: ImmutableList<BottomNavigationItem>,
+    navigationBarItems: List<BottomNavigationItem>,
     navController: NavHostController,
     currentDestination: NavDestination?,
 ): BottomNavigationUiModel? {
@@ -41,7 +40,7 @@ fun createBottomNavigationUiModel(
 
 @Immutable
 data class BottomNavigationUiModel(
-    val items: ImmutableList<BottomNavigationItem>,
+    val items: List<BottomNavigationItem>,
     val isItemSelected: (BottomNavigationItem) -> Boolean,
     val onItemClick: (BottomNavigationItem) -> Unit,
 )

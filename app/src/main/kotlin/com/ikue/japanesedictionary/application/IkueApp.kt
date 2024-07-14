@@ -24,7 +24,6 @@ import com.ikue.japanesedictionary.search.IkueSearchBar
 import com.ikue.japanesedictionary.search.SearchBarUiModel
 import com.ikue.japanesedictionary.search.SearchViewModel
 import com.ikue.japanesedictionary.search.createSearchBarUiModel
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun IkueApp() {
@@ -33,7 +32,7 @@ fun IkueApp() {
         val currentEntry = navController.currentBackStackEntryAsState().value
         val currentDestination = currentEntry?.destination
 
-        val navigationBarItems = persistentListOf(History, Home, Favourites)
+        val navigationBarItems = listOf(History, Home, Favourites)
         val showTopAndBottomBars = remember(currentDestination) {
             navigationBarItems.any { currentDestination?.hasRoute(it::class) ?: false }
         }
@@ -93,7 +92,7 @@ fun IkueApp(
 @Composable
 private fun IkueAppPreview() {
     val bottomNavigationUiModel = BottomNavigationUiModel(
-        items = persistentListOf(History, Home, Favourites),
+        items = listOf(History, Home, Favourites),
         onItemClick = {},
         isItemSelected = { it == Home }
     )

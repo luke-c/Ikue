@@ -46,7 +46,6 @@ android {
     }
     buildFeatures {
         buildConfig = true
-        compose = true
     }
     packaging {
         resources {
@@ -57,6 +56,7 @@ android {
 
 composeCompiler {
     enableStrongSkippingMode = true
+    stabilityConfigurationFile = rootProject.file("stability_config.conf")
 }
 
 dependencies {
@@ -70,7 +70,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.core)
-    implementation(libs.kotlinx.collections.immutable)
 
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)

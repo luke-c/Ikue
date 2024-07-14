@@ -1,7 +1,5 @@
 package com.ikue.japanesedictionary.search
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -50,28 +48,24 @@ fun IkueSearchBar(
     modifier: Modifier = Modifier,
     uiModel: SearchBarUiModel,
 ) {
-    Row(
+    SearchBar(
         modifier = modifier,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        SearchBar(
-            query = uiModel.query,
-            onQueryChange = uiModel.onQueryChange,
-            onSearch = { },
-            active = uiModel.active,
-            onActiveChange = uiModel.onActiveChange,
-            placeholder = {
-                Text("Search...")
-            },
-            leadingIcon = {
-                Icon(uiModel.leadingIcon, contentDescription = null)
-            },
-            trailingIcon = {
-                Icon(uiModel.trailingIcon, contentDescription = null)
-            }
-        ) {
-
+        query = uiModel.query,
+        onQueryChange = uiModel.onQueryChange,
+        onSearch = { },
+        active = uiModel.active,
+        onActiveChange = uiModel.onActiveChange,
+        placeholder = {
+            Text("Search...")
+        },
+        leadingIcon = {
+            Icon(uiModel.leadingIcon, contentDescription = null)
+        },
+        trailingIcon = {
+            Icon(uiModel.trailingIcon, contentDescription = null)
         }
+    ) {
+
     }
 }
 
