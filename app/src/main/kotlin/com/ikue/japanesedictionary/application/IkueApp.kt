@@ -100,11 +100,14 @@ private fun IkueAppPreview() {
     val searchBarUiModel = SearchBarUiModel(
         query = "",
         onQueryChange = {},
-        expanded = false,
+        isSearchBarExpanded = false,
         onExpandedChange = {},
         onSubmit = {},
         onLeadingIconClick = {},
         onTrailingIconClick = {},
+        isSearchBarMenuExpanded = false,
+        onSearchBarMenuDismissed = {},
+        onSettingsMenuItemClick = {},
     )
 
     IkueTheme {

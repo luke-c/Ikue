@@ -20,7 +20,7 @@ internal class SearchViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onSearchExpandedChange(isExpanded: Boolean) {
-        _viewState.update { it.copy(isExpanded = isExpanded) }
+        _viewState.update { it.copy(isSearchBarExpanded = isExpanded) }
     }
 
     fun onSearchSubmitted() {
@@ -28,7 +28,7 @@ internal class SearchViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onLeadingIconClick() {
-        val expanded = _viewState.value.isExpanded
+        val expanded = _viewState.value.isSearchBarExpanded
         onSearchExpandedChange(isExpanded = !expanded)
 
         if (expanded) {
@@ -37,12 +37,20 @@ internal class SearchViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onTrailingIconClick() {
-        val expanded = _viewState.value.isExpanded
+        val expanded = _viewState.value.isSearchBarExpanded
 
         if (expanded) {
             _viewState.update { it.copy(query = "") }
         } else {
-            // expand menu
+            _viewState.update { it.copy(isSearchBarMenuExpanded = true) }
         }
+    }
+
+    fun onSearchBarMenuDismissed() {
+        _viewState.update { it.copy(isSearchBarMenuExpanded = false) }
+    }
+
+    fun onSettingsMenuItemClick() {
+        // open settings
     }
 }

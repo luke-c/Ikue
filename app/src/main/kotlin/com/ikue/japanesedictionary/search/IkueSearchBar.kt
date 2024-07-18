@@ -1,10 +1,14 @@
 package com.ikue.japanesedictionary.search
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,11 +34,14 @@ internal fun createSearchBarUiModel(
     return SearchBarUiModel(
         query = viewState.value.query,
         onQueryChange = viewModel::onSearchQueryChange,
-        expanded = viewState.value.isExpanded,
+        isSearchBarExpanded = viewState.value.isSearchBarExpanded,
         onExpandedChange = viewModel::onSearchExpandedChange,
         onSubmit = viewModel::onSearchSubmitted,
         onLeadingIconClick = viewModel::onLeadingIconClick,
         onTrailingIconClick = viewModel::onTrailingIconClick,
+        isSearchBarMenuExpanded = viewState.value.isSearchBarMenuExpanded,
+        onSearchBarMenuDismissed = viewModel::onSearchBarMenuDismissed,
+        onSettingsMenuItemClick = viewModel::onSettingsMenuItemClick,
     )
 }
 
@@ -42,14 +49,18 @@ internal fun createSearchBarUiModel(
 internal data class SearchBarUiModel(
     val query: String,
     val onQueryChange: (String) -> Unit,
-    val expanded: Boolean,
+    val isSearchBarExpanded: Boolean,
     val onExpandedChange: (Boolean) -> Unit,
     val onSubmit: () -> Unit,
     val onLeadingIconClick: () -> Unit,
     val onTrailingIconClick: () -> Unit,
+    val isSearchBarMenuExpanded: Boolean,
+    val onSearchBarMenuDismissed: () -> Unit,
+    val onSettingsMenuItemClick: () -> Unit,
 ) {
-    val leadingIcon = if (expanded) Icons.AutoMirrored.Filled.ArrowBack else Icons.Filled.Search
-    val trailingIcon = if (expanded) Icons.Filled.Close else Icons.Filled.MoreVert
+    val leadingIcon =
+        if (isSearchBarExpanded) Icons.AutoMirrored.Filled.ArrowBack else Icons.Filled.Search
+    val trailingIcon = if (isSearchBarExpanded) Icons.Filled.Close else Icons.Filled.MoreVert
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,7 +72,7 @@ internal fun IkueSearchBar(
     SearchBar(
         modifier = modifier,
         inputField = { SearchBarInputField(uiModel = uiModel) },
-        expanded = uiModel.expanded,
+        expanded = uiModel.isSearchBarExpanded,
         onExpandedChange = uiModel.onExpandedChange,
         content = {}
     )
@@ -78,7 +89,7 @@ private fun SearchBarInputField(
         query = uiModel.query,
         onQueryChange = uiModel.onQueryChange,
         onSearch = { uiModel.onSubmit() },
-        expanded = uiModel.expanded,
+        expanded = uiModel.isSearchBarExpanded,
         onExpandedChange = uiModel.onExpandedChange,
         placeholder = {
             Text("Search...")
@@ -86,14 +97,17 @@ private fun SearchBarInputField(
         leadingIcon = {
             SearchBarLeadingIcon(
                 icon = uiModel.leadingIcon,
-                expanded = uiModel.expanded,
+                expanded = uiModel.isSearchBarExpanded,
                 onClick = uiModel.onLeadingIconClick,
             )
         },
         trailingIcon = {
-            SearchBarIconButton(
+            SearchBarTrailingIcon(
                 icon = uiModel.trailingIcon,
-                onClick = uiModel.onTrailingIconClick,
+                isSearchBarMenuExpanded = uiModel.isSearchBarMenuExpanded,
+                onIconClick = uiModel.onTrailingIconClick,
+                onSearchBarMenuDismissed = uiModel.onSearchBarMenuDismissed,
+                onSettingsMenuItemClick = uiModel.onSettingsMenuItemClick,
             )
         }
     )
@@ -117,6 +131,48 @@ private fun SearchBarLeadingIcon(
             modifier = modifier,
             imageVector = icon,
             contentDescription = null,
+        )
+    }
+}
+
+@Composable
+private fun SearchBarTrailingIcon(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    isSearchBarMenuExpanded: Boolean,
+    onIconClick: () -> Unit,
+    onSearchBarMenuDismissed: () -> Unit,
+    onSettingsMenuItemClick: () -> Unit,
+) {
+    Box(modifier = modifier) {
+        SearchBarIconButton(
+            icon = icon,
+            onClick = onIconClick,
+        )
+        SearchBarMenu(
+            expanded = isSearchBarMenuExpanded,
+            onDismiss = onSearchBarMenuDismissed,
+            onSettingsClick = onSettingsMenuItemClick,
+        )
+    }
+}
+
+@Composable
+private fun SearchBarMenu(
+    modifier: Modifier = Modifier,
+    expanded: Boolean,
+    onDismiss: () -> Unit,
+    onSettingsClick: () -> Unit,
+) {
+    DropdownMenu(
+        modifier = modifier,
+        expanded = expanded,
+        onDismissRequest = onDismiss
+    ) {
+        DropdownMenuItem(
+            text = { Text("Settings") },
+            onClick = onSettingsClick,
+            leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null) }
         )
     }
 }
@@ -147,11 +203,14 @@ private fun IkueSearchBarCollapsedPreview() {
             uiModel = SearchBarUiModel(
                 query = "",
                 onQueryChange = {},
-                expanded = false,
+                isSearchBarExpanded = false,
                 onExpandedChange = {},
                 onSubmit = {},
                 onLeadingIconClick = {},
                 onTrailingIconClick = {},
+                isSearchBarMenuExpanded = false,
+                onSearchBarMenuDismissed = {},
+                onSettingsMenuItemClick = {},
             )
         )
     }
@@ -166,11 +225,14 @@ private fun IkueSearchBarExpandedPreview() {
             uiModel = SearchBarUiModel(
                 query = "Ohayou",
                 onQueryChange = {},
-                expanded = true,
+                isSearchBarExpanded = true,
                 onExpandedChange = {},
                 onSubmit = {},
                 onLeadingIconClick = {},
                 onTrailingIconClick = {},
+                isSearchBarMenuExpanded = false,
+                onSearchBarMenuDismissed = {},
+                onSettingsMenuItemClick = {},
             )
         )
     }
