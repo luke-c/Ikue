@@ -20,8 +20,29 @@ internal class SearchViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onSearchExpandedChange(isExpanded: Boolean) {
-        _viewState.update {
-            it.copy(isExpanded = isExpanded)
+        _viewState.update { it.copy(isExpanded = isExpanded) }
+    }
+
+    fun onSearchSubmitted() {
+        // open search results
+    }
+
+    fun onLeadingIconClick() {
+        val expanded = _viewState.value.isExpanded
+        onSearchExpandedChange(isExpanded = !expanded)
+
+        if (expanded) {
+            _viewState.update { it.copy(query = "") }
+        }
+    }
+
+    fun onTrailingIconClick() {
+        val expanded = _viewState.value.isExpanded
+
+        if (expanded) {
+            _viewState.update { it.copy(query = "") }
+        } else {
+            // expand menu
         }
     }
 }

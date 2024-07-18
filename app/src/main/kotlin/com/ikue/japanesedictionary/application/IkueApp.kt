@@ -47,7 +47,7 @@ fun IkueApp() {
         val searchViewModel = hiltViewModel<SearchViewModel>()
         val searchBarUiModel = createSearchBarUiModel(
             showTopAndBottomBars = showTopAndBottomBars,
-            searchViewModel = searchViewModel,
+            viewModel = searchViewModel,
         )
 
         IkueApp(
@@ -59,7 +59,7 @@ fun IkueApp() {
 }
 
 @Composable
-fun IkueApp(
+internal fun IkueApp(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     bottomNavigationUiModel: BottomNavigationUiModel?,
@@ -100,8 +100,11 @@ private fun IkueAppPreview() {
     val searchBarUiModel = SearchBarUiModel(
         query = "",
         onQueryChange = {},
-        active = false,
-        onActiveChange = {},
+        expanded = false,
+        onExpandedChange = {},
+        onSubmit = {},
+        onLeadingIconClick = {},
+        onTrailingIconClick = {},
     )
 
     IkueTheme {
