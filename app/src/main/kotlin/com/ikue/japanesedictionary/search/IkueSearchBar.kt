@@ -1,6 +1,8 @@
 package com.ikue.japanesedictionary.search
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -17,10 +19,12 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ikue.japanesedictionary.application.theme.IkueTheme
 
@@ -69,8 +73,16 @@ internal fun IkueSearchBar(
     modifier: Modifier = Modifier,
     uiModel: SearchBarUiModel,
 ) {
+    // It's not possible to add padding to only the unexpanded SearchBar, so we
+    // need to dynamically set and remove the padding ourself when the SearchBar
+    // is unexpanded and expanded respectively.
+    val horizontalPadding by animateDpAsState(
+        targetValue = if (uiModel.isSearchBarExpanded) 0.dp else 16.dp,
+        label = "IkueSearchBar padding"
+    )
+
     SearchBar(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = horizontalPadding),
         inputField = { SearchBarInputField(uiModel = uiModel) },
         expanded = uiModel.isSearchBarExpanded,
         onExpandedChange = uiModel.onExpandedChange,
