@@ -78,7 +78,7 @@ internal fun IkueSearchBar(
     // is unexpanded and expanded respectively.
     val horizontalPadding by animateDpAsState(
         targetValue = if (uiModel.isSearchBarExpanded) 0.dp else 16.dp,
-        label = "IkueSearchBar padding"
+        label = "IkueSearchBar padding",
     )
 
     SearchBar(

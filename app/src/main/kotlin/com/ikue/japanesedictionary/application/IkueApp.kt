@@ -22,6 +22,7 @@ import com.ikue.japanesedictionary.application.navigation.createBottomNavigation
 import com.ikue.japanesedictionary.application.theme.IkueTheme
 import com.ikue.japanesedictionary.search.IkueSearchBar
 import com.ikue.japanesedictionary.search.SearchBarUiModel
+import com.ikue.japanesedictionary.search.SearchFloatingActionButton
 import com.ikue.japanesedictionary.search.SearchViewModel
 import com.ikue.japanesedictionary.search.createSearchBarUiModel
 
@@ -78,6 +79,13 @@ internal fun IkueApp(
         bottomBar = {
             bottomNavigationUiModel?.let {
                 IkueBottomNavigation(uiModel = it)
+            }
+        },
+        floatingActionButton = {
+            searchBarUiModel?.let {
+                SearchFloatingActionButton(
+                    onClick = { it.onExpandedChange(true) }
+                )
             }
         }
     ) { innerPadding ->

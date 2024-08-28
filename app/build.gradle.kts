@@ -55,7 +55,6 @@ android {
 }
 
 composeCompiler {
-    enableStrongSkippingMode = true
     stabilityConfigurationFile = rootProject.file("stability_config.conf")
 }
 
