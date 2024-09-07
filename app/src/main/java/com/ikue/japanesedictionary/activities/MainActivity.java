@@ -174,11 +174,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     private void setupViewPager() {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new HistoryFragment(), getString(R.string.history_fragment_title));
