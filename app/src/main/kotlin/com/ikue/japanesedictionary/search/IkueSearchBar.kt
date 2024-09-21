@@ -19,6 +19,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,11 +33,17 @@ import com.ikue.japanesedictionary.application.theme.IkueTheme
 internal fun createSearchBarUiModel(
     showTopAndBottomBars: Boolean,
     viewModel: SearchViewModel,
+    onNavigateToSettings: () -> Unit,
 ): SearchBarUiModel? {
     if (!showTopAndBottomBars) return null
     val viewState = viewModel.viewState.collectAsStateWithLifecycle()
     return SearchBarUiModel(
         query = viewState.value.query,
+        navigateToSettings = viewState.value.navigateToSettings,
+        onNavigateToSettings = {
+            onNavigateToSettings()
+            viewModel.onNavigationSuccess()
+        },
         onQueryChange = viewModel::onSearchQueryChange,
         isSearchBarExpanded = viewState.value.isSearchBarExpanded,
         onExpandedChange = viewModel::onSearchExpandedChange,
@@ -52,6 +59,8 @@ internal fun createSearchBarUiModel(
 @Immutable
 internal data class SearchBarUiModel(
     val query: String,
+    val navigateToSettings: Boolean,
+    val onNavigateToSettings: () -> Unit,
     val onQueryChange: (String) -> Unit,
     val isSearchBarExpanded: Boolean,
     val onExpandedChange: (Boolean) -> Unit,
@@ -73,6 +82,12 @@ internal fun IkueSearchBar(
     modifier: Modifier = Modifier,
     uiModel: SearchBarUiModel,
 ) {
+    LaunchedEffect(uiModel) {
+        if (uiModel.navigateToSettings) {
+            uiModel.onNavigateToSettings()
+        }
+    }
+
     // It's not possible to add padding to only the unexpanded SearchBar, so we
     // need to dynamically set and remove the padding ourself when the SearchBar
     // is unexpanded and expanded respectively.
@@ -214,6 +229,8 @@ private fun IkueSearchBarCollapsedPreview() {
         IkueSearchBar(
             uiModel = SearchBarUiModel(
                 query = "",
+                navigateToSettings = false,
+                onNavigateToSettings = {},
                 onQueryChange = {},
                 isSearchBarExpanded = false,
                 onExpandedChange = {},
@@ -236,6 +253,8 @@ private fun IkueSearchBarExpandedPreview() {
         IkueSearchBar(
             uiModel = SearchBarUiModel(
                 query = "Ohayou",
+                navigateToSettings = false,
+                onNavigateToSettings = {},
                 onQueryChange = {},
                 isSearchBarExpanded = true,
                 onExpandedChange = {},

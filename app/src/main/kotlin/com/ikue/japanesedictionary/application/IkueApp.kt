@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -18,6 +19,7 @@ import com.ikue.japanesedictionary.application.navigation.History
 import com.ikue.japanesedictionary.application.navigation.Home
 import com.ikue.japanesedictionary.application.navigation.IkueBottomNavigation
 import com.ikue.japanesedictionary.application.navigation.IkueNavGraph
+import com.ikue.japanesedictionary.application.navigation.Settings
 import com.ikue.japanesedictionary.application.navigation.createBottomNavigationUiModel
 import com.ikue.japanesedictionary.application.theme.IkueTheme
 import com.ikue.japanesedictionary.search.IkueSearchBar
@@ -41,14 +43,25 @@ fun IkueApp() {
         val bottomNavigationUiModel = createBottomNavigationUiModel(
             showTopAndBottomBars = showTopAndBottomBars,
             navigationBarItems = navigationBarItems,
-            navController = navController,
-            currentDestination = currentDestination,
+            onItemClick = {
+                navController.navigate(it) {
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                }
+            },
+            onItemSelected = { currentDestination?.hasRoute(it::class) ?: false }
         )
 
         val searchViewModel = hiltViewModel<SearchViewModel>()
         val searchBarUiModel = createSearchBarUiModel(
             showTopAndBottomBars = showTopAndBottomBars,
             viewModel = searchViewModel,
+            onNavigateToSettings = {
+                navController.navigate(Settings)
+            },
         )
 
         IkueApp(
@@ -116,6 +129,8 @@ private fun IkueAppPreview() {
         isSearchBarMenuExpanded = false,
         onSearchBarMenuDismissed = {},
         onSettingsMenuItemClick = {},
+        navigateToSettings = false,
+        onNavigateToSettings = {},
     )
 
     IkueTheme {

@@ -8,6 +8,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.ikue.japanesedictionary.R
 import kotlinx.serialization.Serializable
 
+interface Route
+
 @Serializable
 object Home: BottomNavigationItem {
     override val title: Int = R.string.home_fragment_title
@@ -25,3 +27,6 @@ object History : BottomNavigationItem {
     override val title: Int = R.string.history_fragment_title
     override val icon: ImageVector = Icons.Filled.Refresh
 }
+
+@Serializable
+object Settings: Route

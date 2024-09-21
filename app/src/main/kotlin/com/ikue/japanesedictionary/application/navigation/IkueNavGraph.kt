@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ikue.japanesedictionary.application.settings.SettingsScreen
 import com.ikue.japanesedictionary.favourites.presentation.FavouritesScreen
 import com.ikue.japanesedictionary.history.presentation.HistoryScreen
 import com.ikue.japanesedictionary.home.presentation.HomeScreen
@@ -32,6 +33,9 @@ fun IkueNavGraph(
         }
         composable<History> {
             HistoryScreen()
+        }
+        composable<Settings> {
+            SettingsScreen()
         }
     }
 }

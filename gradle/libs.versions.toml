@@ -6,20 +6,21 @@ versionCode = "6"
 versionName = "1.0.5"
 
 kotlin = "2.0.20"
-agp = "8.6.0"
+agp = "8.6.1"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 testRunner = "1.6.2"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.5"
+lifecycleRuntimeKtx = "2.8.6"
 activityCompose = "1.9.2"
-composeBom = "2024.09.00"
-navigation = "2.8.0"
-kotlinSerialisation = "1.7.2"
+composeBom = "2024.09.02"
+navigation = "2.8.1"
+kotlinSerialisation = "1.7.3"
 ksp = "2.0.20-1.0.25"
 hilt = "2.52"
 hiltNavigationCompose = "1.2.0"
+versions = "0.51.0"
 
 # Legacy
 material2 = "1.12.0"
@@ -68,3 +69,4 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }

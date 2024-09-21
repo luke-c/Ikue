@@ -3,7 +3,7 @@ package com.ikue.japanesedictionary.application.navigation
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 
-interface BottomNavigationItem {
+interface BottomNavigationItem: Route {
     @get:StringRes
     val title: Int
     val icon: ImageVector

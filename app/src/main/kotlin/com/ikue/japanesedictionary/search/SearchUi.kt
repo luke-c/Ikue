@@ -5,5 +5,6 @@ internal interface SearchUi {
         val query: String = "",
         val isSearchBarExpanded: Boolean = false,
         val isSearchBarMenuExpanded: Boolean = false,
+        val navigateToSettings: Boolean = false,
     )
 }

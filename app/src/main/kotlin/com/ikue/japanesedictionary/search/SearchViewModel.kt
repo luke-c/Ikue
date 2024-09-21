@@ -51,6 +51,15 @@ internal class SearchViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onSettingsMenuItemClick() {
-        // open settings
+        _viewState.update {
+            it.copy(
+                navigateToSettings = true,
+                isSearchBarMenuExpanded = false
+            )
+        }
+    }
+
+    fun onNavigationSuccess() {
+        _viewState.update { it.copy(navigateToSettings = false) }
     }
 }
