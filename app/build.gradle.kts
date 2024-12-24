@@ -55,7 +55,7 @@ android {
 }
 
 composeCompiler {
-    stabilityConfigurationFile = rootProject.file("stability_config.conf")
+    stabilityConfigurationFiles.addAll(project.layout.projectDirectory.file("stability_config.conf"))
 }
 
 dependencies {
