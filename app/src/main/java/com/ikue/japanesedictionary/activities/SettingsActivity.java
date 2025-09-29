@@ -4,14 +4,17 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.WindowCompat;
 
 import com.ikue.japanesedictionary.R;
 import com.ikue.japanesedictionary.fragments.SettingsFragment;
+import com.ikue.japanesedictionary.utils.EdgeToEdgeUtils;
 
 public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.enableEdgeToEdge(getWindow());
 
         setContentView(R.layout.activity_settings);
 
@@ -27,5 +30,7 @@ public class SettingsActivity extends AppCompatActivity {
                     .add(R.id.container,
                             new SettingsFragment()).commit();
         }
+
+        EdgeToEdgeUtils.applySystemBarsPadding(toolbar);
     }
 }

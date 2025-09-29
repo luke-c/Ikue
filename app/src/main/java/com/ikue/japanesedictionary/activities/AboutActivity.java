@@ -5,6 +5,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 
 import com.colinrtwhite.licensesdialog.LicensesDialog;
 import com.colinrtwhite.licensesdialog.license.ApacheLicense20;
@@ -28,7 +29,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        WindowCompat.enableEdgeToEdge(getWindow());
         View aboutPage = new AboutPage(this)
                 .isRTL(false)
                 .setImage(R.mipmap.ic_launcher)

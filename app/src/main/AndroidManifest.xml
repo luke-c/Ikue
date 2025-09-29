@@ -97,8 +97,7 @@
             android:name=".activities.TipsActivity"
             android:exported="false"
             android:label="@string/tips_activity_title"
-            android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.ActionBar">
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
