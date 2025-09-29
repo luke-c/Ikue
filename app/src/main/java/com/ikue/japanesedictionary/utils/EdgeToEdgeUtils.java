@@ -18,7 +18,7 @@ public class EdgeToEdgeUtils {
     public static void applyRecyclerViewPadding(View view) {
         ViewCompat.setOnApplyWindowInsetsListener(view, (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
-            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            v.setPadding(insets.left, 0, insets.right, insets.bottom);
             return WindowInsetsCompat.CONSUMED;
         });
     }
