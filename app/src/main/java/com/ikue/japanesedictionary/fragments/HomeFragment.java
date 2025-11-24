@@ -103,11 +103,6 @@ public class HomeFragment extends Fragment implements DetailAsyncCallbacks {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onDestroy() {
         // Cancel the AsyncTask if it is running when Activity is about to close
         // cancel(false) is safer and doesn't force an instant cancellation

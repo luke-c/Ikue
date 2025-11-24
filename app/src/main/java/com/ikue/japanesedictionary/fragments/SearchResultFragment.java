@@ -16,6 +16,7 @@ import com.ikue.japanesedictionary.database.DictionaryDbHelper;
 import com.ikue.japanesedictionary.database.SearchDatabaseTask;
 import com.ikue.japanesedictionary.interfaces.SearchAsyncCallbacks;
 import com.ikue.japanesedictionary.models.DictionaryListEntry;
+import com.ikue.japanesedictionary.utils.EdgeToEdgeUtils;
 import com.ikue.japanesedictionary.utils.SearchUtils;
 
 import java.util.ArrayList;
@@ -109,6 +110,8 @@ public class SearchResultFragment extends Fragment implements SearchAsyncCallbac
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setAdapter(adapter);
+
+        EdgeToEdgeUtils.applyRecyclerViewPadding(recyclerView);
 
         // We need to run the AsyncTask here instead of onCreate so we know that ProgressBar has been
         // instantiated. If we run it on onCreate the AsyncTask will try to show a ProgressBar on a

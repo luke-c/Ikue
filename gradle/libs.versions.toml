@@ -1,0 +1,74 @@
+[versions]
+compileSdk = "36"
+minSdk = "23"
+targetSdk = "36"
+versionCode = "8"
+versionName = "1.0.7"
+
+kotlin = "2.2.20"
+agp = "8.13.0"
+coreKtx = "1.17.0"
+junit = "4.13.2"
+junitVersion = "1.3.0"
+testRunner = "1.7.0"
+espressoCore = "3.7.0"
+lifecycleRuntimeKtx = "2.9.4"
+activityCompose = "1.11.0"
+composeBom = "2025.09.01"
+navigation = "2.9.5"
+kotlinSerialisation = "1.9.0"
+ksp = "2.2.20-2.0.3"
+hilt = "2.57.2"
+hiltCompose = "1.3.0"
+versions = "0.53.0"
+
+# Legacy
+material2 = "1.13.0"
+appcompat = "1.7.1"
+cardview = "1.0.0"
+recyclerview = "1.4.0"
+sqliteassethelper = "2.0.1"
+androidAboutPage = "1.3"
+licensesdialog = "2.1.0"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "testRunner" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-material-icons = { group = "androidx.compose.material", name = "material-icons-core" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltCompose" }
+androidx-hilt-lifecycle-viewmodel-compose = { group = "androidx.hilt", name = "hilt-lifecycle-viewmodel-compose", version.ref = "hiltCompose" }
+kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinSerialisation" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+
+# Legacy
+google-material2 = { group = "com.google.android.material", name = "material", version.ref = "material2" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+sqliteassethelper = { group = "com.readystatesoftware.sqliteasset", name = "sqliteassethelper", version.ref = "sqliteassethelper" }
+androidaboutpage = { group = "com.github.medyo", name = "android-about-page", version.ref = "androidAboutPage" }
+licensesdialog = { group = "com.github.colinrtwhite", name = "licensesdialog", version.ref = "licensesdialog" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }

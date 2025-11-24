@@ -143,7 +143,6 @@ public class EntryDetailFragment extends Fragment implements DetailAsyncCallback
 
         // Makes RecyclerView wrap its content
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
 
         detailsTask = new GetEntryDetailTask(detailAsyncCallbacks, helper, entryId).execute();
     }

@@ -20,8 +20,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import androidx.test.InstrumentationRegistry;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 /**
  * Instrumentation test, which will execute on an Android device.
@@ -35,7 +35,7 @@ public class DatabaseTest {
     @Test
     public void useAppContext() {
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
         assertTrue(appContext.getPackageName().equals("com.ikue.japanesedictionary")
                 || appContext.getPackageName().equals("com.ikue.japanesedictionary.debug"));
@@ -43,7 +43,7 @@ public class DatabaseTest {
 
     @Before
     public void setup() {
-        helper = DictionaryDbHelper.getInstance(InstrumentationRegistry.getTargetContext());
+        helper = DictionaryDbHelper.getInstance(InstrumentationRegistry.getInstrumentation().getTargetContext());
     }
 
     @Test
