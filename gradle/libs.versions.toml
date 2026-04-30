@@ -1,26 +1,27 @@
 [versions]
-compileSdk = "36"
+compileSdk = "37"
 minSdk = "23"
-targetSdk = "36"
-versionCode = "8"
-versionName = "1.0.7"
+targetSdk = "37"
+versionCode = "7"
+versionName = "1.0.6"
 
-kotlin = "2.2.20"
-agp = "8.13.0"
-coreKtx = "1.17.0"
+kotlin = "2.3.21"
+agp = "9.2.0"
+coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 testRunner = "1.7.0"
 espressoCore = "3.7.0"
-lifecycleRuntimeKtx = "2.9.4"
-activityCompose = "1.11.0"
-composeBom = "2025.09.01"
-navigation = "2.9.5"
-kotlinSerialisation = "1.9.0"
-ksp = "2.2.20-2.0.3"
-hilt = "2.57.2"
-hiltCompose = "1.3.0"
-versions = "0.53.0"
+lifecycleRuntimeKtx = "2.10.0"
+activityCompose = "1.13.0"
+composeBom = "2026.04.01"
+nav3Core = "1.1.1"
+lifecycleViewmodelNav3 = "2.10.0"
+kotlinSerialisation = "1.11.0"
+ksp = "2.3.6"
+hilt = "2.59.2"
+hiltNavigationCompose = "1.3.0"
+versions = "0.54.0"
 
 # Legacy
 material2 = "1.13.0"
@@ -48,9 +49,10 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material-icons = { group = "androidx.compose.material", name = "material-icons-core" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltCompose" }
-androidx-hilt-lifecycle-viewmodel-compose = { group = "androidx.hilt", name = "hilt-lifecycle-viewmodel-compose", version.ref = "hiltCompose" }
+androidx-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "nav3Core" }
+androidx-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "nav3Core" }
+androidx-lifecycle-viewmodel-navigation3 = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinSerialisation" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
@@ -66,7 +68,6 @@ licensesdialog = { group = "com.github.colinrtwhite", name = "licensesdialog", v
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
