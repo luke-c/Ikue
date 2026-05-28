@@ -9,18 +9,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class SearchViewModel @Inject constructor() : ViewModel() {
-    private val _viewState: MutableStateFlow<SearchUi.State> =
-        MutableStateFlow(value = SearchUi.State())
-    internal val viewState: StateFlow<SearchUi.State> = _viewState
+    internal val viewState: StateFlow<SearchUi.State>
+        field = MutableStateFlow(value = SearchUi.State())
 
     fun onSearchQueryChange(newQuery: String) {
-        _viewState.update {
+        viewState.update {
             it.copy(query = newQuery)
         }
     }
 
     fun onSearchExpandedChange(isExpanded: Boolean) {
-        _viewState.update { it.copy(isSearchBarExpanded = isExpanded) }
+        viewState.update { it.copy(isSearchBarExpanded = isExpanded) }
     }
 
     fun onSearchSubmitted() {
@@ -28,30 +27,30 @@ internal class SearchViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onLeadingIconClick() {
-        val expanded = _viewState.value.isSearchBarExpanded
+        val expanded = viewState.value.isSearchBarExpanded
         onSearchExpandedChange(isExpanded = !expanded)
 
         if (expanded) {
-            _viewState.update { it.copy(query = "") }
+            viewState.update { it.copy(query = "") }
         }
     }
 
     fun onTrailingIconClick() {
-        val expanded = _viewState.value.isSearchBarExpanded
+        val expanded = viewState.value.isSearchBarExpanded
 
         if (expanded) {
-            _viewState.update { it.copy(query = "") }
+            viewState.update { it.copy(query = "") }
         } else {
-            _viewState.update { it.copy(isSearchBarMenuExpanded = true) }
+            viewState.update { it.copy(isSearchBarMenuExpanded = true) }
         }
     }
 
     fun onSearchBarMenuDismissed() {
-        _viewState.update { it.copy(isSearchBarMenuExpanded = false) }
+        viewState.update { it.copy(isSearchBarMenuExpanded = false) }
     }
 
     fun onSettingsMenuItemClick() {
-        _viewState.update {
+        viewState.update {
             it.copy(
                 navigateToSettings = true,
                 isSearchBarMenuExpanded = false
@@ -60,6 +59,6 @@ internal class SearchViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onNavigationSuccess() {
-        _viewState.update { it.copy(navigateToSettings = false) }
+        viewState.update { it.copy(navigateToSettings = false) }
     }
 }

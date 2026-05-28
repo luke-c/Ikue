@@ -27,5 +27,5 @@ If you want to generate the APK yourself, make sure to use the <a href="https://
 Currently the app only uses the JMdict_e.xml information.
 
 ## License
-Copyright (c) 2024 Luke Casey </br>
+Copyright (c) 2026 Luke Casey </br>
 See <a href="/LICENSE">LICENSE</a> for more information.

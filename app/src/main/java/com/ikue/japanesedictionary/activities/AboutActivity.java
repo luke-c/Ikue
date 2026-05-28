@@ -1,11 +1,17 @@
 package com.ikue.japanesedictionary.activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.colinrtwhite.licensesdialog.LicensesDialog;
 import com.colinrtwhite.licensesdialog.license.ApacheLicense20;
@@ -43,7 +49,30 @@ public class AboutActivity extends AppCompatActivity {
                 .addItem(getThanksElement())
                 .create();
 
-        setContentView(aboutPage);
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+
+        Toolbar toolbar = new Toolbar(this);
+        toolbar.setTitle(R.string.about_activity_title);
+        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary, getTheme()));
+        toolbar.setTitleTextColor(Color.WHITE);
+
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
+
+        root.addView(toolbar);
+        root.addView(aboutPage);
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, systemBars.top, 0, systemBars.bottom);
+            return insets;
+        });
+
+        setContentView(root);
     }
 
     private Element getTermsOfUseElement() {

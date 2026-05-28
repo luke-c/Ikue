@@ -8,19 +8,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.ikue.japanesedictionary.application.navigation.BottomNavigationUiModel
 import com.ikue.japanesedictionary.application.navigation.Favourites
 import com.ikue.japanesedictionary.application.navigation.History
 import com.ikue.japanesedictionary.application.navigation.Home
 import com.ikue.japanesedictionary.application.navigation.IkueBottomNavigation
 import com.ikue.japanesedictionary.application.navigation.IkueNavGraph
+import com.ikue.japanesedictionary.application.navigation.NavigationState
+import com.ikue.japanesedictionary.application.navigation.Navigator
 import com.ikue.japanesedictionary.application.navigation.Settings
 import com.ikue.japanesedictionary.application.navigation.createBottomNavigationUiModel
+import com.ikue.japanesedictionary.application.navigation.rememberNavigationState
 import com.ikue.japanesedictionary.application.theme.IkueTheme
 import com.ikue.japanesedictionary.search.IkueSearchBar
 import com.ikue.japanesedictionary.search.SearchBarUiModel
@@ -31,28 +29,26 @@ import com.ikue.japanesedictionary.search.createSearchBarUiModel
 @Composable
 fun IkueApp() {
     IkueTheme {
-        val navController = rememberNavController()
-        val currentEntry = navController.currentBackStackEntryAsState().value
-        val currentDestination = currentEntry?.destination
+        val navigationState = rememberNavigationState(
+            startRoute = Home,
+            topLevelRoutes = setOf(History, Home, Favourites),
+        )
+        val navigator = remember { Navigator(navigationState) }
+
+        val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last()
 
         val navigationBarItems = listOf(History, Home, Favourites)
-        val showTopAndBottomBars = remember(currentDestination) {
-            navigationBarItems.any { currentDestination?.hasRoute(it::class) ?: false }
+        val showTopAndBottomBars = remember(currentRoute) {
+            navigationBarItems.contains(currentRoute)
         }
 
         val bottomNavigationUiModel = createBottomNavigationUiModel(
             showTopAndBottomBars = showTopAndBottomBars,
             navigationBarItems = navigationBarItems,
             onItemClick = {
-                navController.navigate(it) {
-                    launchSingleTop = true
-                    restoreState = true
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                }
+                navigator.navigate(it)
             },
-            onItemSelected = { currentDestination?.hasRoute(it::class) ?: false }
+            onItemSelected = { it == navigationState.topLevelRoute }
         )
 
         val searchViewModel = hiltViewModel<SearchViewModel>()
@@ -60,14 +56,17 @@ fun IkueApp() {
             showTopAndBottomBars = showTopAndBottomBars,
             viewModel = searchViewModel,
             onNavigateToSettings = {
-                navController.navigate(Settings)
+                navigator.navigate(Settings)
             },
         )
 
+        val onBack = { navigator.goBack() }
+
         IkueApp(
-            navController = navController,
+            navigationState = navigationState,
             bottomNavigationUiModel = bottomNavigationUiModel,
-            searchBarUiModel = searchBarUiModel
+            searchBarUiModel = searchBarUiModel,
+            onBack = onBack,
         )
     }
 }
@@ -75,9 +74,10 @@ fun IkueApp() {
 @Composable
 internal fun IkueApp(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
+    navigationState: NavigationState,
     bottomNavigationUiModel: BottomNavigationUiModel?,
     searchBarUiModel: SearchBarUiModel?,
+    onBack: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -104,7 +104,8 @@ internal fun IkueApp(
     ) { innerPadding ->
         IkueNavGraph(
             modifier = Modifier.padding(innerPadding),
-            navController = navController
+            navigationState = navigationState,
+            onBack = onBack,
         )
     }
 }
@@ -134,10 +135,16 @@ private fun IkueAppPreview() {
     )
 
     IkueTheme {
+        val navigationState = rememberNavigationState(
+            startRoute = Home,
+            topLevelRoutes = setOf(History, Home, Favourites),
+        )
+
         IkueApp(
-            navController = rememberNavController(),
+            navigationState = navigationState,
             bottomNavigationUiModel = bottomNavigationUiModel,
-            searchBarUiModel = searchBarUiModel
+            searchBarUiModel = searchBarUiModel,
+            onBack = {},
         )
     }
 }

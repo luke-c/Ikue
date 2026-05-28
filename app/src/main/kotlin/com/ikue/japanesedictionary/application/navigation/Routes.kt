@@ -5,10 +5,11 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation3.runtime.NavKey
 import com.ikue.japanesedictionary.R
 import kotlinx.serialization.Serializable
 
-interface Route
+interface Route : NavKey
 
 @Serializable
 object Home: BottomNavigationItem {

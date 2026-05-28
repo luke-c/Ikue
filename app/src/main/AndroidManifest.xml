@@ -81,7 +81,7 @@
             android:exported="false"
             android:label="@string/about_activity_title"
             android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.ActionBar">
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
