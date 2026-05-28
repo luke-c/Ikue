@@ -39,10 +39,6 @@ android {
             isDebuggable = true
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
     buildFeatures {
         buildConfig = true
     }
@@ -50,6 +46,18 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xexplicit-backing-fields")
     }
 }
 
@@ -71,6 +79,7 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.androidx.datastore.preferences)
 
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)

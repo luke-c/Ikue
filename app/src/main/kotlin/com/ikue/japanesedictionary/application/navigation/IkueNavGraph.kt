@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.ikue.japanesedictionary.application.settings.SettingsScreen
+import com.ikue.japanesedictionary.settings.presentation.SettingsScreen
 import com.ikue.japanesedictionary.favourites.presentation.FavouritesScreen
 import com.ikue.japanesedictionary.history.presentation.HistoryScreen
 import com.ikue.japanesedictionary.home.presentation.HomeScreen
